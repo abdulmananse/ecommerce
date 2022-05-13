@@ -22,15 +22,11 @@
                 @php($url = '/admin/products/'.Hashids::encode($product->id))
                 @break
 
-            @case(2)
-                @php($url = '/admin/products/update-store/'.Hashids::encode($product->id))
-                @break
-
             @default
                 @php($url = '/admin/products/'.Hashids::encode($product->id))
         @endswitch 
         
-        @if($current_tab == 3)
+        @if($current_tab == 2)
         
             @if($product->is_variants == 1)
                 @include ('admin.products.variant_form')

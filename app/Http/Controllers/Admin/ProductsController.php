@@ -248,7 +248,7 @@ class ProductsController extends Controller
             Session::flash('error', 'Product not successfully added!');
         }
 
-        return redirect($this->resource.'/'. Hashids::encode($product->id) .'/edit?tab=2');
+        return redirect($this->resource.'/'. Hashids::encode($product->id) .'/edit?tab=1');
     }
 
     /**

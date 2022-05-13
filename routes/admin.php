@@ -106,9 +106,11 @@ Route::group(['namespace' => 'Admin'], function () {
       Route::put('orders/update-order-status/{cart_id}','OrdersController@updateOrderStatus');
     Route::post('invoice/update-product-courier','OrdersController@updateProductCourier');
 
-
+    //Admin orders
+    Route::resource('admin-orders', 'AdminOrderController');
+    Route::get('get-product-row', 'AdminOrderController@getProductRow');
+    
     // Courier Assignment
-
     Route::resource('courier-assignment', 'CourierAssignmentsController');
     Route::get('courier-assignment/{id}', 'CourierAssignmentsController@edit');
     Route::get('courier-assignment/cartDetails/{id}', 'CourierAssignmentsController@cartDetails');

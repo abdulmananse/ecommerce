@@ -172,14 +172,68 @@ function remove_record(url,reload_datatable,method){
       });
 }
 
+/**
+ * Loading overlay js
+ * @param _ele
+ */
+let loadingOverlay = (_ele, show = true) => {
+    if (show) {
+        _ele.LoadingOverlay('show');
+    }    
+}
+
+/**
+ * Stopping overlay js
+ * @param _ele
+ */
+let stopOverlay = (_ele, hide = true) => {
+    if (hide) {
+        _ele.LoadingOverlay('hide');
+    }
+}
+
 function success_message(message)
 {
-  toastr.success(message);
+    successMessage(message);
 }
 
 function error_message(message)
 {
-  toastr.error(message);
+    errorMessage(message);
+}
+
+/**
+ * Show Success Message
+ * @param message
+ * @param title
+ */
+function successMessage(message, title='')
+{
+    if (!title) title = "Success!";
+    toastr.remove();
+    toastr.success(message, title, {
+        closeButton: true,
+        timeOut: 4000,
+        progressBar: true,
+        newestOnTop: true
+    }); 
+}
+
+/**
+ * Show Error Message
+ * @param message
+ * @param title
+ */
+function errorMessage(message, title='')
+{
+    if (!title) title = "Error!";
+    toastr.remove();
+    toastr.error(message, title, {
+        closeButton: true,
+        timeOut: 4000,
+        progressBar: true,
+        newestOnTop: true
+    }); 
 }
 
 function    generateRandomNumber(length) {

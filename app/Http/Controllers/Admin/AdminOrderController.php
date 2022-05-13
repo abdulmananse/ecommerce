@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\Transaction;
@@ -16,10 +17,10 @@ use App\Models\Email;
 use App\Models\TaxRate;
 use function foo\func;
 
-class OrdersController extends Controller
+class AdminOrderController extends Controller
 {
 
-    public $resource = 'admin/orders';
+    public $resource = 'admin/admin-orders';
 
     public function __construct()
     {
@@ -189,7 +190,10 @@ class OrdersController extends Controller
      */
     public function create()
     {
-        return view($this->resource . '/create');
+        $customers = User::where('type', 'retailer')->get()->pluck('full_name', 'id')->prepend('Select Customer', '');
+        $products = Product::pluck('name', 'id')->prepend('Select Product', '');
+        
+        return view($this->resource . '/create', get_defined_vars());
     }
 
     /**
@@ -257,11 +261,22 @@ class OrdersController extends Controller
     public function destroy($id)
     {
     }
-
+    
+    /**
+     * Get Product Row
+     */
+    public function getProductRow()
+    {
+        $products = Product::pluck('name', 'id')->prepend('Select Product', '');
+        
+        return response()->json([
+            'success'  => true,
+            'html'  => view($this->resource . '.product-row', get_defined_vars())->render()
+        ], $this->successStatus);
+    }
+    
     /**
      * change status
-     *
-     *
      */
     public function updateProductCourier(Request $request)
     {

@@ -38,10 +38,10 @@
         <li class="{{ $tab1 }}"><a href="{{ url('admin/products/create') }}">Product Information</a></li>
     @else
         <li class="{{ $tab1 }}"><a href="{{ url('admin/products/'. Hashids::encode($product->id) .'/edit?tab=1') }}">Product Information</a></li>
-        <li class="{{ $tab2 }}"><a href="{{ url('admin/products/'. Hashids::encode($product->id) .'/edit?tab=2') }}">Store & Categories</a></li>
+        <!--<li class="{{ $tab2 }}"><a href="{{ url('admin/products/'. Hashids::encode($product->id) .'/edit?tab=2') }}">Store & Categories</a></li>-->
 
         @if($product->is_variants == 1)
-            <li><a href="{{ url('admin/products/'. Hashids::encode($product->id) .'/edit?tab=3') }}">Variants</a></li>
+            <li><a href="{{ url('admin/products/'. Hashids::encode($product->id) .'/edit?tab=2') }}">Variants</a></li>
         @endif
     @endif
 </ul>
@@ -80,8 +80,13 @@
                                     <div class="help-block with-errors"></div>
                                 </div>
                             </div>
-
-
+                            
+                            <div class="row modifier_select">
+                                <div class="form-group col-md-3" style="margin-left: 18px;" id="is_variants_text">
+                                    <input id="is_variants" name="is_variants" type="checkbox" value="1"> <b>This product has variants</b>
+                                </div>
+                            </div>
+                            
 
                             <div class="row modifier_select">
 
@@ -317,44 +322,6 @@
                 </div>
             </div>
         </div>
-    @endif
-
-    @if(isset($submitButtonText))
-        @if(!empty($tab2))
-            <!-- Store and Categories-->
-            <div class="tab-pane fade in {{ $tab2 }}">
-            <div class="row">
-                <div class="col-lg-12">
-                    <section class="panel">
-                        <div class="panel-body">
-
-                            <div class="row">
-                                <div class="form-group col-md-6 {{ $errors->has('store_category_ids') ? 'has-error' : ''}}">
-                                    {!! Form::label('store_category_ids', 'Stores & Categories', ['class' => 'control-label required-input']) !!}
-                                    <div id="store_category_tree"></div>
-                                    <input type="text" name="store_category_ids" id="checkedIds" required style="display:none;" />
-                                    {!! $errors->first('store_category_ids', '<p class="help-block">:message</p>') !!}
-                                    <div class="help-block with-errors"></div>
-                                </div>
-
-                                <div class="form-group col-md-6">
-                                    {!! Form::label('store_quantity', 'Stores Quantity', ['class' => 'control-label required-input']) !!}
-                                    <div id="store_quantity" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="col-lg-offset-2 col-lg-10">
-                                    {!! Form::submit('Save', ['class' => 'btn btn-info pull-right']) !!}
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-            </div>
-        </div>
-        @endif
     @endif
 </div>
 
