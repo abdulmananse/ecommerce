@@ -1,3 +1,6 @@
+@php
+    $user = Auth::guard('web')->user();
+@endphp
 <div class="row collection hvr2">
     @foreach($products as $product)
         <div class="col-md-3 col-sm-6 col-xs-12 isotope-item colltn-1 colltn-2 colltn-3">
@@ -27,7 +30,7 @@
                 </div>
 
 
-                @if(Auth::check() && Auth::guard('web')->check() && $user->type != 'retailer')
+                @if(Auth::check() && Auth::guard('web')->check() && @$user->type != 'retailer')
                     <p class="font-3">Price: <span class="thm-clr"> £{{ $product->discountedPrice }}</span></p>
                 @else
                     <p class="font-3">Price:

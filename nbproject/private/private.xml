@@ -4,9 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/wamp64/www/ecommerce/resources/views/admin/admin-orders/create.blade.php</file>
+            <file>file:/C:/wamp64/www/ecommerce/resources/views/admin/brands/form.blade.php</file>
+            <file>file:/C:/wamp64/www/ecommerce/resources/views/admin/admin-orders/product-row.blade.php</file>
             <file>file:/C:/wamp64/www/ecommerce/app/Http/Controllers/Admin/AdminOrderController.php</file>
             <file>file:/C:/wamp64/www/ecommerce/routes/admin.php</file>
-            <file>file:/C:/wamp64/www/ecommerce/app/Http/Controllers/Admin/ProductsController.php</file>
         </group>
     </open-files>
 </project-private>

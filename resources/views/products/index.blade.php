@@ -1,7 +1,24 @@
 @extends('layouts.app')
 
 @section('content')
-
+    
+    <style>
+        .save-to-proceed {
+            background-color: #f92400;
+            color: #fff;
+            font-size: 16px;
+            height: 50px;
+            line-height: 50px;
+            padding: 0 64px;
+            border-radius: 25px;
+            margin-right: 30px;
+            font-weight: 600;
+            margin-left: -8px;
+            letter-spacing: 0.5px;
+            border: none;
+            margin-top: 25px;
+        }
+    </style>
     <!-- CONTENT + SIDEBAR -->
     <div class="main-wrapper clearfix">
         <div class="site-pagetitle jumbotron">
@@ -24,15 +41,13 @@
             <div class="main-container row">
                 <aside class="col-md-3 col-sm-4">
                     <div class="main-sidebar">
-                        <h3 class="sec-title fsz-25 no-mrgn blk-clr"> FILTER BY </h3>
+                         <h3 class="sec-title fsz-25 no-mrgn blk-clr"> FILTER BY </h3>
                         <div class="widget sidebar-widget widget_categories clearfix">
                             <h6 class="widget-title">CATEGORY</h6>
                             <div class="panel-group">
                                 <div class="panel panel-cate">
                                     @forelse(getCategories() as $category)
-                                        <a data-toggle="collapse"  href="{{url('products?category='.$category->id.'-'.string_replace($category->name))}}"
-                                           id="{{$category->id.'-'.$category->name}}"
-                                           class="collapsed"> {{$category->name}}   </a>
+                                        <a style="cursor: pointer;" data-toggle="collapse" id="{{$category->id.'-'.$category->name}}" class="collapsed categoryType"> {{$category->name}}   </a>
                                         <div class="cate-heading">
                                             <a data-toggle="collapse"  href="#{{$category->id}}"
                                                id="{{$category->id.'-'.$category->name}}"
@@ -43,7 +58,7 @@
                                                 <ul>
                                                     @foreach($category->subcategories as $subcategory)
                                                         <li>
-                                                            <a class="cat-item"
+                                                            <a class="cat-item categoryType"
                                                                id="{{$subcategory->id.'-'.$subcategory->sub_name}}"
                                                                href="javascript:void(0)"
                                                                title="">{{$subcategory->sub_name}}</a>
@@ -60,8 +75,32 @@
 
                             </div>
                         </div>
-
+                         
+                        <form method="get" action="{{ url('products') }}">
+                        <input type="hidden" name="category" value="all" class="records">
+                        <input type="hidden" name="records" value="10" class="records">
+                        <input type="hidden" name="order" value="asc">
+                        <input type="hidden" name="page" value="1">
+                        <input type="hidden" name="filter" value="true">
+                        <input id="view-type" type="hidden" name="view-type" value="grid" />
+                        
                         <div class="widget sidebar-widget widget_categories clearfix">
+                            <h6 class="widget-title">BRAND</h6>
+                            <div class="panel-group">
+                                <ul class="panel panel-cate">
+                                    @forelse($brands as $id => $name)
+                                        <li class="check-box">
+                                            <input type="checkbox" name="brand[]" id="checkbox{{$id}}" value="{{$id.'-'.$name}}">
+                                            <label for="checkbox{{$id}}">{{ $name }} </label>
+                                        </li>
+                                    @empty
+                                        <li>No Records Found</li>
+                                    @endforelse
+                                </ul>
+
+                            </div>
+                        </div>
+<!--                        <div class="widget sidebar-widget widget_categories clearfix">
                             <h6 class="widget-title">COLOR</h6>
                             <div class="panel-group">
                                 <div class="panel panel-cate">
@@ -83,12 +122,18 @@
                                 </div>
 
                             </div>
-                        </div>
+                        </div>-->
 
                         <div class="widget sidebar-widget woocommerce widget_price_filter clearfix">
                             <h6 class="widget-title">Filter by price</h6>
-                            <form>
-                                <div class="price_slider_wrapper">
+                            <div class="price search-filter-input">
+                                <input id="min_price" type="hidden" name="min_price" value="0">
+                                <input id="max_price" type="hidden" name="max_price" value="500">
+                                <div id="slider-range2" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"><div class="ui-slider-range ui-corner-all ui-widget-header" style="left: 0%; width: 50%;"></div><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 0%;"></span><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 50%;"></span></div>
+                                <p class="show_range" style="text-align: center; margin-top: 10px;">£0.00 - £500.00</p>
+                            </div>
+                            
+<!--                                <div class="price_slider_wrapper">
                                     <div id="price_slider" class="price_slider"></div>
                                     <div class="price_slider_amount">
                                         <input type="text" id="min_price" name="min_price" value="" data-min="10"
@@ -103,11 +148,14 @@
 
                                         <div class="clear"></div>
                                     </div>
-                                </div>
-                            </form>
+                                </div>-->
                         </div>
-
-                        <div class="widget sidebar-widget widget_categories clearfix">
+                        
+                        <div class="form-box">
+                            <button type="submit" class="save-to-proceed" style="margin-bottom: 20px">Apply Filters</button>
+                        </div>
+                        </form>
+<!--                        <div class="widget sidebar-widget widget_categories clearfix">
                             <h6 class="widget-title">Size</h6>
                             <ul>
                                 <li class="cat-item"><a href="#">Very Small</a> (75)</li>
@@ -116,14 +164,14 @@
                                 <li class="cat-item"><a href="#">Large</a> (10)</li>
                                 <li class="cat-item"><a href="#">Very Large </a> (21)</li>
                             </ul>
-                        </div>
+                        </div>-->
 
-                        <div class="widget sidebar-widget">
+<!--                        <div class="widget sidebar-widget">
                             <div class="text-box">
                                 <h2 class="title-3 fsz-14 blklt-clr"> FREE SHIPPING. FREE RETURN. </h2>
                                 <h2 class="sec-title fsz-20 blklt-clr"> ALL THE TIME </h2>
                             </div>
-                        </div>
+                        </div>-->
                     </div>
                 </aside>
 
@@ -261,8 +309,53 @@
 
             pageClick(url, current_url, more_options_url, 'products');
         });
+        
+        $('body').on('click', '.categoryType', function(e) {
+            e.preventDefault();
+            let category_id = $(this).attr('id');
+            current_url     = window.location.href;
+            let selectedCategoryName = (category_id).split('-').pop();
+            category_id = category_id.replace(/ & /g, "-");
+            category_id = category_id.replace(/, /g, "-");
+            category_id = category_id.replace(/ /g, "-");
+            category_id = category_id.replace("(", "");
+            category_id = category_id.replace(")", "");
+            $('#categoryName').text(selectedCategoryName);
 
+            let category_param  = getParams('category');
+            let updated_url = current_url.replace("category="+category_param, "category="+category_id);
+            window.history.pushState("", "", updated_url);
 
+            getCategoryProducts(category_id, url, current_url, more_options_url, ordering, page_number, records);
+        });
+        
+        let min_price = getParams('min_price', current_url);
+        if(!min_price){
+            min_price = 0;
+        }
+
+        let max_price = getParams('max_price', current_url);
+        if(!max_price){
+            max_price = 500;
+        }
+
+        $('#min_price').val(min_price);
+        $('#max_price').val(max_price);
+        $('.show_range').text("£" + (parseInt(min_price).toFixed(2)) + " - £" + (parseInt(max_price).toFixed(2)));
+        $( "#slider-range2" ).slider({
+            range: true,
+            min: 0,
+            max: 1000,
+            step: 5,
+            values: [ min_price, max_price ],
+            slide: function( event, ui ) {
+                // $( "#amount2" ).val( "$" + addCommas(ui.values[ 0 ].toFixed(2)) + " - $" + addCommas(ui.values[ 1 ].toFixed(2)) );
+                $('.show_range').text("£" + (ui.values[ 0 ].toFixed(2)) + " - £" + (ui.values[ 1 ].toFixed(2)));
+                $("#min_price").val((ui.values[ 0 ]));
+                $("#max_price").val((ui.values[ 1 ]));
+            }
+        });
+        
     });
 
     function changeViewType(obj){

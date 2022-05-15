@@ -237,13 +237,13 @@
                                                             class="product-quantity">&times; {{$product->quantity}}</strong>
                                                     </td>
 
-                                                    @if(Auth::user()->type == 'wholesaler')
+                                                    {{-- @if(Auth::user()->type == 'wholesaler') --}}
                                                         <td class="product-total"><b
                                                                 class="amount fa fa-gbp">{{$product->price.' * '.$product->quantity.' = '.$product->price * $product->quantity}}</b></td>
-                                                    @else
+                                                    {{-- @else
                                                         <td class="product-total"><b
                                                                 class="amount fa fa-gbp">{{ number_format(getProductDetails($product->id)->price,2).' * '.$product->quantity.' = '. number_format(getProductDetails($product->id)->price * $product->quantity,2)}}</b></td>
-                                                    @endif
+                                                    @endif --}}
 
 
                                                 </tr>

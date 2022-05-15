@@ -205,6 +205,7 @@ class AdminOrderController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request->all());
     }
 
     /**
@@ -272,6 +273,25 @@ class AdminOrderController extends Controller
         return response()->json([
             'success'  => true,
             'html'  => view($this->resource . '.product-row', get_defined_vars())->render()
+        ], $this->successStatus);
+    }
+    
+    /**
+     * Get Product Details
+     * @param integer $id
+     */
+    public function getProductDetails($id)
+    {
+        $product = Product::with('quantity')->find($id);
+        if ($product) {
+            return response()->json([
+                'success'  => true,
+                'product'  => $product
+            ], $this->successStatus);
+        }
+        
+        return response()->json([
+            'success'  => false,
         ], $this->successStatus);
     }
     

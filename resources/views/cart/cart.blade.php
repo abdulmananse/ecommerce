@@ -13,6 +13,8 @@
                 </thead>
                 <tbody>
                 @forelse($cartContents as $product)
+                <?php $slug = (!empty($product->slug)) ? $product->slug : Hashids::encode($product->id); ?>
+                
                     <tr class="cart_item">
                         <td class="product-thumbnail">
                             <a href="javascript:void(0)">
@@ -28,7 +30,7 @@
                                 <span class="star half"></span>
                             </div>
                             <div class="cart-product-title">
-                                <a href="single-product.html">{{$product->name}} <span
+                                <a href="{{ url('products/'.$slug) }}">{{$product->name}} <span
                                         class="thm-clr"> {{$product->code}} </span> </a>
                             </div>
 
@@ -37,7 +39,8 @@
 
                         <td class="product-price">
                             <p class="font-3 fsz-18 no-mrgn"><b
-                                    class="amount blk-clr">{{$product->quantity . ' x £' . $product->price." "}}@if(@$product->cprice > $product->price)
+                                    class="amount blk-clr">{{$product->quantity . ' x £' . $product->price." "}}
+                                    @if(@$product->cprice > $product->price)
                                         <s>{{"(".$product->cprice.")"}}</s>
                                     @endif</b><!-- <del>$299.00</del>--> </p>
                             <!--                                        <p class="fsz-14 no-mrgn"> <b class="gray-clr">Special Offers: </b> <b class="blk-clr">Discount 50%</b> </p>-->

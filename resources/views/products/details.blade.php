@@ -6,6 +6,10 @@
     {{$product->meta_description??''}}
 @endsection
 @section('content')
+    
+    @php
+        $user = Auth::guard('web')->user();
+    @endphp
 
     <div class="main-wrapper clearfix">
         <div class="site-pagetitle jumbotron">
@@ -56,7 +60,23 @@
                                 <div class="product_title_wrapper">
                                     <div itemprop="name" class="product_title entry-title">
                                         {{ $product->name }} <span class="thm-clr"></span>
-                                        <p class="font-3 fsz-18 no-mrgn price"> <b class="amount blk-clr fa fa-gbp"> {{ $product->price }}</b>   </p>
+                                        
+                                        @if(Auth::check() && Auth::guard('web')->check() && @$user->type != 'retailer')
+                                            <p class="font-3 fsz-18 no-mrgn price">
+                                                <b class="amount fa fa-gbp thm-clr"> {{ $product->discountedPrice }}</b>
+                                            </p>
+                                        @else
+                                            <p class="font-3 fsz-18 no-mrgn price">
+                                            @if($product->discount_type>0)
+                                                <del> £{{ number_format($product->price,2) }}</del>
+                                            @endif
+                                               <b class="amount fa fa-gbp thm-clr"> {{ $product->discountedPrice }}</b>
+                                            </p>
+                                        @endif
+                                        
+<!--                                        <p class="font-3 fsz-18 no-mrgn price"> 
+                                            <b class="amount blk-clr fa fa-gbp"> {{ $product->price }}</b>   
+                                        </p>-->
                                     </div>
                                 </div>
 
@@ -65,7 +85,11 @@
                                 </div>
 
                                 <ul class="stock-detail list-items fsz-12">
-                                    <li> <strong> MATERIAL : <span class="blk-clr"> COTTON </span> </strong> </li>
+                                    <li> <strong> Category : <span class="blk-clr">
+                                        @if (@$product->category_products[0])
+                                            {{ $product->category_products[0]->category->name }}
+                                        @endif
+                                         </span> </strong> </li>
                                     <li> <strong>  STOCK : <span class="blk-clr"> READY STOCK </span> </strong> </li>
                                 </ul>
 

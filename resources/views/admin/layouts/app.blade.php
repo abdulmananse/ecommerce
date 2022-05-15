@@ -80,7 +80,9 @@
         @include('admin.sections.footer')
 
     </section>
-
+    
+    @routes
+    
     <!-- Scripts -->
 
      <!--Core js-->

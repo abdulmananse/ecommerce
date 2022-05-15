@@ -28,7 +28,7 @@
                 <section class="panel">
                     <div class="panel-body invoice" id="printData">
                             
-                        <form id="applicationForm" action="{{route('admin.update.invoice')}}" method="post">
+                        <form id="applicationForm" action="{{ route('admin.admin-orders.store') }}" method="post">
                         @csrf
                         <div class="row invoice-to">
                             <div class="col-md-6 col-sm-6 pull-left">
@@ -70,11 +70,12 @@
                             <tbody>
                                 <tr class='product_row'>
                                     <td class="invoice">
-                                        {!! Form::select('product_id[0]', $products, null, ['class' => 'form-control select2 products', 'style' => 'width:250px', 'required' => 'required']) !!}
-                                        <label id="product_id[0]-error" class="error" for="product_id[0]"></label>
+                                        {!! Form::select('product_name[0]', $products, null, ['class' => 'form-control select2 products', 'style' => 'width:250px', 'required' => 'required']) !!}
+                                        <label id="product_name[0]-error" class="error" for="product_name[0]"></label>
+                                        <input type="hidden" name="product_id[0]" value="0" class="product_id" />
                                     </td>
-                                    <td class="text-center product_unit_price">0</td>
-                                    <td class="text-center product_quantity">
+                                    <td class="text-center product_unit_price" data-value="0">0</td>
+                                    <td class="text-center product_quantity_tr">
                                         <input required type='number' style='width:50px' name='product_quantity[]' class='product_quantity' value="1" min="1" />
                                         <label id="product_quantity[0]-error" class="error" for="product_quantity[0]"></label>
                                     </td>
@@ -129,53 +130,32 @@
                 customer_id : { required : true },
             },
             submitHandler: function(form) {
-
-                console.log('asdfgh');
-                return false;
                 
-//                var registration_status = $("#registration_status").val();
-//
-//                if (programs.length==0 && registration_status == 'registered') {
-//                    errorMessage('Students enrollment stats is required!');
-//                } else {
-//                   $('.qualifications').prop("disabled", false);
-//                    $('.programs').prop("disabled", false);
-//                    $('.degrees').prop("disabled", false);
-//                    $('.subjects').prop("disabled", false);
-//
-//                    let _form = $(form);
-//                    let _loader = $("body");
-//                    let formData = _form.serializeFiles();
-//                    loadingOverlay(_loader);
-//                    $('.form-group .text-danger').text('');
-//                    $('.form-control').removeClass('is-invalid');
-//                    $.ajax({
-//                        type: _form.attr('method'),
-//                        url: _form.attr('action'),
-//                        processData: false,
-//                        contentType: false,
-//                        dataType: 'json',
-//                        data: formData,
-//                        success:function (res) {
-//                            successMessage(res.message);
-//                            stopOverlay(_loader);
-//                            setTimeout(function() {
-//                                window.location = route('applications.index');
-//                            }, 2000);
-//                        },
-//                        error: function (request, status, error) {
-//                            $('.qualifications').prop("disabled", true);
-//                            $('.programs').prop("disabled", true);
-//                            $('.degrees').prop("disabled", true);
-//                            $('.subjects').prop("disabled", true);
-//
-//                            stopOverlay(_loader);
-//                            showAjaxErrorMessage(request, true);
-//                        }
-//                    }); 
-//                }
-//            }
-        }
+                let _form = $(form);
+                let _loader = $("body");
+                let formData = _form.serialize();
+                loadingOverlay(_loader);
+                $.ajax({
+                    type: _form.attr('method'),
+                    url: _form.attr('action'),
+                    processData: false,
+                    //contentType: false,
+                    //dataType: 'json',
+                    data: formData,
+                    success:function (res) {
+                        return false;
+                        successMessage(res.message);
+                        stopOverlay(_loader);
+                        setTimeout(function() {
+                            window.location = route('admin.admin-orders.index');
+                        }, 2000);
+                    },
+                    error: function (request, status, error) {
+                        stopOverlay(_loader);
+                        showAjaxErrorMessage(request, true);
+                    }
+                }); 
+            }
     });
     
         $(document).on('click', '.loadRow', function () {
@@ -183,17 +163,65 @@
         });
         
         $(document).on('change', '.products', function (e) {
+            
+            let _el = $(this);
+            var _parent = $(this).parents('.product_row');
+            var val = this.value;
+            
             if (_.includes(products, this.value)) {
-                $(this).find('option[value=""]').removeAttr("selected");
-                $(this).find('option[value=""]').attr("selected", "selected");
+                _el.find('option[value=""]').removeAttr("selected");
+                _el.find('option[value=""]').attr("selected", "selected");
                 errorMessage('You have already select this option please select other option');
                 return false;
             } else {
-                var wrapped = _(products).push(this.value);
-                wrapped.commit();
-                products = _.uniqBy(products);
-                $(this).attr("disabled", true);
+                
+                loadingOverlay(_el);
+        
+                $.ajax({
+                    type: "GET",
+                    url: '{{ url("admin/get-product-details")}}' + '/' + val,
+                    dataType: "json",
+                    success: function (data, textStatus, jqXHR) {
+                        if (data.success) {
+                            
+                            var product = data.product;
+                            if (product.quantity && product.quantity.quantity > 0) {
+                                _parent.find(".product_id").val(product.id);
+                                _parent.find(".product_unit_price").attr('data-value', product.price);
+                                _parent.find(".product_unit_price").text(product.price);
+                                
+                                _parent.find(".product_quantity").val(1);
+                                _parent.find(".product_quantity").attr('max', product.quantity.quantity);
+                                
+                                calculateAmount();
+                                
+                                var wrapped = _(products).push(val);
+                                wrapped.commit();
+                                products = _.uniqBy(products);
+                                _el.attr("disabled", true);    
+                            } else {
+                                errorMessage('This product is not available for sale');
+                            }
+                            
+                            
+                        } else {
+                            errorMessage(data.message);
+                        }
+                        stopOverlay(_el);
+                    }
+                });
             }
+        });
+        
+        $(document).on('change', '.product_quantity', function (e) {
+            var val = parseInt(this.value);
+            var max = parseInt($(this).attr('max'));
+            
+            if (val > max) {
+                $(this).val(max);
+            }
+            
+            calculateAmount();
         });
         
         $(document).on('click', '.removeRow', function() {
@@ -232,22 +260,32 @@
     }
     
     function calculateAmount() {
-        let qualificationMaleCount = 0;
-        $(".total_male_teachers").val(qualificationMaleCount);
-        $('.teachers .qualification_male_count').each(function() {
-            if (parseInt($(this).val()) > 0) {
-                qualificationMaleCount += parseInt($(this).val());
-                $(".total_male_teachers").val(qualificationMaleCount);
+        
+        var grossTotal = 0;
+        var totalDiscount = 0;
+        var totalVat = 0;
+        var totalAmount = 0;
+        
+        $('.table-invoice tbody tr.product_row').each(function() {
+            let _product = $(this);
+            var product_id = _product.find(".product_id").val();
+            if (product_id > 0) {
+                var productUnitPrice = _product.find('.product_unit_price').attr('data-value');
+                var quantity = parseInt(_product.find('.product_quantity').val());
+
+                if (productUnitPrice > 0 && quantity > 0) {
+                    var productTotal = productUnitPrice*quantity;
+                    _product.find(".product_total").text(productTotal);
+
+                    grossTotal = grossTotal + productTotal;
+                }
             }
         });
-        let qualificationFemaleCount = 0;
-        $(".total_female_teachers").val(qualificationFemaleCount);
-        $('.teachers .qualification_female_count').each(function() {
-            if (parseInt($(this).val()) > 0) {
-                qualificationFemaleCount += parseInt($(this).val());
-                $(".total_female_teachers").val(qualificationFemaleCount);
-            }
-        });
+        
+        $(".gross_total").text(grossTotal);
+        $(".total_discount").text(totalDiscount);
+        $(".total_vat").text(totalVat);
+        $(".grand-total").text(totalAmount);
     }
     
     function printDiv(divName){

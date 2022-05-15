@@ -136,6 +136,15 @@ class Product extends Model
     {
     	return $this->hasMany(StoreProduct::class, 'product_id');
     }
+    
+    /**
+     * belongs To relation Store_products
+     */
+
+    public function quantity()
+    {
+    	return $this->hasOne(StoreProduct::class, 'product_id');
+    }
 
     /**
      * has Many relation Category_products

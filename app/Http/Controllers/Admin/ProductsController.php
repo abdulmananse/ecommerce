@@ -222,7 +222,25 @@ class ProductsController extends Controller
         $product = Product::create($requestData);
 
         if($product){
+            
+            if ($request->filled('sub_category_id')) {
+                // save category products
+                $category_product['product_id'] = $product->id;
+                $category_product['category_id'] = $request->sub_category_id;
 
+                $category_products = CategoryProduct::firstOrNew($category_product);
+                $category_products->save();
+            }
+            
+            if ($request->filled('category_id')) {
+                // save category products
+                $category_product['product_id'] = $product->id;
+                $category_product['category_id'] = $request->category_id;
+
+                $category_products = CategoryProduct::firstOrNew($category_product);
+                $category_products->save();
+            }
+            
             if(!empty($request->tags)){
                 $tags = explode(',', $request->tags);
                 foreach($tags as $tag){
@@ -340,6 +358,26 @@ class ProductsController extends Controller
 
 
         $product->update($requestData);
+        
+        // remove store products and category products and product stock and product tags
+        CategoryProduct::where('product_id',$product->id)->delete();
+        if ($request->filled('sub_category_id')) {
+            // save category products
+            $category_product['product_id'] = $product->id;
+            $category_product['category_id'] = $request->sub_category_id;
+
+            $category_products = CategoryProduct::firstOrNew($category_product);
+            $category_products->save();
+        }
+
+        if ($request->filled('category_id')) {
+            // save category products
+            $category_product['product_id'] = $product->id;
+            $category_product['category_id'] = $request->category_id;
+
+            $category_products = CategoryProduct::firstOrNew($category_product);
+            $category_products->save();
+        }
 
         // remove product tags
         ProductTag::where('product_id',$product->id)->delete();

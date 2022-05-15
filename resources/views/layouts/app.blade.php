@@ -27,6 +27,7 @@
         <link href="{{asset('front_assets/plugins/royalslider/skins/universal/rs-universal.css')}}" rel="stylesheet">
         <link href="{{asset('front_assets/plugins/royalslider/royalslider.css')}}" rel="stylesheet">
         <link href="{{asset('front_assets/plugins/subscribe-better-master/subscribe-better.css')}}" rel="stylesheet" type="text/css">
+        <link href="{{asset('css/jquery-ui-1.10.1.custom.min.css')}}" rel="stylesheet" type="text/css">
 
         <!-- Icons Font CSS -->
         <link href="{{asset('front_assets/plugins/font-awesome/css/font-awesome.min.css')}}" rel="stylesheet" type="text/css">
@@ -70,6 +71,7 @@
         <script src="{{asset('front_assets/js/countdown.js')}}"></script>
         <script src="{{asset('front_assets/js/jquery.sticky.js')}}"></script>
         <script src="{{asset('front_assets/js/custom.js')}}"></script>
+       <script src="{{ asset('js/jquery-ui-1.10.1.custom.min.js') }}"></script>
        <script src="{{ asset('js/validator.min.js') }}"></script>
 
         <script>

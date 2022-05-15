@@ -109,6 +109,7 @@ Route::group(['namespace' => 'Admin'], function () {
     //Admin orders
     Route::resource('admin-orders', 'AdminOrderController');
     Route::get('get-product-row', 'AdminOrderController@getProductRow');
+    Route::get('get-product-details/{id}', 'AdminOrderController@getProductDetails');
     
     // Courier Assignment
     Route::resource('courier-assignment', 'CourierAssignmentsController');

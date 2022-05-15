@@ -1,3 +1,6 @@
+@php
+    $user = Auth::guard('web')->user();
+@endphp
 <div class="tab-content">
     <!-- Product Grid View -->
     <div id="grid-view" class="tab-pane fade active in" role="tabpanel">
@@ -32,7 +35,22 @@
                         <div class="product-content">
                             <h3><a class="title-3 fsz-16" href="{{ url('products/'.$slug) }}"
                                    title="{{ $product->name }}">{{ str_limit($product->name,25) }} </a></h3>
-                            @if(Auth::check() && Auth::guard('web')->check() && Auth::user()->type != 'retailer')
+                            
+                            @if(Auth::check() && Auth::guard('web')->check() && @$user->type != 'retailer')
+                                <p class="font-3">Price:
+                                    <span class="thm-clr"> £{{ $product->discountedPrice }}</span>
+                                </p>
+                            @else
+                                <p class="font-3">Price:
+                                @if($product->discount_type>0)
+                                    <del> £{{ number_format($product->price,2) }}</del>
+                                @endif
+                                   <span class="thm-clr"> £{{ $product->discountedPrice }}</span>
+                                </p>
+                            @endif
+                            
+                            
+<!--                            @if(Auth::check() && Auth::guard('web')->check() && Auth::user()->type != 'retailer')
                                 @if(Auth::user()->type == 'wholesaler')
                                     <p class="font-3">Price:
                                         <?php $totalPercent = ($product->cost * Auth::user()->mark_up / 100);?>
@@ -50,7 +68,7 @@
                                         @endif
                                         <del>£{{ $product->discountedPrice }}</del>
                                         @endif
-                                    </p>
+                                    </p>-->
 
 
                         </div>

@@ -55,25 +55,30 @@ class CartController extends Controller
                 'value' => addShippingCharges($product,Auth::user()->type)['charges'],
                 'attributes' =>  ['courier_id' => $product->shipping_id]
             ));
+            
+            $discountedPrice = floatval(preg_replace('/[^\d.]/', '', $product->discountedPrice));
+            
             $productData = array(
                 'id' => $product->id,
                 'name' => $product->name,
-                'price' => $product->discountedPrice,
+                'price' => $discountedPrice,
                 'quantity' => $qty,
                 'attributes' => array(),
                 'conditions' => $shipping
             );
-
+            //dd($productData);
             $cart=ShoppingCart::where(['user_id' => Auth::id(), 'payment_status' => 'pending'])->first();
 
             if(Auth::user()->type != 'dropshipper' || !@$cart->courierAssignment || @$cart->courierAssignment->status == 3|| @$cart->courierAssignment->status == 4  )
             {
+                //dd($productData);
                 Cart::session(Auth::id())->add($productData);
                 $cartTotal = Cart::session(Auth::id())->getTotalQuantity();
                 $cartPrice = Cart::session(Auth::id())->getSubTotal();
                 $cartPrice = number_format($cartPrice,2);
                 $cart = Cart::session(Auth::id())->getContent()->values()->toArray();
-                $this-> updateCartInDB($cart);
+                
+                $this->updateCartInDB($cart);
             }
             else
             {
@@ -157,10 +162,11 @@ class CartController extends Controller
 
 
 
-       $couriers= Courier::all();
+        $couriers= Courier::all();
         $vatCharges=TaxRate::select('rate')->where('id',1)->first();
         $vatCharges=(int)$vatCharges->rate;
-
+        
+        $subTotal = floatval(preg_replace('/[^\d.]/', '', $subTotal));
 //        dd($vatCharges);
 
 
@@ -472,7 +478,7 @@ class CartController extends Controller
 
         $vatCharges=TaxRate::select('rate')->where('id',1)->first();
         $vatCharges=(int)$vatCharges->rate;
-
+        $subTotal = floatval(preg_replace('/[^\d.]/', '', $subTotal));
 
         return view('cart.checkout', compact('vatCharges','total_shipment_charges','userData', 'cartContents', 'subTotal', 'cartSum', 'originalPrice'));
     }
@@ -1135,6 +1141,8 @@ class CartController extends Controller
         $couriers= Courier::all();
         $vatCharges=TaxRate::select('rate')->where('id',1)->first();
         $vatCharges=(int)$vatCharges->rate;
+        $subTotal = floatval(preg_replace('/[^\d.]/', '', $subTotal));
+        
         return view('sections.detail')->with( compact('vatCharges','couriers','total_shipment_charges','cart','count', 'cartContents', 'subTotal', 'cartSum', 'originalPrice'));
     }
 }

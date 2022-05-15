@@ -173,6 +173,38 @@ function remove_record(url,reload_datatable,method){
 }
 
 /**
+ * Show Ajax Error Message
+ * @param response
+ */
+function showAjaxErrorMessage(response, form = false)
+{
+    let responseJson = JSON.parse(response.responseText);
+    let errors = responseJson.errors;
+    
+    if (form) {
+        if (errors !== undefined) {
+            Object.keys(errors).forEach(function (item) {
+                for (let value of errors[item]) {                    
+                    $('[name=' + item + ']').parent('.form-group').find(".text-danger").text(value);
+                    $('#' + item + '-error').text(value);
+                    $('[name=' + item + ']').addClass('is-invalid');
+                }
+            });
+        }
+    } 
+    if (errors !== undefined) {
+        Object.keys(errors).forEach(function (item) {
+            for (let value of errors[item]) {
+                errorMessage(value);
+            }
+        });
+    } else if (responseJson.message !== undefined) {
+        errorMessage(responseJson.message);
+    }
+    
+}
+
+/**
  * Loading overlay js
  * @param _ele
  */
