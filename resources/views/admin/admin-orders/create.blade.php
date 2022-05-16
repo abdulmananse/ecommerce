@@ -35,10 +35,10 @@
 
                                 <h4>Admin Details:</h4>
                                 <p>
-                                    <b>Company Name:</b> Badray ltd<br>
-                                    <b>Phone:</b> 0141 3280103<br>
-                                    <b>Email:</b> aqsinternational@badrayltd.co.uk<br>
-                                    <b>Address:</b> 4 Gordon Avenue G52 4TG Hillington Glasgow
+                                    <b>Company Name:</b> The Super Van<br>
+                                    <b>Phone:</b> +44 141 374 0365<br>
+                                    <b>Email:</b> info@fonology.co.uk<br>
+                                    <b>Address:</b> 61c Main Street, Thornliebank G46 7RX Glasgow, UK.
                                 </p>
                                 <h4>Customer:</h4>
                                 <p>
@@ -74,7 +74,7 @@
                                         <label id="product_name[0]-error" class="error" for="product_name[0]"></label>
                                         <input type="hidden" name="product_id[0]" value="0" class="product_id" />
                                     </td>
-                                    <td class="text-center product_unit_price" data-value="0">0</td>
+                                    <td class="text-center product_unit_price" data-value="0" data-discounted_price="0" data-tax_rate="0" >0</td>
                                     <td class="text-center product_quantity_tr">
                                         <input required type='number' style='width:50px' name='product_quantity[]' class='product_quantity' value="1" min="1" />
                                         <label id="product_quantity[0]-error" class="error" for="product_quantity[0]"></label>
@@ -99,7 +99,7 @@
                         
                         <div class="form-group">
                             <div class="col-lg-offset-2 col-lg-6">
-                                {!! Form::submit('Create Invoice', ['class' => 'btn btn-info pull-right']) !!}
+                                {!! Form::submit('Create Invoice', ['class' => 'btn btn-info pull-right admin-order-btn']) !!}
                             </div>
                         </div>    
                             
@@ -143,16 +143,17 @@
                     //dataType: 'json',
                     data: formData,
                     success:function (res) {
-                        return false;
                         successMessage(res.message);
                         stopOverlay(_loader);
                         setTimeout(function() {
-                            window.location = route('admin.admin-orders.index');
+                            window.location = "{{ route('admin.admin-orders.index') }}";
                         }, 2000);
                     },
                     error: function (request, status, error) {
                         stopOverlay(_loader);
                         showAjaxErrorMessage(request, true);
+                    },complete: function() {
+                        $(".admin-order-btn").prop('disabled', false);
                     }
                 }); 
             }
@@ -188,7 +189,12 @@
                             if (product.quantity && product.quantity.quantity > 0) {
                                 _parent.find(".product_id").val(product.id);
                                 _parent.find(".product_unit_price").attr('data-value', product.price);
+                                _parent.find(".product_unit_price").attr('data-discounted_price', product.discountedPrice);
                                 _parent.find(".product_unit_price").text(product.price);
+                                
+                                if (typeof product.tax_rate.rate !== "undefined") {
+                                    _parent.find(".product_unit_price").attr('data-tax_rate', product.tax_rate.rate);
+                                }
                                 
                                 _parent.find(".product_quantity").val(1);
                                 _parent.find(".product_quantity").attr('max', product.quantity.quantity);
@@ -271,21 +277,27 @@
             var product_id = _product.find(".product_id").val();
             if (product_id > 0) {
                 var productUnitPrice = _product.find('.product_unit_price').attr('data-value');
+                var discountedPrice = _product.find('.product_unit_price').attr('data-discounted_price');
+                var taxRate = _product.find('.product_unit_price').attr('data-tax_rate');
                 var quantity = parseInt(_product.find('.product_quantity').val());
-
+                
                 if (productUnitPrice > 0 && quantity > 0) {
                     var productTotal = productUnitPrice*quantity;
                     _product.find(".product_total").text(productTotal);
 
                     grossTotal = grossTotal + productTotal;
+                    totalDiscount = totalDiscount + ((productUnitPrice - discountedPrice) * quantity);
+                    if (taxRate > 0) {
+                        totalVat = totalVat + (((taxRate / 100) * productUnitPrice) * quantity);
+                    }
                 }
             }
         });
-        
-        $(".gross_total").text(grossTotal);
-        $(".total_discount").text(totalDiscount);
-        $(".total_vat").text(totalVat);
-        $(".grand-total").text(totalAmount);
+        totalAmount = (grossTotal - totalDiscount) + totalVat;
+        $(".gross_total").text((grossTotal>0) ? grossTotal.toFixed(2) : 0);
+        $(".total_discount").text((totalDiscount>0) ? totalDiscount.toFixed(2) : 0);
+        $(".total_vat").text((totalVat>0) ? totalVat.toFixed(2) : 0);
+        $(".grand-total").text((totalAmount>0) ? totalAmount.toFixed(2) : 0);
     }
     
     function printDiv(divName){

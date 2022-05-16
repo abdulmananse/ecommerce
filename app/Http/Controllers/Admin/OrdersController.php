@@ -41,7 +41,7 @@ class OrdersController extends Controller
 
 
             $id = $request->input('user_id');
-            $orders = Transaction::with(['cart.user', 'purchasedItems.product.product_images'])->dateFilter();
+            $orders = Transaction::with(['cart.user', 'purchasedItems.product.product_images'])->where('type', 'customer_order')->dateFilter();
             if ($id) {
                 $user_id = decodeId($id);
 

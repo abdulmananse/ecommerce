@@ -13,6 +13,7 @@ class ShoppingCart extends Model
     protected $fillable = [
         'id',
         'user_id',
+        'user_details',
         'cart_details'
     ];
 
@@ -24,7 +25,11 @@ class ShoppingCart extends Model
     public function user(){
         return $this->belongsTo(User::class,'user_id');
     }
-
+    
+    public function order_user(){
+        return $this->belongsTo(OrderUser::class,'user_id');
+    }
+    
     public function courierAssignment(){
         return $this->hasOne(CouriersAssignment::class,'cart_id');
     }

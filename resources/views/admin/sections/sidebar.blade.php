@@ -43,6 +43,20 @@
                         </a>
                     </li>
                 @endcan
+                
+                <li>
+                    <a  href="{{ url('admin/order-users')  }}" {{ setActive(['admin/order-users']) }}>
+                        <i class="fa fa-users"></i>
+                        <span>Order Users</span>
+                    </a>
+                </li>
+                <li>
+                    <a  href="{{ url('admin/admin-orders')  }}" {{ setActive(['admin/admin-orders']) }}>
+                        <i class="fa fa-shopping-cart"></i>
+                        <span>Admin Orders</span>
+                    </a>
+                </li>
+                    
                 @can('view wholesaler')
                     <li>
                         <a  href="{{ route('admin.retailer.orders')  }}" {{ setActive(['admin/retailer-orders']) }}>
@@ -99,36 +113,29 @@
                         <span>User Invoices</span>
                     </a>
                 </li>
-                @can('view stores')
-                <li>
-                    <a  href="{{ url('admin/stores') }}" {{ setActive(['admin/stores']) }}>
-                        <i class="fa fa-home"></i>
-                        <span>Stores</span>
-                    </a>
-                </li>
-                @endcan
-                @can('view categories')
-                <li>
-                    <a  href="{{ url('admin/categories') }}" {{ setActive(['admin/categories']) }}>
-                        <i class="fa fa-sitemap"></i>
-                        <span>Categories</span>
-                    </a>
-                </li>
-                @endcan
-                <li>
-                    <a  href="{{ url('admin/subcategories') }}" {{ setActive(['admin/subcategories']) }}>
-                        <i class="fa fa-comments-o"></i>
-                        <span>Sub Categories</span>
-                    </a>
-                </li>
-                @can('view products')
-                <li>
-                    <a  href="{{ url('admin/products') }}" {{ setActive(['admin/products','admin/product-stocks']) }}>
+                
+                <li class="sub-menu">
+                    <a href="javascript:void(0);" {{ setActive(['admin/products','admin/categories','admin/subcategories','admin/stores']) }}>
                         <i class="fa fa-shopping-cart"></i>
-                        <span>Products</span>
+                        <span>Catalog</span>
                     </a>
+                    <ul class="sub">
+                        @can('view products')
+                        <li {{ setActive(['admin/products']) }}><a href="{{ url('admin/products') }}">Products</a></li>
+                        @endcan
+                        @can('view categories')
+                        <li {{ setActive(['admin/categories']) }}><a href="{{ url('admin/categories') }}">Categories</a></li>
+                        @endcan
+                        @can('view categories')
+                        <li {{ setActive(['admin/subcategories']) }}><a href="{{ url('admin/subcategories') }}">Sub Categories</a></li>
+                        @endcan
+                        @can('view stores')
+                        <li {{ setActive(['admin/stores']) }}><a href="{{ url('admin/stores') }}">Stores</a></li>
+                        @endcan
+                    </ul>
                 </li>
-                @endcan
+                
+                
                 @can('view orders')
                 <li>
                     <a  href="{{ url('admin/orders') }}" {{ setActive(['admin/orders']) }}>

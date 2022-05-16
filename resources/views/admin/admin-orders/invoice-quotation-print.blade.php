@@ -10,11 +10,9 @@
 
 @php
     $cart = @$order->cart;
-    $user = unserialize(@$cart->user_details);
-    //dd($user);
-    $cart_details = unserialize(@$cart->cart_details);
-
-    $trans_details = unserialize(@$order->trans_details);
+    $user = @$cart->user_details;
+    $cart_details = @$cart->cart_details;
+    $trans_details = @$order->trans_details;
 
     $total_text = 'Due';
     if($cart->payment_status == 'complete'){
@@ -45,9 +43,10 @@
 
 <div id="logo" class="logo">
 
-                    <img src="{{ asset('uploads/settings/site_logo.jpg') }}" >
+                        <img src="{{ asset('uploads/settings/site_logo.jpg') }}" >
+
                 </div>
-                <center><h1><u>Invoice</u></h1></center>
+                <center><h1><u>Quotation</u></h1></center>
 
                         <div class="row invoice-to">
                             <div class="col-md-6 col-sm-6 pull-left">
@@ -62,13 +61,13 @@
                                 </p>
                                 <h4>Customer Details:</h4>
                                 <p>
-                                    <b>Name:</b> {{ @$user['first_name'] }} {{ @$user['last_name'] }}<br>
-                                    @if(@$user['shop_name'])
-                                        <b>Shop Name:</b> {{ @$user['shop_name'] }}<br>
+                                    <b>Name:</b> {{ @$user->first_name }} {{ @$user->last_name }}<br>
+                                    @if(@$user->shop_name)
+                                        <b>Shop Name:</b> {{ @$user->shop_name }}<br>
                                     @endif
-                                    <b>Phone:</b> {{ @$user['contact_no'] }}<br>
-                                    <b>Email:</b> {{@$user['email'] }}<br>
-                                    <b>Address:</b> {{ @$user['address'] }}, {{ @$user['postal_code'] }}, {{ @$user['town'] }}, {{ @$user['city'] }}
+                                    <b>Phone:</b> {{ @$user->contact_no }}<br>
+                                    <b>Email:</b> {{@$user->email }}<br>
+                                    <b>Address:</b> {{ @$user->address }}, {{ @$user->postal_code }}, {{ @$user->town }}, {{ @$user->city }}
                                 </p>
                             </div>
                             <div class="col-md-4 col-sm-5 pull-right">
@@ -110,7 +109,7 @@
                             @foreach($cart_details as $single_item)
 
                             @php
-                             
+                                $single_item = (array) $single_item;
                                 $unit_price = $single_item['price'];
 
                                 $item_sub_total = $unit_price * $single_item['quantity'];
@@ -153,15 +152,13 @@
                                     }
                                 @endphp
 
-                                <p>Order Status : <span class="label {{$payment_class}}">{{$payment_status}}</span></p>
-
                             </div>
                             <div class="col-md-4 col-xs-5 invoice-block pull-right">
                                 <ul class="unstyled amounts">
                                     <li>Product amount : {{$currency_code}}{{number_format($subtotal,2)}}</li>
-                                    <li style="display:none;">Discount : {{$currency_code}}{{number_format($order['discount'],2)}} </li>
-                                     <li>Vat : {{$currency_code}}{{number_format($order['tax'],2)}} </li>
-                                    <li class="grand-total">Total : {{$currency_code}}{{number_format($order['amount'],2)}}</li>
+                                    <li style="display:none;">Discount : {{$currency_code}}{{number_format($order->discount,2)}} </li>
+                                     <li>Vat : {{$currency_code}}{{number_format($order->tax,2)}} </li>
+                                    <li class="grand-total">Total : {{$currency_code}}{{number_format($order->amount,2)}}</li>
                                 </ul>
                             </div>
                         </div>

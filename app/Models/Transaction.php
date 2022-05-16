@@ -17,6 +17,7 @@ class Transaction extends Model
         'amount',
         'cart_details',
         'trans_details',
+        'type',
         'is_latest'
     ];
 

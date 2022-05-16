@@ -1,4 +1,4 @@
-@extends('admin.layouts.print')
+@extends('admin.layouts.app')
 
 @section('style')
 <style>
@@ -7,47 +7,52 @@
 @endsection
 
 @section('content')
-
 @php
-    $cart = @$order->cart;
-    $user = unserialize(@$cart->user_details);
-    //dd($user);
-    $cart_details = unserialize(@$cart->cart_details);
 
-    $trans_details = unserialize(@$order->trans_details);
+    $cart = @$order->cart;
+    $user = @$cart->user_details;
+    $cart_details = @$cart->cart_details;
+    $trans_details = @$order->trans_details;
+    $updateData = collect([]);
+    if($order->updated_columns){
+          $updateData = collect(json_decode($order->updated_columns,true));
+
+    }
 
     $total_text = 'Due';
     if($cart->payment_status == 'complete'){
         $total_text = 'Paid';
     }
- $updateData = collect([]);
-    if($order->updated_columns){
-          $updateData = collect(json_decode($order->updated_columns,true));
 
-    }
     $currency = getDefaultCurrency();
     $currency_code = @$currency->code;
-      $subtotal = 0;
+    $subtotal = 0;
     $courier=0;
     $courierAmout =0;
 @endphp
 
-<section id="main-content1" >
-    <section class="wrapper1">
-
+<section id="main-content" >
+    <section class="wrapper">
+        <div class="row">
+            <div class="col-md-12">
+                <!--breadcrumbs start -->
+                <ul class="breadcrumb">
+                    <li><a href="{{ url('admin/dashboard') }}"><i class="fa fa-home"></i> Dashboard</a></li>
+                     <li><a href="{{ url('admin/admin-orders') }}"> Admin Orders</a></li>
+                    <li class="active">Quotation</li>
+                </ul>
+                <!--breadcrumbs end -->
+            </div>
+        </div>
 
                   <div class="row">
             <div class="col-md-12">
                 <section class="panel">
-
+                    <!--<a id='printMe'  onclick="printDiv('printData');" style="padding: 10px;float: right;font-size: large;cursor: pointer">-->
+                    <a   href="{{ url('admin/admin-order-quotation-print/'. Hashids::encode($order->id)) }}" target="_blank" style="padding: 10px;float: right;font-size: large;cursor: pointer">
+                       <i class="fa fa-print"></i>
+                    </a>
                     <div class="panel-body invoice" id="printData">
-
-
-<div id="logo" class="logo">
-
-                    <img src="{{ asset('uploads/settings/site_logo.jpg') }}" >
-                </div>
-                <center><h1><u>Invoice</u></h1></center>
 
                         <div class="row invoice-to">
                             <div class="col-md-6 col-sm-6 pull-left">
@@ -62,13 +67,13 @@
                                 </p>
                                 <h4>Customer Details:</h4>
                                 <p>
-                                    <b>Name:</b> {{ @$user['first_name'] }} {{ @$user['last_name'] }}<br>
-                                    @if(@$user['shop_name'])
-                                        <b>Shop Name:</b> {{ @$user['shop_name'] }}<br>
+                                    <b>Name:</b> {{ @$user->first_name }} {{ @$user->last_name }}<br>
+                                    @if(@$user->shop_name)
+                                        <b>Shop Name:</b> {{ @$user->shop_name }}<br>
                                     @endif
-                                    <b>Phone:</b> {{ @$user['contact_no'] }}<br>
-                                    <b>Email:</b> {{@$user['email'] }}<br>
-                                    <b>Address:</b> {{ @$user['address'] }}, {{ @$user['postal_code'] }}, {{ @$user['town'] }}, {{ @$user['city'] }}
+                                    <b>Phone:</b> {{ @$user->contact_no }}<br>
+                                    <b>Email:</b> {{@$user->email }}<br>
+                                    <b>Address:</b> {{ @$user->address }}, {{ @$user->postal_code }}, {{ @$user->town }}, {{ @$user->city }}
                                 </p>
                             </div>
                             <div class="col-md-4 col-sm-5 pull-right">
@@ -94,6 +99,10 @@
 
                             </div>
                         </div>
+                        <form action="{{route('admin.update.invoice')}}" method="post">
+                            @csrf
+                            <input type="hidden" name="order_id" value="{{$order->id}}">
+
                         <table class="table table-invoice" >
                             <thead>
                             <tr>
@@ -110,13 +119,17 @@
                             @foreach($cart_details as $single_item)
 
                             @php
-                             
+                                $single_item = (array) $single_item;
                                 $unit_price = $single_item['price'];
 
+
+
                                 $item_sub_total = $unit_price * $single_item['quantity'];
-                                $subtotal = ($subtotal +$item_sub_total);
+                                $subtotal = ($subtotal + $item_sub_total);
                                 $item_discount = (@$single_item['item_discount'])?$single_item['item_discount']:0;
-                                $item_sub_total = $item_sub_total - $item_discount;                                   $productName = $single_item['name'];
+                                $item_sub_total = $item_sub_total - $item_discount;
+                                $item_sub_total = $item_sub_total + $courier;
+                                  $productName = $single_item['name'];
                                   $price = number_format($unit_price,2);
                                 if($updateData->contains('id',$single_item['id'])){
                                    $dataRecieve = $updateData->firstWhere('id',$single_item['id']);
@@ -126,10 +139,9 @@
                             @endphp
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td class="invoice">
-                                    <h4>{{$productName}}</h4>
-                                </td>
-                                <td class="text-center">{{$currency_code}}{{$price}}</td>
+                                <td class="invoice"><h4>{{$productName}}</h4></td>
+                                <input type="hidden" name="product_id[]" value="{{$single_item['id']}}">
+                                <td class="text-center">{{$currency_code}} {{$price}}</td>
                                 <td class="text-center">{{$single_item['quantity']}}</td>
                                 <td class="text-center">{{$currency_code}}{{number_format($item_sub_total,2)}}</td>
                             </tr>
@@ -140,6 +152,7 @@
 
                             </tbody>
                         </table>
+                        </form>
                         <div class="row">
                             <div class="col-md-8 col-xs-7 payment-method">
                                 @php
@@ -153,15 +166,17 @@
                                     }
                                 @endphp
 
+                                
                                 <p>Order Status : <span class="label {{$payment_class}}">{{$payment_status}}</span></p>
 
                             </div>
                             <div class="col-md-4 col-xs-5 invoice-block pull-right">
                                 <ul class="unstyled amounts">
                                     <li>Product amount : {{$currency_code}}{{number_format($subtotal,2)}}</li>
-                                    <li style="display:none;">Discount : {{$currency_code}}{{number_format($order['discount'],2)}} </li>
-                                     <li>Vat : {{$currency_code}}{{number_format($order['tax'],2)}} </li>
-                                    <li class="grand-total">Total : {{$currency_code}}{{number_format($order['amount'],2)}}</li>
+                                    <li style="display:none;">Discount : {{$currency_code}}{{number_format($order->discount,2)}} </li>
+                                     <li>Vat : {{$currency_code}}{{number_format($order->tax,2)}} </li>
+
+                                    <li class="grand-total">Total : {{$currency_code}}{{number_format($order->amount,2)}}</li>
                                 </ul>
                             </div>
                         </div>
@@ -183,9 +198,29 @@
 @section('scripts')
 
 <script type="text/javascript">
+    $(document).on('change', '.couriers', function (e)
+   {
+        e.preventDefault();
+        var cart_id = {{@$order->cart_id}};
+        var courier_id = $(this).val();
+        var product_id = $(this).attr('data-product_id');
 
-    $(document).ready(function(){
-        printDiv('printData');
+        console.log('cart_id '+cart_id+' courier_id '+courier_id+' product_id '+product_id);
+
+        $.ajax({
+            url:"{{url('admin/invoice/update-product-courier')}}",
+            type:"post",
+            data:{cart_id:cart_id, courier_id:courier_id, product_id:product_id},
+            success:function (res) {
+                if (res == 'true') {
+                    success_message("Courier sucessfully updated");
+                }
+            },
+            error: function (request, status, error) {
+                error_message(request.responseText);
+            }
+        });
+
     });
 
     function printDiv(divName){

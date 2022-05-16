@@ -42,7 +42,7 @@
                 <!--breadcrumbs start -->
                 <ul class="breadcrumb">
                     <li><a href="{{ url('admin/dashboard') }}"><i class="fa fa-home"></i> Dashboard</a></li>
-                     <li><a href="{{ url('admin/orders') }}"> Orders</a></li>
+                     <li><a href="{{ url('admin/admin-orders') }}"> Admin Orders</a></li>
                     <li class="active">Invoice</li>
                 </ul>
                 <!--breadcrumbs end -->
@@ -53,7 +53,7 @@
             <div class="col-md-12">
                 <section class="panel">
                     <!--<a id='printMe'  onclick="printDiv('printData');" style="padding: 10px;float: right;font-size: large;cursor: pointer">-->
-                    <a   href="{{ url('admin/order-print/'. Hashids::encode($order->id)) }}" target="_blank" style="padding: 10px;float: right;font-size: large;cursor: pointer">
+                    <a   href="{{ url('admin/admin-order-print/'. Hashids::encode($order->id)) }}" target="_blank" style="padding: 10px;float: right;font-size: large;cursor: pointer">
                        <i class="fa fa-print"></i>
                     </a>
                     <div class="panel-body invoice" id="printData">
@@ -61,29 +61,29 @@
                         <div class="row invoice-to">
                             <div class="col-md-6 col-sm-6 pull-left">
 
-                                <h4>Invoice ID: <b>{{$order->paypal_id}}</b></h4>
+                                <h4>Invoice ID: <b>{{$order->id}}</b></h4>
                                 <h4>Admin Details:</h4>
                                 <p>
-                                    <b>Company Name:</b> Badray ltd<br>
-                                    <b>Phone:</b> 0141 3280103<br>
-                                    <b>Email:</b> aqsinternational@badrayltd.co.uk<br>
-                                    <b>Address:</b> 4 Gordon Avenue G52 4TG Hillington Glasgow
+                                    <b>Company Name:</b> The Super Van<br>
+                                    <b>Phone:</b> +44 141 374 0365<br>
+                                    <b>Email:</b> info@fonology.co.uk<br>
+                                    <b>Address:</b> 61c Main Street, Thornliebank G46 7RX Glasgow, UK.
                                 </p>
                                 <h4>Customer Details:</h4>
                                 <p>
                                     <b>Name:</b> {{ @$user['first_name'] }} {{ @$user['last_name'] }}<br>
-                                    @if(@$user['company_name'])
-                                        <b>Company Name:</b> {{ @$user['company_name'] }}<br>
+                                    @if(@$user['shop_name'])
+                                        <b>Shop Name:</b> {{ @$user['shop_name'] }}<br>
                                     @endif
-                                    <b>Phone:</b> {{ @$user['phone'] }}<br>
-                                    <b>Email:</b> {{@$user['email_address'] }}<br>
-                                    <b>Address:</b> {{ @$user['address'] }}, {{ @$user['post_code'] }}, {{ @$user['town_city'] }}, {{ @$user['state_country'] }}, {{ @$user['country'] }}
+                                    <b>Phone:</b> {{ @$user['contact_no'] }}<br>
+                                    <b>Email:</b> {{@$user['email'] }}<br>
+                                    <b>Address:</b> {{ @$user['address'] }}, {{ @$user['postal_code'] }}, {{ @$user['town'] }}, {{ @$user['city'] }}
                                 </p>
                             </div>
                             <div class="col-md-4 col-sm-5 pull-right">
                                 <div class="row">
                                     <div class="col-md-4 col-sm-5 inv-label">Invoice #</div>
-                                    <div class="col-md-8 col-sm-7">{{ $order->paypal_id }}</div>
+                                    <div class="col-md-8 col-sm-7">{{ $order->id }}</div>
                                 </div>
                                 <br>
                                 <div class="row">
@@ -115,7 +115,6 @@
                                 <th class="text-center">Unit Cost</th>
                                 <th class="text-center">Quantity</th>
                                 <th class="text-center">Total</th>
-                                <th class="text-center">Couriers</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -125,8 +124,6 @@
 
                             @php
 
-                                 $courier = $single_item['conditions']->getValue()??0;
-                                 $courierAmout = ($courier + $courierAmout );
                                 $unit_price = $single_item['price'];
 
 
@@ -146,24 +143,11 @@
                             @endphp
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td class="invoice">
-                                    <h4><input type="text" name="product_name[]" value="{{$productName}}"></h4>
-                                    {{-- {!! getProductTagline($single_item['id']) !!}  --}}
-                                </td>
-
+                                <td class="invoice"><h4>{{$productName}}</h4></td>
                                 <input type="hidden" name="product_id[]" value="{{$single_item['id']}}">
-                                <td class="text-center">{{$currency_code}} <input type="text" name="price[]" value="{{$price}}"></td>
+                                <td class="text-center">{{$currency_code}} {{$price}}</td>
                                 <td class="text-center">{{$single_item['quantity']}}</td>
                                 <td class="text-center">{{$currency_code}}{{number_format($item_sub_total,2)}}</td>
-                                @if(auth()->user()->can('change order invoice courier'))
-                                    @if($cart->delivery_status=="pending")
-                                        <td>{{ Form::select('courier_id',  $couriers, @$single_item['courier']['id'],['data-product_id' => @$single_item['id'],'class' => 'form-control couriers select2-'.$loop->iteration]) }}</td>
-                                    @else
-                                        <td class="text-center">{{ $single_item['conditions']->getName()??'' }}</td>
-                                    @endif
-                                @else
-                                    <td class="text-center">{{ $single_item['conditions']->getName()??''}}</td>
-                                @endif
                             </tr>
 
 
@@ -172,13 +156,9 @@
 
                             </tbody>
                         </table>
-                            <div class="row">
-                                <button type="submit">Update</button>
-                            </div>
                         </form>
                         <div class="row">
                             <div class="col-md-8 col-xs-7 payment-method">
-                                <h4>Payment</h4>
                                 @php
                                     $payment_method = @$trans_details['payer'];
                                     $payment_status = 'Pending';
@@ -190,15 +170,9 @@
                                     }
                                 @endphp
 
-                                <p>Payment Method : {{$payment_method}}</p>
+                                
                                 <p>Order Status : <span class="label {{$payment_class}}">{{$payment_status}}</span></p>
 
-
-                                <br>
-                                 <h4>Biller Detail</h4>
-
-                                    <p>Name : {{@$trans_details['payee_name']['full_name']}}</p>
-                                    <p>Email : {{@$trans_details['payee']}}</p>
                             </div>
                             <div class="col-md-4 col-xs-5 invoice-block pull-right">
                                 <ul class="unstyled amounts">
@@ -206,9 +180,6 @@
                                     <li style="display:none;">Discount : {{$currency_code}}{{number_format($order['discount'],2)}} </li>
                                      <li>Vat : {{$currency_code}}{{number_format($order['tax'],2)}} </li>
 
-                                        <li>Courier Charges : {{$currency_code}}{{number_format($courierAmout,2)}}</li>
-
-                                        <li>Courier Vat : {{$currency_code}}{{number_format($courierAmout * ($vatCharges/100),2)}}</li>
                                     <li class="grand-total">Total : {{$currency_code}}{{number_format($order['amount'],2)}}</li>
                                 </ul>
                             </div>

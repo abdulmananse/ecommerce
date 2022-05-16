@@ -110,6 +110,14 @@ Route::group(['namespace' => 'Admin'], function () {
     Route::resource('admin-orders', 'AdminOrderController');
     Route::get('get-product-row', 'AdminOrderController@getProductRow');
     Route::get('get-product-details/{id}', 'AdminOrderController@getProductDetails');
+    Route::get('admin-order-print/{id}','AdminOrderController@orderPrint');
+    Route::get('admin-orders/quotation/{id}','AdminOrderController@getQuotation');
+    Route::get('admin-order-quotation-print/{id}','AdminOrderController@orderQuotationPrint');
+    
+    Route::get('order-users', 'OrderUserController@index');
+    Route::get('users/import', 'OrderUserController@import');
+    Route::post('users/import', 'OrderUserController@importUsers');
+    
     
     // Courier Assignment
     Route::resource('courier-assignment', 'CourierAssignmentsController');
