@@ -39,7 +39,7 @@
                 <ul class="breadcrumb">
                     <li><a href="{{ url('admin/dashboard') }}"><i class="fa fa-home"></i> Dashboard</a></li>
                      <li><a href="{{ url('admin/admin-orders') }}"> Admin Orders</a></li>
-                    <li class="active">Quotation</li>
+                    <li class="active">Invoice</li>
                 </ul>
                 <!--breadcrumbs end -->
             </div>
@@ -58,7 +58,7 @@
                             <div class="col-md-6 col-sm-6 pull-left">
 
                                 <h4>Invoice ID: <b>{{$order->id}}</b></h4>
-                                <h4>Admin Details:</h4>
+                                <h4>Supplier Details:</h4>
                                 <p>
                                     <b>Company Name:</b> The Super Van<br>
                                     <b>Phone:</b> +44 141 374 0365<br>
@@ -99,7 +99,7 @@
 
                             </div>
                         </div>
-                        <form action="{{route('admin.update.invoice')}}" method="post">
+                        <form action="{{url('admin/admin-orders/update-quotation')}}" method="post">
                             @csrf
                             <input type="hidden" name="order_id" value="{{$order->id}}">
 
@@ -136,23 +136,27 @@
                                    $productName = $dataRecieve['name'];
                                    $price = $dataRecieve['price'];
                                 }
+                                $pId = $single_item['id'];
                             @endphp
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td class="invoice"><h4>{{$productName}}</h4></td>
-                                <input type="hidden" name="product_id[]" value="{{$single_item['id']}}">
-                                <td class="text-center">{{$currency_code}} {{$price}}</td>
-                                <td class="text-center">{{$single_item['quantity']}}</td>
-                                <td class="text-center">{{$currency_code}}{{number_format($item_sub_total,2)}}</td>
+                                <td class="invoice">
+                                    <input type="text" name="products[{{ $pId }}][name]" value="{{$productName}}" style="width: 380px;margin-right: -200px;">
+                                </td>
+                                <td class="text-center">{{$currency_code}} 
+                                    <input type="number" name="products[{{ $pId }}][price]" value="{{$price}}" style="width: 60px;">
+                                </td>
+                                <td class="text-center">
+                                    <input type="number" name="products[{{ $pId }}][quantity]" value="{{$single_item['quantity']}}" style="width: 40px;">
+                                </td>
+                                <td class="text-center">{{$currency_code}}
+                                    <input type="number" name="products[{{ $pId }}][total]" value="{{number_format($item_sub_total,2)}}" style="width: 60px;">
+                                </td>
                             </tr>
-
-
                             @endforeach
-
-
                             </tbody>
                         </table>
-                        </form>
+                        
                         <div class="row">
                             <div class="col-md-8 col-xs-7 payment-method">
                                 @php
@@ -172,17 +176,28 @@
                             </div>
                             <div class="col-md-4 col-xs-5 invoice-block pull-right">
                                 <ul class="unstyled amounts">
-                                    <li>Product amount : {{$currency_code}}{{number_format($subtotal,2)}}</li>
-                                    <li style="display:none;">Discount : {{$currency_code}}{{number_format($order->discount,2)}} </li>
-                                     <li>Vat : {{$currency_code}}{{number_format($order->tax,2)}} </li>
-
-                                    <li class="grand-total">Total : {{$currency_code}}{{number_format($order->amount,2)}}</li>
+                                    <li>Product amount : {{$currency_code}}
+                                        <input type="number" name="subtotal" value="{{number_format($subtotal,2)}}" style="width: 60px;">
+                                    </li>
+                                    <li>Discount : {{$currency_code}}
+                                        <input type="number" name="discount" value="{{number_format($order->discount,2)}}" style="width: 60px;">
+                                    </li>
+                                    <li style="display:none;">Vat : {{$currency_code}}
+                                        <input type="number" name="tax" value="{{number_format($order->tax,2)}}" style="width: 60px;">
+                                    </li>
+                                    <li class="grand-total">Total : {{$currency_code}}
+                                        <input type="number" name="amount" value="{{number_format($order->amount,2)}}" style="width: 60px;color: black;">
+                                    </li>
                                 </ul>
                             </div>
                         </div>
 
-
-
+                        <div class="form-group">
+                            <div class="col-lg-offset-2 col-lg-6">
+                                {!! Form::submit('Update Invoice', ['class' => 'btn btn-info pull-right admin-order-btn']) !!}
+                            </div>
+                        </div>  
+                        </form>
                     </div>
                 </section>
             </div>

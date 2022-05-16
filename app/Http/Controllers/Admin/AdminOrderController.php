@@ -119,8 +119,8 @@ class AdminOrderController extends Controller
                     }
                     $action = '';
 
-                    $action .='<a href="admin-orders/' . Hashids::encode($order->id) . '" class="text-success btn-order" data-toggle="tooltip" title="View Invoice"><i class="fa fa-eye fa-lg"></i></a>';
-                    $action .='<a href="admin-orders/quotation/' . Hashids::encode($order->id) . '" class="text-primary btn-order" data-toggle="tooltip" title="View Quotation"><i class="fa fa-file fa-lg"></i></a>';
+                    $action .='<a href="admin-orders/' . Hashids::encode($order->id) . '" class="text-success btn-order" data-toggle="tooltip" title="View Quotation"><i class="fa fa-eye fa-lg"></i></a>';
+                    $action .='<a href="admin-orders/quotation/' . Hashids::encode($order->id) . '" class="text-primary btn-order" data-toggle="tooltip" title="Generate Invoice"><i class="fa fa-file fa-lg"></i></a>';
                     $action .='<a href="' .url('admin/update-status-order/'.Hashids::encode($order->id) ). '" class="text-success btn-order" data-toggle="tooltip" title="Update Status"><i class="fa fa-edit"></i></a>';
                     // $action .='<a href="' .url('admin/update-delivery-status/'.Hashids::encode($order->cart_id) ). '" class="text-success btn-order" data-toggle="tooltip" title="Update Delivery Status"><i class="fa fa-edit"></i></a>';
 
@@ -236,7 +236,7 @@ class AdminOrderController extends Controller
         
         return response()->json([
             'success'  => true,
-            'message'  => 'Order successfully created'
+            'message'  => 'Quotation successfully created'
         ], $this->successStatus);
     }
 
@@ -287,7 +287,50 @@ class AdminOrderController extends Controller
 
         return view($this->resource . '/quotation-invoice', compact('order'));
     }
-
+    
+    /**
+     * Display the specified resource.
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateQuotation(Request $request)
+    {
+        $id = $request->order_id;
+        $quotation = Quotation::where('transaction_id', $id)->first();
+        
+        if ($quotation) {
+            $transactionDetails = json_decode($quotation->transaction_details);
+            $transactionDetails->cost = $request->subtotal;
+            $transactionDetails->discount = $request->discount;
+            $transactionDetails->tax = $request->tax;
+            $transactionDetails->amount = $request->amount;
+            //dd();
+            foreach($request->products as $productKey => $product) {
+                //dd($product);
+                if (@$transactionDetails->cart->cart_details && count($transactionDetails->cart->cart_details)>0) {
+                    foreach ($transactionDetails->cart->cart_details as $cartKey => $cart) {
+                        if ($cart->id == $productKey) {
+                            $productDetail = $transactionDetails->cart->cart_details[$cartKey];
+                            $productDetail->name = $product['name'];
+                            $productDetail->price = $product['price'];
+                            $productDetail->quantity = $product['quantity'];
+                            $productDetail->total = $product['total'];
+                            break;
+                        }
+                    }
+                }
+            }
+            $quotation->update(['transaction_details' => json_encode($transactionDetails)]);
+            
+            Session::flash('success', 'Quotation successfully updated!');  
+        } else {
+            Session::flash('error', 'Quotation not update!');  
+        }
+        
+        return redirect('admin/admin-orders/quotation/' . Hashids::encode($id));
+    }
+    
     /**
      * Show the form for editing the specified resource.
      *

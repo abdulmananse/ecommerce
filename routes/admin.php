@@ -113,6 +113,7 @@ Route::group(['namespace' => 'Admin'], function () {
     Route::get('admin-order-print/{id}','AdminOrderController@orderPrint');
     Route::get('admin-orders/quotation/{id}','AdminOrderController@getQuotation');
     Route::get('admin-order-quotation-print/{id}','AdminOrderController@orderQuotationPrint');
+    Route::post('admin-orders/update-quotation','AdminOrderController@updateQuotation');
     
     Route::get('order-users', 'OrderUserController@index');
     Route::get('users/import', 'OrderUserController@import');

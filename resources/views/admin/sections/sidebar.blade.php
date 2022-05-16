@@ -53,7 +53,7 @@
                 <li>
                     <a  href="{{ url('admin/admin-orders')  }}" {{ setActive(['admin/admin-orders']) }}>
                         <i class="fa fa-shopping-cart"></i>
-                        <span>Admin Orders</span>
+                        <span>Quotations</span>
                     </a>
                 </li>
                     

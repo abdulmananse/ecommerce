@@ -46,13 +46,13 @@
                         <img src="{{ asset('uploads/settings/site_logo.jpg') }}" >
 
                 </div>
-                <center><h1><u>Quotation</u></h1></center>
+                <center><h1><u>Invoice</u></h1></center>
 
                         <div class="row invoice-to">
                             <div class="col-md-6 col-sm-6 pull-left">
 
                                 <h4>Invoice ID: <b>{{$order->id}}</b></h4>
-                                <h4>Admin Details:</h4>
+                                <h4>Supplier Details:</h4>
                                 <p>
                                     <b>Company Name:</b> The Super Van<br>
                                     <b>Phone:</b> +44 141 374 0365<br>

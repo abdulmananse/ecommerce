@@ -17,7 +17,7 @@
                 <ul class="breadcrumb">
                     <li><a href="{{ url('admin/dashboard') }}"><i class="fa fa-home"></i> Dashboard</a></li>
                      <li><a href="{{ url('admin/admin-orders') }}"> Admin Orders</a></li>
-                    <li class="active">Invoice</li>
+                    <li class="active">Quotation</li>
                 </ul>
                 <!--breadcrumbs end -->
             </div>
@@ -64,7 +64,7 @@
                                 <th class="text-center">Unit Price</th>
                                 <th class="text-center">Quantity</th>
                                 <th class="text-center">Total</th>
-                                <th class="text-center"></th>
+                                <th class="text-center"><i class="btn btn-sm fa fa-plus loadRow text-success"></i></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -80,7 +80,7 @@
                                         <label id="product_quantity[0]-error" class="error" for="product_quantity[0]"></label>
                                     </td>
                                     <td class="text-center product_total">0</td>
-                                    <td class="text-center"><i class="btn btn-sm fa fa-plus loadRow text-success"></i></td>
+                                    <td class="text-center"><i class="btn btn-sm fa fa-close removeRow text-danger"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -99,7 +99,7 @@
                         
                         <div class="form-group">
                             <div class="col-lg-offset-2 col-lg-6">
-                                {!! Form::submit('Create Invoice', ['class' => 'btn btn-info pull-right admin-order-btn']) !!}
+                                {!! Form::submit('Create Quotation', ['class' => 'btn btn-info pull-right admin-order-btn']) !!}
                             </div>
                         </div>    
                             

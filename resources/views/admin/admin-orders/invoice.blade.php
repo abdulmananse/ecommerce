@@ -42,8 +42,8 @@
                 <!--breadcrumbs start -->
                 <ul class="breadcrumb">
                     <li><a href="{{ url('admin/dashboard') }}"><i class="fa fa-home"></i> Dashboard</a></li>
-                     <li><a href="{{ url('admin/admin-orders') }}"> Admin Orders</a></li>
-                    <li class="active">Invoice</li>
+                     <li><a href="{{ url('admin/admin-orders') }}"> Quotations</a></li>
+                    <li class="active">Quotation</li>
                 </ul>
                 <!--breadcrumbs end -->
             </div>
@@ -61,7 +61,7 @@
                         <div class="row invoice-to">
                             <div class="col-md-6 col-sm-6 pull-left">
 
-                                <h4>Invoice ID: <b>{{$order->id}}</b></h4>
+                                <h4>Quotation ID: <b>{{$order->id}}</b></h4>
                                 <h4>Admin Details:</h4>
                                 <p>
                                     <b>Company Name:</b> The Super Van<br>
@@ -82,7 +82,7 @@
                             </div>
                             <div class="col-md-4 col-sm-5 pull-right">
                                 <div class="row">
-                                    <div class="col-md-4 col-sm-5 inv-label">Invoice #</div>
+                                    <div class="col-md-4 col-sm-5 inv-label">Quotation #</div>
                                     <div class="col-md-8 col-sm-7">{{ $order->id }}</div>
                                 </div>
                                 <br>

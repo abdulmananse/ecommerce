@@ -22,7 +22,7 @@
                 <!--breadcrumbs start -->
                 <ul class="breadcrumb">
                     <li><a href="{{ url('admin/dashboard') }}"><i class="fa fa-home"></i> Dashboard</a></li>
-                    <li class="active">Admin Orders</li>
+                    <li class="active">Quotations</li>
                 </ul>
                 <!--breadcrumbs end -->
             </div>
@@ -31,7 +31,7 @@
             <div class="col-sm-12">
                 <section class="panel">
                     <header class="panel-heading">
-                        Admin Orders
+                        Quotations
                          <span class="pull-right">
                             <div id="reportrange" class="pull-right report-range">
                                 <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;
@@ -41,7 +41,7 @@
                         
                         <span class="tools pull-right" style="margin-right: 12px;margin-top: -6px;">
                             <a href="{{ url('admin/admin-orders/create') }}" class="btn btn-info btn-sm" data-toggle="tooltip" title="Add New Category">
-                                <i class="fa fa-plus" aria-hidden="true"></i> Create Admin Order
+                                <i class="fa fa-plus" aria-hidden="true"></i> Create Quotation
                             </a>
                          </span>
                     </header>

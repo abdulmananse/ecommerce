@@ -47,12 +47,12 @@
 
                     <img src="{{ asset('uploads/settings/site_logo.jpg') }}" >
                 </div>
-                <center><h1><u>Invoice</u></h1></center>
+                <center><h1><u>Quotation</u></h1></center>
 
                         <div class="row invoice-to">
                             <div class="col-md-6 col-sm-6 pull-left">
 
-                                <h4>Invoice ID: <b>{{$order->id}}</b></h4>
+                                <h4>Quotation ID: <b>{{$order->id}}</b></h4>
                                 <h4>Admin Details:</h4>
                                 <p>
                                     <b>Company Name:</b> The Super Van<br>
@@ -73,7 +73,7 @@
                             </div>
                             <div class="col-md-4 col-sm-5 pull-right">
                                 <div class="row">
-                                    <div class="col-md-4 col-sm-5 inv-label">Invoice #</div>
+                                    <div class="col-md-4 col-sm-5 inv-label">Quotation #</div>
                                     <div class="col-md-8 col-sm-7">{{ $order->id }}</div>
                                 </div>
                                 <br>
