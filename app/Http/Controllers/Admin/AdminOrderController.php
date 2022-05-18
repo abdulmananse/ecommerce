@@ -143,7 +143,7 @@ class AdminOrderController extends Controller
      */
     public function create()
     {
-        $customers = OrderUser::get()->pluck('full_name', 'id')->prepend('Select Customer', '');
+        $customers = OrderUser::pluck('owner_name', 'id')->prepend('Select Customer', '');
         $products = Product::pluck('name', 'id')->prepend('Select Product', '');
         
         return view($this->resource . '/create', get_defined_vars());
@@ -158,6 +158,7 @@ class AdminOrderController extends Controller
      */
     public function store(Request $request)
     {
+        
         $customerId = $request->customer_id;
         $customer = OrderUser::find($customerId);
         $cartData['user_id'] = $customerId;
@@ -166,6 +167,7 @@ class AdminOrderController extends Controller
         }
         
         $productQuantity = $request->product_quantity;
+        $productPrice = $request->product_price;
         $productData = [];
         $historyData = array();
         $tax        = 0;
@@ -176,25 +178,28 @@ class AdminOrderController extends Controller
         foreach($request->product_id as $key => $productId) {
             $product = Product::with('tax_rate')->find($productId);
             if ($product) {
+                //$price = $product->price;
+                $price = isset($productPrice[$key]) ? $productPrice[$key] : $product->price;
                 
                 $qty = isset($productQuantity[$key]) ? $productQuantity[$key] : 1;
-                if ($product->tax_rate) {
-                    $tax = ($tax + (($product->tax_rate->rate / 100) * $product->price) * $qty);
+                $taxRate = getVatCharges(); //$product->tax_rate
+                if ($taxRate > 0) {
+                    $tax = ($tax + (($taxRate / 100) * $price) * $qty);
                 }
-                $cost       = ($cost + ($product->price * $qty));
-                $discount   = $discount + (($product->price - $product->discountedPrice) * $qty);
+                $cost       = ($cost + ($price * $qty));
+                $discount   = $discount + (($price - $product->discountedPrice) * $qty);
                 $totalQty = $totalQty + $qty;
                 
                 $productData[] = [
                     'id' => $product->id,
                     'name' => $product->name,
-                    'price' => $product->discountedPrice,
+                    'price' => $price, //$product->discountedPrice,
                     'quantity' => $qty,
                 ];
                 
                 $input['product_id']            = $product->id;
                 $input['quantity']              = $qty;
-                $input['amount_per_item']       = $product->discountedPrice;
+                $input['amount_per_item']       = $price; //$product->discountedPrice;
                 $input['created_at']            = Carbon::now();
                 $input['updated_at']            = Carbon::now();
                 array_push($historyData, $input);
@@ -208,7 +213,8 @@ class AdminOrderController extends Controller
         $shoppingCart = ShoppingCart::create($cartData);
         if ($shoppingCart) {
             
-            $totalAmount = ($cost - $discount) + $tax;
+            //$totalAmount = ($cost - $discount) + $tax;
+            $totalAmount = $cost;
             
             $transaction['user_id']   = $customerId;
             $transaction['cart_id']   = $shoppingCart->id;
@@ -268,7 +274,6 @@ class AdminOrderController extends Controller
      */
     public function getQuotation($id)
     {
-
         $id = decodeId($id);
         $quotation = Quotation::where('transaction_id', $id)->first();
         if (!$quotation) {

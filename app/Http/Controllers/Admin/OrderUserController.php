@@ -30,8 +30,8 @@ class OrderUserController extends Controller
             $customers = OrderUser::query();
 
             return Datatables::of($customers)
-                ->addColumn('name', function ($customer) {
-                    return $customer->first_name.' '.$customer->last_name;
+                ->addColumn('address', function ($customer) {
+                    return $customer->address.', '.$customer->town.', '.$customer->city;
                 })
                 ->editColumn('id', 'ID: {{$id}}')
                 ->rawColumns(['action'])

@@ -74,9 +74,12 @@
                                         <label id="product_name[0]-error" class="error" for="product_name[0]"></label>
                                         <input type="hidden" name="product_id[0]" value="0" class="product_id" />
                                     </td>
-                                    <td class="text-center product_unit_price" data-value="0" data-discounted_price="0" data-tax_rate="0" >0</td>
+                                    <td class="text-center product_unit_price" data-value="0" data-discounted_price="0" data-tax_rate="0" >
+                                        <input required type='number' style='width:60px' name='product_price[]' class='product_price' value="0" step="any" min="0" />
+                                        <label id="product_price[0]-error" class="error" for="product_price[0]"></label>
+                                    </td>
                                     <td class="text-center product_quantity_tr">
-                                        <input required type='number' style='width:50px' name='product_quantity[]' class='product_quantity' value="1" min="1" />
+                                        <input required type='number' style='width:50px' name='product_quantity[]' class='product_quantity' value="1" step="1" min="1" />
                                         <label id="product_quantity[0]-error" class="error" for="product_quantity[0]"></label>
                                     </td>
                                     <td class="text-center product_total">0</td>
@@ -89,9 +92,9 @@
                             
                             <div class="col-md-4 col-xs-5 invoice-block pull-right">
                                 <ul class="unstyled amounts">
-                                    <li>Gross Total: <span class="gross_total">0</span></li>
-                                    <li>Discount :   <span class="total_discount">0</span></li>
-                                    <li>Vat :   <span class="total_vat">0</span></li>
+                                    <li style="display: none;">Gross Total: <span class="gross_total">0</span></li>
+                                    <li style="display: none;">Discount :   <span class="total_discount">0</span></li>
+                                    <li style="display: none;">Vat :   <span class="total_vat">0</span></li>
                                     <li class="grand-total">Total :  <span class="total_amount">0</span></li>
                                 </ul>
                             </div>
@@ -123,7 +126,7 @@
     
     var i = 1;
     var products = [];
-    
+    var taxRate = {{ getVatCharges() }};
     $(document).ready(function () {
         $("#applicationForm").validate({
             rules : {
@@ -143,6 +146,7 @@
                     //dataType: 'json',
                     data: formData,
                     success:function (res) {
+                        //return false;
                         successMessage(res.message);
                         stopOverlay(_loader);
                         setTimeout(function() {
@@ -190,7 +194,8 @@
                                 _parent.find(".product_id").val(product.id);
                                 _parent.find(".product_unit_price").attr('data-value', product.price);
                                 _parent.find(".product_unit_price").attr('data-discounted_price', product.discountedPrice);
-                                _parent.find(".product_unit_price").text(product.price);
+                                //_parent.find(".product_unit_price").text(product.price);
+                                _parent.find('.product_price').val(product.price);
                                 
                                 if (typeof product.tax_rate.rate !== "undefined") {
                                     _parent.find(".product_unit_price").attr('data-tax_rate', product.tax_rate.rate);
@@ -227,6 +232,10 @@
                 $(this).val(max);
             }
             
+            calculateAmount();
+        });
+        
+        $(document).on('change', '.product_price', function (e) {
             calculateAmount();
         });
         
@@ -276,9 +285,10 @@
             let _product = $(this);
             var product_id = _product.find(".product_id").val();
             if (product_id > 0) {
-                var productUnitPrice = _product.find('.product_unit_price').attr('data-value');
+                //var productUnitPrice = _product.find('.product_unit_price').attr('data-value');
+                var productUnitPrice = _product.find('.product_price').val();
                 var discountedPrice = _product.find('.product_unit_price').attr('data-discounted_price');
-                var taxRate = _product.find('.product_unit_price').attr('data-tax_rate');
+                //var taxRate = _product.find('.product_unit_price').attr('data-tax_rate');
                 var quantity = parseInt(_product.find('.product_quantity').val());
                 
                 if (productUnitPrice > 0 && quantity > 0) {
@@ -293,11 +303,12 @@
                 }
             }
         });
-        totalAmount = (grossTotal - totalDiscount) + totalVat;
+        //totalAmount = (grossTotal - totalDiscount) + totalVat;
+        totalAmount = grossTotal;
         $(".gross_total").text((grossTotal>0) ? grossTotal.toFixed(2) : 0);
         $(".total_discount").text((totalDiscount>0) ? totalDiscount.toFixed(2) : 0);
         $(".total_vat").text((totalVat>0) ? totalVat.toFixed(2) : 0);
-        $(".grand-total").text((totalAmount>0) ? totalAmount.toFixed(2) : 0);
+        $(".total_amount").text((totalAmount>0) ? totalAmount.toFixed(2) : 0);
     }
     
     function printDiv(divName){

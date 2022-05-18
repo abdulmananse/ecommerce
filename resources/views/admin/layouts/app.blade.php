@@ -81,8 +81,6 @@
 
     </section>
     
-    @routes
-    
     <!-- Scripts -->
 
      <!--Core js-->

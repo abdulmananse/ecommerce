@@ -155,9 +155,9 @@
                             </div>
                             <div class="col-md-4 col-xs-5 invoice-block pull-right">
                                 <ul class="unstyled amounts">
-                                    <li>Product amount : {{$currency_code}}{{number_format($subtotal,2)}}</li>
+                                    <li style="display:none;">Product amount : {{$currency_code}}{{number_format($subtotal,2)}}</li>
                                     <li style="display:none;">Discount : {{$currency_code}}{{number_format($order->discount,2)}} </li>
-                                     <li>Vat : {{$currency_code}}{{number_format($order->tax,2)}} </li>
+                                     <li style="display:none;">Vat : {{$currency_code}}{{number_format($order->tax,2)}} </li>
                                     <li class="grand-total">Total : {{$currency_code}}{{number_format($order->amount,2)}}</li>
                                 </ul>
                             </div>
@@ -170,7 +170,28 @@
             </div>
         </div>
 
-
+        <table class="table" >
+            <thead>
+            <tr>
+                <th class="text-center">RATE</th>
+                <th class="text-center">VAT</th>
+                <th class="text-center">NET</th>
+            </tr>
+            </thead>
+            <tbody>
+                @php
+                    $vat = $order->tax;
+                    $amount = $order->amount;
+                    $price = $amount - $vat;
+                    $vatRate = $vat / $amount * 100;
+                @endphp
+                <tr>
+                    <td class="text-center">VAT @ {{ $vatRate }}%</td>
+                    <td class="text-center">{{$currency_code}}{{ number_format($vat, 2) }}</td>
+                    <td class="text-center">{{$currency_code}}{{number_format($price, 2)}}</td>
+                </tr>
+            </tbody>
+        </table>
 
     </section>
 </section>

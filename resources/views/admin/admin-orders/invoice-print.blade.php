@@ -153,14 +153,12 @@
                                     }
                                 @endphp
 
-                                <p>Order Status : <span class="label {{$payment_class}}">{{$payment_status}}</span></p>
-
                             </div>
                             <div class="col-md-4 col-xs-5 invoice-block pull-right">
                                 <ul class="unstyled amounts">
-                                    <li>Product amount : {{$currency_code}}{{number_format($subtotal,2)}}</li>
+                                    <li style="display:none;">Gross Total : {{$currency_code}}{{number_format($subtotal,2)}}</li>
                                     <li style="display:none;">Discount : {{$currency_code}}{{number_format($order['discount'],2)}} </li>
-                                     <li>Vat : {{$currency_code}}{{number_format($order['tax'],2)}} </li>
+                                    <li style="display:none;">Vat : {{$currency_code}}{{number_format($order['tax'],2)}} </li>
                                     <li class="grand-total">Total : {{$currency_code}}{{number_format($order['amount'],2)}}</li>
                                 </ul>
                             </div>

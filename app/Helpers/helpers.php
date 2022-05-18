@@ -1800,9 +1800,12 @@ if (! function_exists('getDefaultVariant')) {
 }
 if(! function_exists('getVatCharges')){
     function getVatCharges(){
-        $vatCharges=TaxRate::select('rate')->where('id',1)->first();
-        $vatCharges=(int)$vatCharges->rate;
-        return $vatCharges;
+        $vatCharge=TaxRate::select('rate')->where('id', settingValue('tax_id'))->first();
+        if ($vatCharge) {
+            $vatCharge=(int)$vatCharge->rate;
+            return $vatCharge;
+        }
+        return 0;
     }
 }
 if (! function_exists('getDefaultCurrency')) {

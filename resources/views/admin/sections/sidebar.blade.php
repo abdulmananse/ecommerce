@@ -47,7 +47,7 @@
                 <li>
                     <a  href="{{ url('admin/order-users')  }}" {{ setActive(['admin/order-users']) }}>
                         <i class="fa fa-users"></i>
-                        <span>Order Users</span>
+                        <span>Customers</span>
                     </a>
                 </li>
                 <li>
@@ -61,7 +61,7 @@
                     <li>
                         <a  href="{{ route('admin.retailer.orders')  }}" {{ setActive(['admin/retailer-orders']) }}>
                             <i class="fa fa-users"></i>
-                            <span>Retailer Orders ({{checkNewOrder('retailer')}})</span>
+                            <span>Website Orders ({{checkNewOrder('retailer')}})</span>
                         </a>
                     </li>
                 @endcan
@@ -117,7 +117,7 @@
                 <li class="sub-menu">
                     <a href="javascript:void(0);" {{ setActive(['admin/products','admin/categories','admin/subcategories','admin/stores']) }}>
                         <i class="fa fa-shopping-cart"></i>
-                        <span>Catalog</span>
+                        <span>Products</span>
                     </a>
                     <ul class="sub">
                         @can('view products')

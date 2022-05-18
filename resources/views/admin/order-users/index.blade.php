@@ -37,11 +37,12 @@
                         <table id="datatable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th> Shop Name </th>
-                                    <th> Owner Name </th>
-                                    <th> Name </th>
-                                    <th> Contact No </th>
+                                    <th> Business Name </th>
+                                    <th> Contact Person </th>
+                                    <th> Contact Number </th>
                                     <th> Address </th>
+                                    <th> Postal Code </th>
+                                    <th> Remarks </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -49,11 +50,12 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th> Shop Name </th>
-                                    <th> Owner Name </th>
-                                    <th> Name </th>
+                                    <th> Business Name </th>
+                                    <th> Contact Person </th>
                                     <th> Contact No </th>
                                     <th> Address </th>
+                                    <th> Postal Code </th>
+                                    <th> Remarks </th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -73,9 +75,10 @@
     var datatable_columns = [
         {data: 'shop_name'},
         {data: 'owner_name'},   
-        {data: 'name'},   
         {data: 'contact_no'},   
         {data: 'address'},   
+        {data: 'postal_code'},   
+        {data: 'notes'},   
         ];
         
         create_datatables(datatable_url,datatable_columns);

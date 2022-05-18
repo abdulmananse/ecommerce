@@ -40,7 +40,7 @@
                         </span>
                         
                         <span class="tools pull-right" style="margin-right: 12px;margin-top: -6px;">
-                            <a href="{{ url('admin/admin-orders/create') }}" class="btn btn-info btn-sm" data-toggle="tooltip" title="Add New Category">
+                            <a href="{{ url('admin/admin-orders/create') }}" class="btn btn-info btn-sm" data-toggle="tooltip" title="Create Quotation">
                                 <i class="fa fa-plus" aria-hidden="true"></i> Create Quotation
                             </a>
                          </span>
@@ -53,7 +53,7 @@
                                     <th> Customer Name </th>
                                     <th> Quantity </th>
                                     <th> Amount </th>
-                                    <th> Discount </th>
+                                    <th> Gross Total </th>
                                     <th> VAT </th>
                                     
                                     
@@ -201,10 +201,9 @@ loadDatatable(start.format('YYYY-MM-DD'),end.format('YYYY-MM-DD'))
                 {data: 'orderId'},
                 {data: 'username'},
                 {data: 'qty'},
-                {data: 'discount'},
-                {data: 'tax'},
                 {data: 'amount'},
-             
+                {data: 'cost'},
+                {data: 'tax'},
                 @if(auth()->user()->can('change order status'))
                 {data: 'status', width: "10%", orderable: false, searchable: false},
                 @endif
