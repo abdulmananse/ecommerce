@@ -17,7 +17,7 @@ class User extends Authenticatable
 
     public function transactions()
     {
-        return $this->hasMany(Models\Transaction::class, 'user_id');
+        return $this->hasMany(Transaction::class, 'user_id');
     }
 
     public function getFullNameAttribute($value)
@@ -43,12 +43,12 @@ class User extends Authenticatable
     
         public function shoppings()
     {
-       return  $this->hasMany(Models\ShoppingCart::class);
+       return  $this->hasMany(ShoppingCart::class);
     }
     
       public function wallets()
     {
-        return $this->hasMany(Models\WholesellerWallet::class,'user_id');
+        return $this->hasMany(WholesellerWallet::class,'user_id');
     }
     /**
      * The attributes that are mass assignable.

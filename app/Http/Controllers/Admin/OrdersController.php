@@ -36,12 +36,13 @@ class OrdersController extends Controller
      */
     public function index(Request $request)
     {
-
+       
         if ($request->ajax()) {
 
-
             $id = $request->input('user_id');
-            $orders = Transaction::with(['cart.user', 'purchasedItems.product.product_images'])->where('type', 'customer_order')->dateFilter();
+            $type = ($request->filled('type')) ? $request->type : 'customer_order';
+            
+            $orders = Transaction::with(['cart.user', 'purchasedItems.product.product_images'])->where('type', $type)->dateFilter();
             if ($id) {
                 $user_id = decodeId($id);
 
@@ -50,7 +51,7 @@ class OrdersController extends Controller
                 $orders =$orders->orderBy('id', 'desc');
             }
 
-            return Datatables::of($orders->get())
+            return Datatables::of($orders)
                 ->addColumn('orders_details', function ($order) {
                     return '<span class="details-control"></span>';
                 })

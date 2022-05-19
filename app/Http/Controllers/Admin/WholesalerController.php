@@ -182,7 +182,9 @@ class WholesalerController extends Controller
     public function wholeSalerOrders()
     {
         if(\request()->ajax()) {
-            return Datatables::of(User::where('type', 'wholesaler')->orderBy('updated_at','desc'))
+            $users = User::where('type', 'wholesaler')->orderBy('updated_at','desc');
+            
+            return Datatables::of($users)
                 ->addColumn('name', function ($customer) {
                     $name = $customer->first_name . ' ' . $customer->last_name;
                     $color ='black';
@@ -190,7 +192,8 @@ class WholesalerController extends Controller
                         $color='red';
                     }
                     return "<a style='color:$color'>$name</a>";
-                })   ->addColumn('email', function ($customer) {
+                })
+                ->addColumn('email', function ($customer) {
                     $name = $customer->email;
                     $color ='black';
                     if($customer->is_latest){
@@ -202,7 +205,7 @@ class WholesalerController extends Controller
                     return '<img width="30" src="' . checkImage('customers/thumbs/' . $customer->profile_image) . '" />';
                 })
                 ->addColumn('action', function ($order) {
-                    return '<a href="orders?user_id=' . Hashids::encode($order->id) . '" target="_blank" class="btn btn-xs btn-warning">Orders</a> | <a href="' . url('admin/update-status/wholesaler/'.Hashids::encode($order->id)). '"  class="btn btn-xs btn-success"><i class="fa fa-edit"></i></a>';
+                    return '<a href="orders?type=wholesaler_order&user_id=' . Hashids::encode($order->id) . '" target="_blank" class="btn btn-xs btn-warning">Orders</a> | <a href="' . url('admin/update-status/wholesaler/'.Hashids::encode($order->id)). '"  class="btn btn-xs btn-success"><i class="fa fa-edit"></i></a>';
                 })
                 ->editColumn('id', 'ID: {{$id}}')
                 ->rawColumns(['profile_image', 'action','name','email'])

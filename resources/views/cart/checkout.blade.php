@@ -337,7 +337,7 @@
     width: 100%;
     min-height: 25px;
     min-width: 150px;" class="disabled disableSection paywithwallet"
-                                                            onclick="payWithWallet({{$subtotals}},{{$totalAmountWallet}})">
+                                                            onclick="payWithWallet({{numberFormatToFloat($subtotals)}},{{$totalAmountWallet}})">
                                                         Pay From wallet({{number_format($totalAmountWallet,2,'.','')}})
                                                     </button>
                                                 </li>

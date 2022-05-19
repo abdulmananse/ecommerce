@@ -163,35 +163,38 @@
                             </div>
                         </div>
 
-
+                        <div class="row">    
+                            <h3 style="margin-left:20px;font-size:16px;">VAT Summary</h3>
+                        <table class="table table-invoice" >
+                            <thead>
+                            <tr>
+                                <th class="text-center">RATE</th>
+                                <th class="text-center">VAT</th>
+                                <th class="text-center">NET</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                    $vat = $order->tax;
+                                    $amount = $order->amount;
+                                    $price = $amount - $vat;
+                                    $vatRate = $vat / $amount * 100;
+                                @endphp
+                                <tr>
+                                    <td class="text-center">VAT @ {{ $vatRate }}%</td>
+                                    <td class="text-center">{{$currency_code}}{{ number_format($vat, 2) }}</td>
+                                    <td class="text-center">{{$currency_code}}{{number_format($price, 2)}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
 
                     </div>
                 </section>
             </div>
         </div>
-
-        <table class="table" >
-            <thead>
-            <tr>
-                <th class="text-center">RATE</th>
-                <th class="text-center">VAT</th>
-                <th class="text-center">NET</th>
-            </tr>
-            </thead>
-            <tbody>
-                @php
-                    $vat = $order->tax;
-                    $amount = $order->amount;
-                    $price = $amount - $vat;
-                    $vatRate = $vat / $amount * 100;
-                @endphp
-                <tr>
-                    <td class="text-center">VAT @ {{ $vatRate }}%</td>
-                    <td class="text-center">{{$currency_code}}{{ number_format($vat, 2) }}</td>
-                    <td class="text-center">{{$currency_code}}{{number_format($price, 2)}}</td>
-                </tr>
-            </tbody>
-        </table>
+        
+     
 
     </section>
 </section>

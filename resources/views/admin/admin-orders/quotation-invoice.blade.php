@@ -86,15 +86,15 @@
                                     <div class="col-md-4 col-sm-5 inv-label">Date #</div>
                                     <div class="col-md-8 col-sm-7">{{ date('d-m-Y h:i a', strtotime($order->created_at)) }}</div>
                                 </div>
-                                <br>
-                                <div class="row">
+<!--                                <br>
+                                <div class="row" >
                                     <div class="col-md-12 inv-label">
                                         <h3>Total {{$total_text}}</h3>
                                     </div>
                                     <div class="col-md-12">
                                         <h1 class="amnt-value">{{ $currency_code }}{{number_format($order->amount,2)}}</h1>
                                     </div>
-                                </div>
+                                </div>-->
 
 
                             </div>
@@ -174,7 +174,7 @@
                             </div>
                             <div class="col-md-4 col-xs-5 invoice-block pull-right">
                                 <ul class="unstyled amounts">
-                                    <li style="display:none;">Product amount : {{$currency_code}}
+<!--                                    <li style="display:none;">Product amount : {{$currency_code}}
                                         <input type="number" name="subtotal" step="any" min="0" value="{{number_format($subtotal,2)}}" style="width: 80px;">
                                     </li>
                                     <li style="display:none;">Discount : {{$currency_code}}
@@ -182,7 +182,7 @@
                                     </li>
                                     <li style="display:none;">Vat : {{$currency_code}}
                                         <input type="number" name="tax" step="any" min="0" value="{{number_format($order->tax,2)}}" style="width: 80px;">
-                                    </li>
+                                    </li>-->
                                     <li class="grand-total">Total : {{$currency_code}}
                                         <input type="number" name="amount" step="any" min="0" value="{{number_format($order->amount,2)}}" style="width: 80px;color: black;">
                                     </li>
@@ -196,12 +196,41 @@
                             </div>
                         </div>  
                         </form>
+                      
+                        <div class="row">    
+                            <h3 style="margin-left:20px;font-size:16px;">VAT Summary</h3>
+                        <table class="table table-invoice" >
+                            <thead>
+                            <tr>
+                                <th class="text-center">RATE</th>
+                                <th class="text-center">VAT</th>
+                                <th class="text-center">NET</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                    $vat = $order->tax;
+                                    $amount = $order->amount;
+                                    $price = $amount - $vat;
+                                    $vatRate = $vat / $amount * 100;
+                                @endphp
+                                <tr>
+                                    <td class="text-center">VAT @ {{ $vatRate }}%</td>
+                                    <td class="text-center">{{$currency_code}}{{ number_format($vat, 2) }}</td>
+                                    <td class="text-center">{{$currency_code}}{{number_format($price, 2)}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
                     </div>
                 </section>
+                
+                
+                
             </div>
         </div>
 
-
+        
 
     </section>
 </section>

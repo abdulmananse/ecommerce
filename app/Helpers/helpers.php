@@ -1844,3 +1844,9 @@ if(!function_exists('getAllCategoryForList')){
         return Categories::with(['subcategories'])->orderBy('ordering','asc')->get();
     }
 }
+
+if(!function_exists('numberFormatToFloat')){
+    function numberFormatToFloat($number){
+        return filter_var($number, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+    }
+}

@@ -38,11 +38,12 @@ class CartController extends Controller
         // add item to cart
         if(Auth::id()){
             $product = Product::with('shipping')->find($request->id);
-
+            
             // if product has variant
             if($product->is_variants == 1){
                 $product = getDefaultVariant($request->id);
             }
+            
             // set quantity
             $qty = ($request->quantity)??1;
 
@@ -200,8 +201,8 @@ class CartController extends Controller
 
                 if (Auth::user()->type == 'dropshipper') {
                     if ($count == 1 && $item->quantity == 1) {
-                        $total_shipment_charges = @$productDetails->courier->charges;
-                        $item->courier_id = @$productDetails->courier->id;
+                        $total_shipment_charges = (@$productDetails->courier->charges)?$productDetails->courier->charges:0;
+                        $item->courier_id = (@$productDetails->courier->id)?$productDetails->courier->id:0;
                     }
                     if (Auth::user()->type == 'dropshipper' && @$courier_assign->status == 2) {
                         $courierAssignmentDetail = CouriersAssignmentDetail::where('product_id', '=', $item->id)->where('cart_id', $cart->id)->first();
@@ -265,39 +266,39 @@ class CartController extends Controller
         foreach($cartContents as $item){
 
             $productDetails = getProductDetails($item->id);
-
-            if(Auth::user()->type == 'wholesaler')
-            {
-                $user= Auth::user();
-                $productPercentaget = ($productDetails->cost * Auth::user()->mark_up/100);
-                $woriginalPrice  += (($productDetails->cost + $productPercentaget) * $item->quantity);
-
-                $item->price=($productDetails->cost + $productPercentaget);
-                $item->cprice= ($productDetails->cost + $productPercentaget);
-
-                if($item->quantity >= $user->quantity_1 && $user->quantity_1  >0 && $user->percentage_1 > 0 )
+            if ($productDetails) {
+                if(Auth::user()->type == 'wholesaler')
                 {
+                    $user= Auth::user();
+                    $productPercentaget = ($productDetails->cost * Auth::user()->mark_up/100);
+                    $woriginalPrice  += (($productDetails->cost + $productPercentaget) * $item->quantity);
 
-                    $item->price =number_format(($item->cprice*(100-$user->percentage_1))/100,2);
+                    $item->price=($productDetails->cost + $productPercentaget);
+                    $item->cprice= ($productDetails->cost + $productPercentaget);
 
-                } if($item->quantity >= $user->quantity_2 && $user->quantity_2  >0 &&  $user->percentage_2 > 0 )
-                {
+                    if($item->quantity >= $user->quantity_1 && $user->quantity_1  >0 && $user->percentage_1 > 0 )
+                    {
 
-                    $item->price =number_format(($item->cprice*(100-$user->percentage_2))/100,2);
+                        $item->price =number_format(($item->cprice*(100-$user->percentage_1))/100,2);
 
-//                    dd($item->price,$user->percentage_2);
+                    } if($item->quantity >= $user->quantity_2 && $user->quantity_2  >0 &&  $user->percentage_2 > 0 )
+                    {
+
+                        $item->price =number_format(($item->cprice*(100-$user->percentage_2))/100,2);
+
+    //                    dd($item->price,$user->percentage_2);
+
+                    }
+                    if($item->quantity >= $user->quantity_3 && $user->quantity_3  >0 && $user->percentage_3 > 0 )
+                    {
+
+                        $item->price =number_format(($item->cprice*(100-$user->percentage_3))/100,2);
+
+                    }
+                    
+                    $wsubtotal+=($item->price*$item->quantity);
 
                 }
-                if($item->quantity >= $user->quantity_3 && $user->quantity_3  >0 && $user->percentage_3 > 0 )
-                {
-
-                    $item->price =number_format(($item->cprice*(100-$user->percentage_3))/100,2);
-
-                }
-
-                $wsubtotal+=($item->price*$item->quantity);
-
-
             }
 
         }
@@ -421,41 +422,44 @@ class CartController extends Controller
         $originalPrice = 0;
         $total_shipment_charges = 0;
         $courier= 0;
+        
         foreach($cartContents as $item){
-
+            
             $cartSum += $item->getPriceSum();
             $productDetails = getProductDetails($item->id);
-            $originalPrice  += ($productDetails->price * $item->quantity);
+            if ($productDetails) {
+                $originalPrice  += ($productDetails->price * $item->quantity);
 
-
-            if(Auth::user()->type == 'dropshipper')
-            {
-                $productDetail = Courier::where('id',$item->conditions->getAttributes()['courier_id'])->first();
-                $item->couriers = $productDetail;
-                $subTotal =0;
-                $total_shipment_charges =  $total_shipment_charges +$item->conditions->getValue() ;
-                $item->courier_id = $item->conditions->getAttributes()['courier_id'];;
-                $courier = $courier+$item->conditions->getValue();
-                $subTotal = $subTotal+($cartSum + $courier);
-
-                if(Auth::user()->type == 'dropshipper' && @$courier_assign->status == 2 )
+                if(Auth::user()->type == 'dropshipper')
                 {
-                    $courierAssignmentDetail= CouriersAssignmentDetail::where('product_id','=',$item->id)->where('cart_id',$cart->id)->first();
-                    $item->courier_detail=$courierAssignmentDetail;
-                    $item->courier_id=$courierAssignmentDetail->couriers->id;
+                    $productDetail = Courier::where('id',$item->conditions->getAttributes()['courier_id'])->first();
+                    $item->couriers = $productDetail;
+                    $subTotal =0;
+                    $total_shipment_charges =  $total_shipment_charges +$item->conditions->getValue() ;
+                    $item->courier_id = $item->conditions->getAttributes()['courier_id'];;
+                    $courier = $courier+$item->conditions->getValue();
+                    $subTotal = $subTotal+($cartSum + $courier);
+
+                    if(Auth::user()->type == 'dropshipper' && @$courier_assign->status == 2 )
+                    {
+                        $courierAssignmentDetail= CouriersAssignmentDetail::where('product_id','=',$item->id)->where('cart_id',$cart->id)->first();
+                        $item->courier_detail=$courierAssignmentDetail;
+                        $item->courier_id=$courierAssignmentDetail->couriers->id;
+
+                    }
+                }
+                elseif(Auth::user()->type == 'wholesaler')
+                {
+
+
+                    $this->applyDiscount($cartContents);
+
+                    $originalPrice=$cartContents->orignalPrice;
+                    $subTotal=$cartContents->subTotal;
 
                 }
             }
-            elseif(Auth::user()->type == 'wholesaler')
-            {
-
-
-                $this->applyDiscount($cartContents);
-
-                $originalPrice=$cartContents->orignalPrice;
-                $subTotal=$cartContents->subTotal;
-
-            }
+            
         }
 
 
@@ -815,6 +819,11 @@ class CartController extends Controller
                     'currency'=> $request->currency,
                     'shipping_address'=>$request->shipping_address,
                 ]);
+            
+            if (Auth::user()->type == 'wholesaler') {
+                $transaction['type'] = 'wholesaler_order';
+            }
+            
             // update transaction
             $transaction = Transaction::create($transaction);
 
@@ -975,6 +984,11 @@ class CartController extends Controller
                     'currency'=>'£',
                     'shipping_address'=> '',
                 ]);
+            
+            if (Auth::user()->type == 'wholesaler') {
+                $transaction['type'] = 'wholesaler_order';
+            }
+            
             // update transaction
             $transaction = Transaction::create($transaction);
 
@@ -1096,6 +1110,10 @@ class CartController extends Controller
                 $productDetails = getProductDetails($item->id);
                 if($productDetails) {
                     $originalPrice += ($productDetails->price * $item->quantity);
+                } else {
+                    Cart::session(Auth::id())->remove($item->id);
+                    $cart = Cart::session(Auth::id())->getContent()->values()->toArray();
+                    $this->updateCartInDB($cart);
                 }
 
                 if (Auth::user()->type == 'dropshipper') {

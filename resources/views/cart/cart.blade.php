@@ -13,7 +13,10 @@
                 </thead>
                 <tbody>
                 @forelse($cartContents as $product)
-                <?php $slug = (!empty($product->slug)) ? $product->slug : Hashids::encode($product->id); ?>
+                <?php 
+                $productDetails = getProductDetails($product->id);
+                if($productDetails) {
+                $slug = (!empty($product->slug)) ? $product->slug : Hashids::encode($product->id); ?>
                 
                     <tr class="cart_item">
                         <td class="product-thumbnail">
@@ -78,6 +81,7 @@
                                data-id="{{$product->id}}"> <i class="fa-times fa"></i> </a>
                         </td>
                     </tr>
+                <?php } ?>
                 @empty
                     <tr>
                         <td colspan="4">No Record Found</td>
@@ -178,10 +182,13 @@
 
                             </tr>
                         @endif
+                        <?php
+                        $subTotal = numberFormatToFloat($subTotal);
+                        ?>
                         <tr class="cart-subtotal">
                             <th>Sub Total:</th>
-                            <td><span class="drk-gry"><i
-                                        class="fa fa-gbp">{{number_format($subTotal+($subTotal*$vatCharges)/100,2)}}</i></span>
+                            <td><span class="drk-gry"><i class="fa fa-gbp">
+                                {{number_format($subTotal+($subTotal*$vatCharges)/100,2)}}</i></span>
                             </td>
                         </tr>
 
