@@ -48,7 +48,6 @@
                                 <th></th>
                                 <th>Image</th>
                                 <th>Code</th>
-                                <th>SKU</th>
                                 <th>Name</th>
                                 <th>Supplier</th>
                                 <th>Cost</th>
@@ -66,7 +65,6 @@
                                 <th></th>
                                 <th>Image</th>
                                 <th>Code</th>
-                                <th>SKU</th>
                                 <th>Name</th>
                                 <th>Supplier</th>
                                 <th>Cost</th>
@@ -133,13 +131,12 @@ $(document).ready(function () {
             {data: 'is_variants', orderable:false, searchable: false},
             {data: 'product_image', width: "10%", className: 'text-center'},
             {data: 'code', className: 'text-center'},
-            {data: 'sku', className: 'text-center'},
             {data: 'name'},                 
             {data: 'supplier', className: 'text-center'},                
             {data: 'cost', className: 'text-center'},                 
             {data: 'price', className: 'text-center'},    
             @if(auth()->user()->can('edit products') || auth()->user()->can('view product stocks') || auth()->user()->can('delete products'))                  
-            {data: 'action', width: "10%", orderable: false, searchable: false}
+            {data: 'action', width: "12%", orderable: false, searchable: false}
             @endif
         ],
       order: []

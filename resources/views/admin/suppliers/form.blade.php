@@ -9,7 +9,7 @@
                     <div class="form-group {{ $errors->has('code') ? 'has-error' : ''}}">
                         {!! Form::label('code', 'Code', ['class' => 'col-lg-3 col-sm-3 control-label required-input']) !!}
                         <div class="col-lg-9">
-                            {!! Form::number('code', null, ['class' => 'form-control','placeholder' => 'Code','required' => 'required','min' => '0']) !!}
+                            {!! Form::text('code', null, ['class' => 'form-control','placeholder' => 'Code','required' => 'required']) !!}
                             {!! $errors->first('code', '<p class="help-block">:message</p>') !!}
                             <div class="help-block with-errors"></div>
                         </div>

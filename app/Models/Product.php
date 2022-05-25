@@ -122,7 +122,17 @@ class Product extends Model
     {
     	return $this->belongsTo(Supplier::class);
     }
-
+    
+    public function sub_category()
+    {
+    	return $this->belongsTo(SubCategory::class, 'sub_category_id');
+    }
+    
+    public function category()
+    {
+    	return $this->belongsTo(Categories::class);
+    }
+    
     public function courier()
     {
     	return $this->belongsTo(Courier::class,'shipping_id','id');

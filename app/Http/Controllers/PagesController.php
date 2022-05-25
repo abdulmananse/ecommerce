@@ -10,6 +10,7 @@ use App\Models\Faq;
 use App\Models\Page;
 use App\Models\Email;
 use App, Session;
+use Log;
 
 class PagesController extends Controller{
 
@@ -49,14 +50,20 @@ class PagesController extends Controller{
             $email_to       = 'aqsinternational@badrayltd.co.uk';
             $email_body     = $data['message'].'<br>'.'<b>Email From: </b>'.$data['email'].'<br>'.'<b>Username: </b>'.$data['name'].'<br>'.'<b>Subject: </b>'.$data['subject']; 
 
-           Email::sendEmail(
-                array(
-                    'email_subject' => 'Contact Us',
-                    'email_to'      => $email_to,
-                    'email_from'    => $request->email,
-                    'final_content' => '<b>Message: </b>'.$email_body
-                )
-            );
+            try{
+                Email::sendEmail(
+                     array(
+                         'email_subject' => 'Contact Us',
+                         'email_to'      => $email_to,
+                         'email_from'    => $request->email,
+                         'final_content' => '<b>Message: </b>'.$email_body
+                     )
+                 );
+            }
+            catch(Exception $e)
+            {
+                Log::error('Order Email error: ' . $e->getMessage());
+            }
         }
 
         Session::flash('success', 'Your message has been sent successfully.');

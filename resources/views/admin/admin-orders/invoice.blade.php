@@ -75,8 +75,10 @@
                                     @if(@$user['shop_name'])
                                         <b>Shop Name:</b> {{ @$user['shop_name'] }}<br>
                                     @endif
-                                    <b>Phone:</b> {{ @$user['contact_no'] }}<br>
-                                    <b>Email:</b> {{@$user['email'] }}<br>
+                                    <b>Phone:</b> {{ (@$user['contact_no']) ? $user['contact_no'] : @$user['phone'] }}<br>
+                                    @if(@$user['email'])
+                                    <b>Email:</b> {{$user['email'] }}<br>
+                                    @endif
                                     <b>Address:</b> {{ @$user['address'] }}, {{ @$user['postal_code'] }}, {{ @$user['town'] }}, {{ @$user['city'] }}
                                 </p>
                             </div>
@@ -168,6 +170,11 @@
                                         $payment_status = 'Paid';
                                         $payment_class = 'label-success';
                                     }
+                                    
+                                    $tax = $order['tax'];
+                                    if (!is_string($tax)) {
+                                        $tax = number_format($tax,2);
+                                    }
                                 @endphp
 
                                 
@@ -176,7 +183,7 @@
                                 <ul class="unstyled amounts">
                                     <li style="display:none;">Gross Total : {{$currency_code}}{{number_format($subtotal,2)}}</li>
                                     <li style="display:none;">Discount : {{$currency_code}}{{number_format($order['discount'],2)}} </li>
-                                    <li style="display:none;">Vat : {{$currency_code}}{{number_format($order['tax'],2)}} </li>
+                                    <li style="display:none;">Vat : {{$currency_code}}{{ $tax }} </li>
                                     <li class="grand-total">Total : {{$currency_code}}{{number_format($order['amount'],2)}}</li>
                                 </ul>
                             </div>

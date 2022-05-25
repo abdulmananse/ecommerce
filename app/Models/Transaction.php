@@ -10,6 +10,7 @@ class Transaction extends Model
         'user_id',
         'paypal_id',
         'cart_id',
+        'parent_id',
         'qty',
         'cost',
         'discount',
@@ -18,6 +19,7 @@ class Transaction extends Model
         'cart_details',
         'trans_details',
         'type',
+        'updated_columns',
         'is_latest'
     ];
 

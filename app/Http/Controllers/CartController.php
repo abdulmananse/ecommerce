@@ -1070,8 +1070,15 @@ class CartController extends Controller
             $data['final_content'] = '<p><b>Dear Admin</b></p>
                                     <p>New Order is Placed</p>';
         }
-
-        Email::sendEmail($data);
+        
+        try{
+            Email::sendEmail($data);
+        }
+        catch(Exception $e)
+        {
+            Log::error('Order Email error: ' . $e->getMessage());
+        }
+        
         return true;
     }
 

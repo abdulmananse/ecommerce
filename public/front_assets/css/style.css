@@ -305,7 +305,9 @@ h2,h3,h4,h5,h6{
     text-transform: uppercase;
 }
 .title-1 { font-size: 25px; color: #444444; text-transform: capitalize;}
-.title-2, .title-3 { font-size: 25px; color: #1f1f1f; text-transform: uppercase;}
+.title-2, .title-3 { font-size: 25px; color: #1f1f1f; 
+          /*text-transform: uppercase;*/
+}
 
 .font-2 {font-family: 'Roboto', sans-serif; font-weight: 400;}
 .light-font-2 {font-family: 'Roboto', sans-serif; font-weight: 300;}

@@ -12,6 +12,8 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Models\Newsletter_subscriber;
 use Hashids, Session;
+use Log;
+
 class RegisterController extends Controller
 {
     /*
@@ -151,6 +153,13 @@ class RegisterController extends Controller
             'final_content' => '<p>Dear {name}</p>
                                 <p>Here is your unsubscription Link {url}</p>',
         ];
-        Email::sendEmail($data);
+        
+        try{
+            Email::sendEmail($data);
+        }
+        catch(Exception $e)
+        {
+            Log::error('Order Email error: ' . $e->getMessage());
+        }
     }
 }

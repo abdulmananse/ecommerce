@@ -137,6 +137,7 @@
                                    $price = $dataRecieve['price'];
                                 }
                                 $pId = $single_item['id'];
+                                $price = numberFormatToFloat($price);
                             @endphp
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
@@ -150,7 +151,7 @@
                                     <input type="number" step="1" min="1" name="products[{{ $pId }}][quantity]" value="{{$single_item['quantity']}}" style="width: 40px;">
                                 </td>
                                 <td class="text-center">{{$currency_code}}
-                                    <input type="number" step="any" min="0" name="products[{{ $pId }}][total]" value="{{number_format($item_sub_total,2)}}" style="width: 60px;">
+                                    <input type="number" step="any" min="0" name="products[{{ $pId }}][total]" value="{{ $item_sub_total }}" style="width: 60px;">
                                 </td>
                             </tr>
                             @endforeach
@@ -168,23 +169,25 @@
                                         $payment_status = 'Paid';
                                         $payment_class = 'label-success';
                                     }
+                                    
+                                    $tax = $order->tax;
                                 @endphp
 
                                 
                             </div>
                             <div class="col-md-4 col-xs-5 invoice-block pull-right">
                                 <ul class="unstyled amounts">
-<!--                                    <li style="display:none;">Product amount : {{$currency_code}}
+                                     <li style="display:none;">Product amount : {{$currency_code}}
                                         <input type="number" name="subtotal" step="any" min="0" value="{{number_format($subtotal,2)}}" style="width: 80px;">
                                     </li>
                                     <li style="display:none;">Discount : {{$currency_code}}
                                         <input type="number" name="discount" step="any" min="0" value="{{number_format($order->discount,2)}}" style="width: 80px;">
                                     </li>
                                     <li style="display:none;">Vat : {{$currency_code}}
-                                        <input type="number" name="tax" step="any" min="0" value="{{number_format($order->tax,2)}}" style="width: 80px;">
-                                    </li>-->
+                                        <input type="number" name="tax" step="any" min="0" value="{{number_format($tax,2)}}" style="width: 80px;">
+                                    </li>
                                     <li class="grand-total">Total : {{$currency_code}}
-                                        <input type="number" name="amount" step="any" min="0" value="{{number_format($order->amount,2)}}" style="width: 80px;color: black;">
+                                        <input type="number" name="amount" step="any" min="0" value="{{ $order->amount }}" style="width: 80px;color: black;">
                                     </li>
                                 </ul>
                             </div>
@@ -209,13 +212,13 @@
                             </thead>
                             <tbody>
                                 @php
-                                    $vat = $order->tax;
+                                    $vat = $tax;
                                     $amount = $order->amount;
                                     $price = $amount - $vat;
                                     $vatRate = $vat / $amount * 100;
                                 @endphp
                                 <tr>
-                                    <td class="text-center">VAT @ {{ $vatRate }}%</td>
+                                    <td class="text-center">VAT @ {{ number_format($vatRate, 2) }}%</td>
                                     <td class="text-center">{{$currency_code}}{{ number_format($vat, 2) }}</td>
                                     <td class="text-center">{{$currency_code}}{{number_format($price, 2)}}</td>
                                 </tr>

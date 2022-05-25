@@ -69,7 +69,7 @@
                     <li>
                         <a  href="{{ route('admin.whole.saler.orders')  }}" {{ setActive(['admin/whole-saler-orders']) }}>
                             <i class="fa fa-users"></i>
-                            <span>Wholesaler Orders ({{checkNewOrder('wholesaler')}})</span>
+                            <span>Shopkeeper Orders ({{checkNewOrder('wholesaler')}})</span>
                         </a>
                     </li>
                 @endcan
@@ -85,7 +85,7 @@
                     <li>
                         <a  href="{{ url('admin/wholesaler') }}" {{ setActive(['admin/wholesaler']) }}>
                             <i class="fa fa-users"></i>
-                            <span>Wholesaler</span>
+                            <span>Shopkeepers</span>
                         </a>
                     </li>
                 @endcan

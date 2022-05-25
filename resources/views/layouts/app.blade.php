@@ -33,8 +33,8 @@
         <link href="{{asset('front_assets/plugins/font-awesome/css/font-awesome.min.css')}}" rel="stylesheet" type="text/css">
 
         <!-- Theme CSS -->
-        <link href="{{asset('front_assets/css/style.css')}}" rel="stylesheet" type="text/css">
-        <link href="{{asset('front_assets/css/header.css')}}" rel="stylesheet" type="text/css">
+        <link href="{{asset('front_assets/css/style.css?v=1.1.1')}}" rel="stylesheet" type="text/css">
+        <link href="{{asset('front_assets/css/header.css?v=1.1.1')}}" rel="stylesheet" type="text/css">
 
 
         <script>
@@ -70,7 +70,7 @@
         <!-- Page JS -->
         <script src="{{asset('front_assets/js/countdown.js')}}"></script>
         <script src="{{asset('front_assets/js/jquery.sticky.js')}}"></script>
-        <script src="{{asset('front_assets/js/custom.js')}}"></script>
+        <script src="{{asset('front_assets/js/custom.js?v=1.1.1')}}"></script>
        <script src="{{ asset('js/jquery-ui-1.10.1.custom.min.js') }}"></script>
        <script src="{{ asset('js/validator.min.js') }}"></script>
 
@@ -117,7 +117,7 @@
 
         @yield('scripts')
 
-       <script type="text/javascript" src="{{url('front_assets/js/scripts.js')}}"></script>
+       <script type="text/javascript" src="{{url('front_assets/js/scripts.js?v=1.1.1')}}"></script>
 
        <script type="text/javascript" src="{{url('js/loadingoverlay.min.js')}}"></script>
     </body>

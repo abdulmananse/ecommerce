@@ -14,7 +14,10 @@ use Illuminate\Http\Request;
 use Session, Hashids, DataTables;
 use App\Models\Email;
 use App\Models\TaxRate;
+use App\Models\ShoppingCartHistory;
+use App\Models\OrderUser;
 use function foo\func;
+use Log;
 
 class OrdersController extends Controller
 {
@@ -358,17 +361,33 @@ class OrdersController extends Controller
             'final_content' => "<p><b>Dear Admin</b></p>
                                     <p>An Order is been $status</p>",
         ];
-      Email::sendEmail($data);
-        Email::sendEmail($data1);
+         
+        try{
+            Email::sendEmail($data);
+        }
+        catch(Exception $e)
+        {
+            Log::error('Order Email error: ' . $e->getMessage());
+        } 
+         
+        try{
+            Email::sendEmail($data1);
+        }
+        catch(Exception $e)
+        {
+            Log::error('Order Email error: ' . $e->getMessage());
+        }
+        
         return 'true';
     }
 
-    public function updateInvoice()
+    public function updateInvoice(Request $request)
     {
-        $productsName = request()->product_name;
-        $productId = \request()->product_id;
-        $price = \request()->price;
-
+        $productsName = $request->product_name;
+        $productId = $request->product_id;
+        $price = $request->price;
+        $orderId = (int) $request->order_id;
+        
         $data = array_map(function($pric,$prductname,$productid){
             return [
                 'id' => $productid,
@@ -376,8 +395,54 @@ class OrdersController extends Controller
                 'price' => $pric,
             ];
 
-        },$price,$productsName,$productId);
-        Transaction::where('id',\request()->order_id)->update(['updated_columns' => json_encode($data)]);
+        }, $price, $productsName, $productId);
+        
+        $transaction = Transaction::where('id', $orderId)
+                ->update(['updated_columns' => json_encode($data)]);
+        
+        if ($transaction) {
+            $transaction = Transaction::with('purchasedItems')->find($orderId);
+            if ($transaction->type == 'wholesaler_order') {
+                $quotationData = $transaction->toArray();
+                
+                $quotationData['cost'] = numberFormatToFloat($transaction->cost);
+                $quotationData['discount'] = numberFormatToFloat($transaction->discount);
+                $quotationData['tax'] = numberFormatToFloat($transaction->tax);
+                $quotationData['amount'] = numberFormatToFloat($transaction->amount);
+                
+                $quotationData['user_id'] = 0;
+                $user = User::find($transaction->user_id);
+                if ($user) {
+                    $orderUser = OrderUser::where('contact_no', $user->phone)->first();
+                    if ($orderUser) {
+                        $quotationData['user_id'] = $orderUser->id;
+                    }
+                }
+                
+                $quotationData['parent_id'] = $orderId;
+                $quotationData['type'] = 'admin_order';
+                unset($quotationData['created_at'], $quotationData['updated_at']);
+                
+                $quotation = Transaction::where(['parent_id' => $orderId, 'type' => 'admin_order'])->first();
+                if ($quotation) {
+                    $quotation->update($quotationData);
+                } else {
+                    $quotation = Transaction::create($quotationData);
+                }
+                
+                ShoppingCartHistory::where('transaction_id', $quotation->id)->delete();
+                if ($transaction->purchasedItems->count() > 0) {
+                    foreach($transaction->purchasedItems as $shoppingCartHistory) {
+                        $shoppingCartHistory = $shoppingCartHistory->toArray();
+                        $shoppingCartHistory['transaction_id'] = $quotation->id;
+                        unset($shoppingCartHistory['created_at'], $shoppingCartHistory['updated_at']);
+                        ShoppingCartHistory::create($shoppingCartHistory);
+                    }
+                }
+                
+            }
+        }
+        
         return back()->with('success','Successfully updated');
     }
 

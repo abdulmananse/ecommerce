@@ -73,17 +73,25 @@
                                         {!! $errors->first('name', '<p class="help-block">:message</p>') !!}
                                         <div class="help-block with-errors"></div>
                                 </div>
-                                <div class="form-group col-md-4 {{ $errors->has('barcode_symbology') ? 'has-error' : ''}}">
+                                
+                                <div class="form-group col-md-4 {{ $errors->has('brand_id') ? 'has-error' : ''}}">
+                                    {!! Form::label('brand_id', 'Brand Name', ['class' => 'control-label']) !!}
+                                    {!! Form::select('brand_id', $brands,null, ['class' => 'form-control select2']) !!}
+                                    {!! $errors->first('brand_id', '<p class="help-block">:message</p>') !!}
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                                
+                                {{-- <div class="form-group col-md-4 {{ $errors->has('barcode_symbology') ? 'has-error' : ''}}">
                                     {!! Form::label('barcode_symbology', 'Barcode Symbology', ['class' => 'control-label required-input']) !!}
                                     {!! Form::select('barcode_symbology', ['code25'=>'Code25','code39'=>'Code39','code128'=>'Code128','ean8'=>'EAN8','ean13'=>'EAN13','upca'=>'UPC-A','upce'=>'UPC-E'],null, ['class' => 'form-control select2','required' => 'required']) !!}
                                     {!! $errors->first('barcode_symbology', '<p class="help-block">:message</p>') !!}
                                     <div class="help-block with-errors"></div>
-                                </div>
+                                </div> --}}
                             </div>
                             
                             <div class="row modifier_select">
                                 <div class="form-group col-md-3" style="margin-left: 18px;" id="is_variants_text">
-                                    <input id="is_variants" name="is_variants" type="checkbox" value="1"> <b>This product has variants</b>
+                                    <input id="is_variants" name="is_variants" type="checkbox" value="1" {{ (@$product->is_variants==1) ? 'checked' : '' }}> <b>This product has variants</b>
                                 </div>
                             </div>
                             
@@ -156,34 +164,30 @@
                                 </div>
 
                                 <div class="form-group col-md-4 hide_price {{ $errors->has('price') ? 'has-error' : ''}}">
-                                    {!! Form::label('price', 'Product Price', ['class' => 'control-label required-input']) !!}
+                                    {!! Form::label('price', 'Selling Price', ['class' => 'control-label required-input']) !!}
                                     <div class="input-group">
                                         <span class="input-group-btn">
                                             <button class="btn btn-default" type="button">£</button>
                                         </span>
-                                        {!! Form::number('price', null, ['class' => 'form-control','placeholder'=>'Product Price','min'=>0,'step'=>'any','required' => 'required']) !!}
+                                        {!! Form::number('price', null, ['class' => 'form-control','placeholder'=>'Selling Price','min'=>0,'step'=>'any','required' => 'required']) !!}
                                     </div>
                                     {!! $errors->first('price', '<p class="help-block">:message</p>') !!}
                                     <div class="help-block with-errors"></div>
                                 </div>
-
-                            </div>
-
-                            <div class="row">
-
-                                <div class="form-group col-md-4 {{ $errors->has('brand_id') ? 'has-error' : ''}}">
-                                    {!! Form::label('brand_id', 'Brand Name', ['class' => 'control-label']) !!}
-                                    {!! Form::select('brand_id', $brands,null, ['class' => 'form-control select2']) !!}
-                                    {!! $errors->first('brand_id', '<p class="help-block">:message</p>') !!}
-                                    <div class="help-block with-errors"></div>
-                                </div>
-
+                                
                                 <div class="form-group col-md-4 {{ $errors->has('shipping_id') ? 'has-error' : ''}}">
                                     {!! Form::label('shipping_id', 'Shipping Charges', ['class' => 'control-label required-input']) !!}
                                     {!! Form::select('shipping_id', $shippings ,null, ['class' => 'form-control select2','required' => 'required']) !!}
                                     {!! $errors->first('shipping_id', '<p class="help-block">:message</p>') !!}
                                     <div class="help-block with-errors"></div>
                                 </div>
+                            </div>
+
+                            <div class="row">
+
+                                
+
+                                
 
                                 <div class="form-group col-md-4 {{ $errors->has('new_arrivals') ? 'has-error' : ''}}">
                                     {!! Form::label('new_arrivals', 'New Arrivals', ['class' => 'control-label required-input']) !!}
@@ -191,11 +195,6 @@
                                     {!! $errors->first('new_arrivals', '<p class="help-block">:message</p>') !!}
                                     <div class="help-block with-errors"></div>
                                 </div>
-
-                            </div>
-
-
-                            <div class="row">
 
 
                                 <div class="form-group col-md-4 {{ $errors->has('is_featured') ? 'has-error' : ''}}">
@@ -305,7 +304,7 @@
                                   </div>
 
                                   <div class="form-group col-md-6 {{ $errors->has('tecnical_specs') ? 'has-error' : ''}}">
-                                    {!! Form::label('tecnical_specs', 'Tecnical Specs', ['class' => 'control-label']) !!}
+                                    {!! Form::label('tecnical_specs', 'Technical Specification', ['class' => 'control-label']) !!}
                                         {!! Form::textarea('tecnical_specs', null, ['class' => 'form-control']) !!}
                                         {!! $errors->first('tecnical_specs', '<p class="help-block">:message</p>') !!}
                                         <div class="help-block with-errors"></div>
@@ -314,7 +313,7 @@
 
                             <div class="form-group">
                                 <div class="col-lg-offset-2 col-lg-10">
-                                    {!! Form::submit(isset($product) ? 'Save' : 'Save & Next', ['class' => 'btn btn-info pull-right']) !!}
+                                    {!! Form::submit('Save', ['class' => 'btn btn-info pull-right']) !!}
                                 </div>
                             </div>
                     </div>

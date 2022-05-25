@@ -20,6 +20,7 @@ use App\Models\TaxRate;
 use App\Models\Quotation;
 use function foo\func;
 use Carbon\Carbon;
+use Log;
 
 class AdminOrderController extends Controller
 {
@@ -278,6 +279,7 @@ class AdminOrderController extends Controller
         $quotation = Quotation::where('transaction_id', $id)->first();
         if (!$quotation) {
             $order = Transaction::with(['cart'])->find($id);
+            
             $order->cart->user_details = unserialize($order->cart->user_details);
             $order->cart->cart_details = unserialize($order->cart->cart_details);
             
@@ -306,9 +308,9 @@ class AdminOrderController extends Controller
         
         if ($quotation) {
             $transactionDetails = json_decode($quotation->transaction_details);
-            $transactionDetails->cost = $request->subtotal;
-            $transactionDetails->discount = $request->discount;
-            $transactionDetails->tax = $request->tax;
+            //$transactionDetails->cost = $request->subtotal;
+            //$transactionDetails->discount = $request->discount;
+            //$transactionDetails->tax = $request->tax;
             $transactionDetails->amount = $request->amount;
             //dd();
             foreach($request->products as $productKey => $product) {
@@ -508,8 +510,25 @@ class AdminOrderController extends Controller
             'final_content' => "<p><b>Dear Admin</b></p>
                                     <p>An Order is been $status</p>",
         ];
-      Email::sendEmail($data);
-        Email::sendEmail($data1);
+         
+        try{
+            Email::sendEmail($data);
+        }
+        catch(Exception $e)
+        {
+            Log::error('Order Email error: ' . $e->getMessage());
+        }
+        
+        try{
+            Email::sendEmail($data1);
+        }
+        catch(Exception $e)
+        {
+            Log::error('Order Email error: ' . $e->getMessage());
+        }
+        
+      
+        
         return 'true';
     }
 

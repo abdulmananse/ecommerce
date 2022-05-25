@@ -166,38 +166,27 @@ class ProductsController extends Controller
        
         $requestid = $id;
         $id = decodeId($id);
-
-        if($id>0){
+        
         $product = Product::with(
         [
+            'category',
+            'sub_category',
             'product_tags'=> function ($query) {
                 $query->orderBy('id', 'asc');
             },
             'store_products.store',
-            'category_products.category.category',
             'product_images',
             'product_attributes.variant',
             'products.product_images',
             'products.product_variants',
             'brand'
-        ])->findOrFail($id);
+        ]);
+            
+        if($id>0){
+            $product = $product->findOrFail($id);
         }else{
-            $product = Product::with(
-                [
-                    'product_tags'=> function ($query) {
-                        $query->orderBy('id', 'asc');
-                    },
-                    'store_products.store',
-                    'category_products.category.category',
-                    'product_images',
-                    'product_attributes.variant',
-                    'products.product_images',
-                    'products.product_variants',
-                    'brand'
-                ])->where('slug',$requestid )->first();
+            $product = $product->where('slug', $requestid)->first();
         }
-
-
 
         if($product){
             $product_views['product_id'] = $product->id;
@@ -215,9 +204,6 @@ class ProductsController extends Controller
         }else{
             $images = $product->product_images->sortByDesc('default');
         }
-
-//        dd($product->category_products->toArray());
-
 
         return view($this->resource.'/details', compact('product','images','product_variants'));
     }

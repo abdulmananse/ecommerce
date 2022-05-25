@@ -85,11 +85,18 @@
                                 </div>
 
                                 <ul class="stock-detail list-items fsz-12">
+                                    @if (@$product->category)
                                     <li> <strong> Category : <span class="blk-clr">
-                                        @if (@$product->category_products[0])
-                                            {{ $product->category_products[0]->category->name }}
-                                        @endif
-                                         </span> </strong> </li>
+                                            {{ $product->category->name }}
+                                         </span> </strong> 
+                                    </li>
+                                    @endif
+                                    @if (@$product->sub_category)
+                                    <br/><li> <strong> Sub Category : <span class="blk-clr">
+                                            {{ $product->sub_category->sub_name }}
+                                         </span> </strong> 
+                                    </li>
+                                    @endif
                                     <li> <strong>  STOCK : <span class="blk-clr"> READY STOCK </span> </strong> </li>
                                 </ul>
 

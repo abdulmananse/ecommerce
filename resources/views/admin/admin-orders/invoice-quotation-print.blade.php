@@ -181,7 +181,7 @@
                                     $vatRate = $vat / $amount * 100;
                                 @endphp
                                 <tr>
-                                    <td class="text-center">VAT @ {{ $vatRate }}%</td>
+                                    <td class="text-center">VAT @ {{ number_format($vatRate, 2) }}%</td>
                                     <td class="text-center">{{$currency_code}}{{ number_format($vat, 2) }}</td>
                                     <td class="text-center">{{$currency_code}}{{number_format($price, 2)}}</td>
                                 </tr>

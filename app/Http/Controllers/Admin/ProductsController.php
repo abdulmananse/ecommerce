@@ -91,6 +91,8 @@ class ProductsController extends Controller
                 ->addColumn('action', function ($product) {
                   $action = '';
                     if(Auth::user()->can('edit products'))
+                        $action .= '<a href="products/make-copy/'. Hashids::encode($product->id).'" class="text-success" data-toggle="tooltip" title="Make a Copy"><i class="fa fa-lg fa-copy"></i></a>';
+                    if(Auth::user()->can('edit products'))
                         $action .= '<a href="products/'. Hashids::encode($product->id).'/edit" class="text-primary" data-toggle="tooltip" title="Edit Product"><i class="fa fa-lg fa-edit"></i></a>';
                     if(Auth::user()->can('view product stocks'))
                         $action .= '<a href="product-stocks/'. $product->id.'" class="text-success" data-toggle="tooltip" title="Stock History"><i class="fa fa-lg fa-bar-chart-o"></i></a>';
@@ -215,6 +217,7 @@ class ProductsController extends Controller
         $requestData['discount'] = empty($requestData['discount']) ? 0 : $requestData['discount'];
         $requestData['supplier_id'] = empty($requestData['supplier_id']) ? 0 : $requestData['supplier_id'];
         $requestData['brand_id'] = empty($requestData['brand_id']) ? 0 : $requestData['brand_id'];
+        $requestData['is_variants'] = (@$requestData['is_variants']==1) ? 1 : 0;
         $requestData['meta_title'] = $requestData['meta_title'];
         $requestData['slug'] = $requestData['slug'];
         $requestData['meta_description'] = $requestData['meta_description'];
@@ -227,7 +230,8 @@ class ProductsController extends Controller
                 // save category products
                 $category_product['product_id'] = $product->id;
                 $category_product['category_id'] = $request->sub_category_id;
-
+                $category_product['type'] = 'subcategory';
+                
                 $category_products = CategoryProduct::firstOrNew($category_product);
                 $category_products->save();
             }
@@ -236,7 +240,8 @@ class ProductsController extends Controller
                 // save category products
                 $category_product['product_id'] = $product->id;
                 $category_product['category_id'] = $request->category_id;
-
+                $category_product['type'] = 'category';
+                
                 $category_products = CategoryProduct::firstOrNew($category_product);
                 $category_products->save();
             }
@@ -266,7 +271,7 @@ class ProductsController extends Controller
             Session::flash('error', 'Product not successfully added!');
         }
 
-        return redirect($this->resource.'/'. Hashids::encode($product->id) .'/edit?tab=1');
+        return redirect($this->resource);
     }
 
     /**
@@ -328,7 +333,7 @@ class ProductsController extends Controller
         $rules['code'] = 'required|unique:products,code,'.$id;
         $rules['name'] = 'required';
         $rules['tax_rate_id'] = 'required';
-        $rules['barcode_symbology'] = 'required';
+        //$rules['barcode_symbology'] = 'required';
         $rules['product_images'] = 'required|numeric';
         $rules['shipping_id'] = 'required|numeric';
 
@@ -352,6 +357,7 @@ class ProductsController extends Controller
         $requestData['discount'] = empty($requestData['discount']) ? 0 : $requestData['discount'];
         $requestData['supplier_id'] = empty($requestData['supplier_id']) ? 0 : $requestData['supplier_id'];
         $requestData['brand_id'] = empty($requestData['brand_id']) ? 0 : $requestData['brand_id'];
+        $requestData['is_variants'] = (@$requestData['is_variants']==1) ? 1 : 0;
         $requestData['meta_title'] = $requestData['meta_title'];
         $requestData['slug'] = $requestData['slug'];
         $requestData['meta_description'] = $requestData['meta_description'];
@@ -365,7 +371,8 @@ class ProductsController extends Controller
             // save category products
             $category_product['product_id'] = $product->id;
             $category_product['category_id'] = $request->sub_category_id;
-
+            $category_product['type'] = 'subcategory';
+            
             $category_products = CategoryProduct::firstOrNew($category_product);
             $category_products->save();
         }
@@ -374,6 +381,7 @@ class ProductsController extends Controller
             // save category products
             $category_product['product_id'] = $product->id;
             $category_product['category_id'] = $request->category_id;
+            $category_product['type'] = 'category';
 
             $category_products = CategoryProduct::firstOrNew($category_product);
             $category_products->save();
@@ -401,7 +409,7 @@ class ProductsController extends Controller
 
         Session::flash('success', 'Product successfully updated!');
 
-        return redirect('admin/products/'. Hashids::encode($product->id) .'/edit?tab=1');
+        return redirect($this->resource);
     }
 
     /**
@@ -503,7 +511,8 @@ class ProductsController extends Controller
                     // save category products
                     $category_product['product_id'] = $product->id;
                     $category_product['category_id'] = $parent_id;
-
+                    $category_product['type'] = 'subcategory';
+                    
                     $category_products = CategoryProduct::firstOrNew($category_product);
                     $category_products->save();
                }
@@ -511,7 +520,8 @@ class ProductsController extends Controller
                 // save category products
                 $category_product['product_id'] = $product->id;
                 $category_product['category_id'] = $category_id;
-
+                $category_product['type'] = 'category';
+                
                 $category_products = CategoryProduct::firstOrNew($category_product);
                 $category_products->save();
             }
@@ -781,12 +791,12 @@ class ProductsController extends Controller
     	$image = ProductImage::findOrFail($id);
         if ($image) {
 
-            $file = public_path() . '/uploads/products/'.$image->name;
-            $thumbFile = public_path() . '/uploads/products/thumbs/'.$image->name;
-            if(is_file($file)){
-                @unlink($file);
-                @unlink($thumbFile);
-            }
+//            $file = public_path() . '/uploads/products/'.$image->name;
+//            $thumbFile = public_path() . '/uploads/products/thumbs/'.$image->name;
+//            if(is_file($file)){
+//                @unlink($file);
+//                @unlink($thumbFile);
+//            }
 
             $image->delete();
         }
@@ -1303,5 +1313,52 @@ class ProductsController extends Controller
         }
 
         return response()->json(['result'=>$response], $status);
+    }
+    
+    
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     *
+     * @return JS0N Response
+     */
+     public function makeCopy($id)
+    {
+        $id = decodeId($id);
+        
+        $product = Product::with(
+        [
+            'product_tags'=> function ($query) {
+                $query->orderBy('id', 'asc');
+            },
+            'category_products',
+            'product_images'
+        ])->findOrFail($id);
+         
+        $productData = $product->toArray();
+
+        $copyProduct = Product::create($productData);
+        if ($copyProduct) {
+            foreach($product->product_tags as $productTag) {
+                $copyProduct->product_tags()->create([
+                    'name' => $productTag->name
+                ]);
+            }
+            foreach($product->category_products as $categoryProduct) {
+                $categoryProduct = $categoryProduct->toArray();
+                $copyProduct->category_products()->create($categoryProduct);
+            }
+            foreach($product->product_images as $productImage) {
+                $productImage = $productImage->toArray();
+                $copyProduct->product_images()->create($productImage);
+            }
+            
+            Session::flash('success', 'Product copy successfully created!');
+            return redirect($this->resource.'/'.Hashids::encode($copyProduct->id).'/edit');
+        }
+        
+        Session::flash('error', 'Product copy not creat!');
+        return redirect($this->resource);
     }
 }

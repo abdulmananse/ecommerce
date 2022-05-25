@@ -81,7 +81,7 @@ class SuppliersController extends Controller
     public function store(Request $request)
     {            
         $this->validate($request, [             
-            'code' => 'required|numeric',            
+            'code' => 'required|max:100',            
             'name' => 'required|max:255'                      
         ]);   
         
@@ -142,7 +142,7 @@ class SuppliersController extends Controller
         $id = Hashids::decode($id)[0];
         
         $this->validate($request, [
-            'code' => 'required|numeric',            
+            'code' => 'required|max:100',            
             'name' => 'required|max:255',                           
         ]);
         

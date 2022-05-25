@@ -27,7 +27,7 @@ class ProductRequest extends FormRequest
             'code' => 'required|unique:products',
             'name' => 'required',
             'tax_rate_id' => 'required',
-            'barcode_symbology' => 'required',
+            //'barcode_symbology' => 'required',
             'cost' => 'required|numeric',
             'price' => 'required|numeric',
             'wholesaler_price' => 'numeric',

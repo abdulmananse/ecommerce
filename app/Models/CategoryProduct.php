@@ -35,6 +35,6 @@ class CategoryProduct extends Model
      *
      * @var array
      */
-    protected $fillable = ['category_id', 'product_id'];
+    protected $fillable = ['category_id', 'product_id', 'type'];
 
 }

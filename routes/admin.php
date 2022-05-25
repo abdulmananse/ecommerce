@@ -36,7 +36,8 @@ Route::group(['namespace' => 'Admin'], function () {
     Route::get('get-product-stocks/{product_id}','ProductsController@getProductStocks');
     Route::post('upload-csv-products','ProductsController@uploadCsvProducts');
     Route::post('update-invoice','OrdersController@updateInvoice')->name('update.invoice');
-
+    Route::get('products/make-copy/{product_id}','ProductsController@makeCopy');
+    
     Route::resource('manage-stocks', 'StockController');
     Route::get('get-store-products', 'StockController@getStoreProducts');
 

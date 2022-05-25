@@ -172,8 +172,10 @@
 
                             </tbody>
                         </table>
-                            <div class="row">
-                                <button type="submit">Update</button>
+                            <div class="form-group">
+                                <div class="col-lg-offset-2 col-lg-6">
+                                    <button type="submit" class="btn btn-info pull-right">Update</button>
+                                </div>
                             </div>
                         </form>
                         <div class="row">
@@ -187,6 +189,11 @@
                                     if($cart->payment_status == 'complete'){
                                         $payment_status = 'Paid';
                                         $payment_class = 'label-success';
+                                    }
+                                    
+                                    $tax = $order['tax'];
+                                    if (!is_string($tax)) {
+                                        $tax = number_format($tax,2);
                                     }
                                 @endphp
 
@@ -204,7 +211,7 @@
                                 <ul class="unstyled amounts">
                                     <li>Product amount : {{$currency_code}}{{number_format($subtotal,2)}}</li>
                                     <li style="display:none;">Discount : {{$currency_code}}{{number_format($order['discount'],2)}} </li>
-                                     <li>Vat : {{$currency_code}}{{number_format($order['tax'],2)}} </li>
+                                     <li>Vat : {{$currency_code}}{{ $tax }} </li>
 
                                         <li>Courier Charges : {{$currency_code}}{{number_format($courierAmout,2)}}</li>
 
