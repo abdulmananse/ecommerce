@@ -145,7 +145,7 @@ class AdminOrderController extends Controller
     public function create()
     {
         $customers = OrderUser::pluck('owner_name', 'id')->prepend('Select Customer', '');
-        $products = Product::pluck('name', 'id')->prepend('Select Product', '');
+        $products = Product::has('quantity')->pluck('name', 'id')->prepend('Select Product', '');
         
         return view($this->resource . '/create', get_defined_vars());
     }
@@ -377,7 +377,7 @@ class AdminOrderController extends Controller
      */
     public function getProductRow()
     {
-        $products = Product::pluck('name', 'id')->prepend('Select Product', '');
+        $products = Product::has('quantity')->pluck('name', 'id')->prepend('Select Product', '');
         
         return response()->json([
             'success'  => true,

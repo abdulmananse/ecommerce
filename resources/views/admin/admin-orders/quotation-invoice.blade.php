@@ -215,7 +215,11 @@
                                     $vat = $tax;
                                     $amount = $order->amount;
                                     $price = $amount - $vat;
+                                    $vatRate = 0;
+                                    if ($amount>0) {
                                     $vatRate = $vat / $amount * 100;
+                                    }
+                                    
                                 @endphp
                                 <tr>
                                     <td class="text-center">VAT @ {{ number_format($vatRate, 2) }}%</td>

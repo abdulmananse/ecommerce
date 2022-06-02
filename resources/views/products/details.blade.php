@@ -106,15 +106,7 @@
                                         <div class="col-sm-4">
                                             <div class="form-group selectpicker-wrapper">
                                                 <label class="fsz-15 title-3"> <b> QUANTITY </b> </label>
-                                                <div class="search-selectpicker selectpicker-wrapper">
-                                                    <select class="selectpicker input-price selectPrice" data-live-search="true" data-width="100%" data-toggle="tooltip"  >
-                                                        <option value="1" selected>1 Pcs</option>
-                                                        <option value="2">2 Pcs</option>
-                                                        <option value="3">3 Pcs</option>
-                                                        <option value="4">4 Pcs</option>
-                                                        <option value="5">5 Pcs</option>
-                                                    </select>
-                                                </div>
+                                                <input class='selectpicker' type='number' min='0' step="1" value="1" max="{{ $product->quantity }}" />
                                             </div>
                                         </div>
 
@@ -159,16 +151,7 @@
                             <hr class="heading-seperator" />
                             <div class="scroll-div">
                                 <div class="nano-content">
-                                    <h2 class="title-3 fsz-14 no-mrgn spcbt-30"> ASIN: <span class="thm-clr"> B00IL3TMFW </span> </h2>
-                                    <p>Product Dimensions: 11 x 5.5 x 8.7 inches; 1.8 pounds.</p>
-                                    <p>Shipping Weight: 1.8 pounds <br>
-                                        (View shipping rates and policies)</p>
-                                    <p>Item model number: NB-B00IL3TMFW</p>
-                                    <p>Average Customer Review:    29 customer reviews</p>
-                                    <p>Would you like to give feedback on images?</p>
-                                    <p>Item model number: NB-B00IL3TMFW</p>
-                                    <p>Average Customer Review:    29 customer reviews</p>
-                                    <p>Would you like to give feedback on images?</p>
+                                    {!! $product->tecnical_specs !!}
                                 </div>
                             </div>
                         </div>
@@ -515,22 +498,31 @@
                     return false;
                 }
                 var id = $(this).attr('data-id');
-                var qty =$('.selectpicker').val();
-                console.log(qty);
-                // show_loader();
-                $.ajax({
-                    url: '{{ url('cart-add') }}',
-                    method: "POST",
-                    data: {id: id, quantity: qty},
-                    success: function (response) {
-                        if(response.status){
-                            success_message("Item successfully added to your cart");
-                            getCartHistory()
-                        } else {
-                            error_message(response.message);
+                var qty = parseInt($('.selectpicker').val());
+                var max = parseInt($('.selectpicker').attr('max'));
+                console.log('qty '+qty);
+                console.log('max '+max);
+                
+                if (qty <= max) {
+                    // show_loader();
+                    $.ajax({
+                        url: '{{ url('cart-add') }}',
+                        method: "POST",
+                        data: {id: id, quantity: qty},
+                        success: function (response) {
+                            if(response.status){
+                                success_message("Item successfully added to your cart");
+                                getCartHistory()
+                            } else {
+                                error_message(response.message);
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    $('.selectpicker').val(max);
+                    error_message("You have purchase maximum "+max+" quantity");
+                }
+                
             });
 
 

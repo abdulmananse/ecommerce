@@ -96,61 +96,52 @@
                             </div>
                             
 
-                            <div class="row modifier_select">
-
-                                <div class="form-group col-md-4 {{ $errors->has('prefix') ? 'has-error' : ''}}">
-                                    {!! Form::label('category_id', 'Category', ['class' => 'control-label required-input']) !!}
-                                        {!! Form::select('category_id', getParentCategories()->prepend('Select Category',0),null, ['class' => 'form-control select2 changescategory']) !!}
-                                        {!! $errors->first('category_id', '<p class="help-block">:message</p>') !!}
+                            <?php
+                                $suppliers = getSuppliersDropdown();
+                            ?>
+                            @for($i=1; $i<=4; $i++)
+                                <div class="row">
+                                    <div class="form-group col-md-3">
+                                        {!! Form::label('supplier_id', 'Supplier Name ' . $i, ['class' => 'control-label']) !!}
+                                        {!! Form::select('supplier_id_' . $i, $suppliers, null, ['class' => 'form-control select2 supplier_ids']) !!}
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        {!! Form::label('quantity', 'Quantity '. $i, ['class' => 'control-label']) !!}
+                                        {!! Form::number('supplier_quantity_' . $i,null, ['class' => 'form-control supplier_quantities supplier_quantity_' . $i,'placeholder'=>'Quantity ' . $i, 'min' => 0, 'step' => 1]) !!}
                                         <div class="help-block with-errors"></div>
-                                </div>
-
-                                <div class="form-group col-md-4 {{ $errors->has('prefix') ? 'has-error' : ''}}">
-                                    {!! Form::label('sub_category_id', 'Sub Category', ['class' => 'control-label required-input']) !!}
-                                    {!! Form::select('sub_category_id', [],null, ['class' => 'form-control select2 subcategory']) !!}
-                                    {!! $errors->first('sub_category_id', '<p class="help-block">:message</p>') !!}
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        {!! Form::label('cost', 'Product Cost ' . $i, ['class' => 'control-label']) !!}
+                                        <div class="input-group">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button">£</button>
+                                            </span>
+                                            {!! Form::number('supplier_cost_' . $i, null, ['class' => 'form-control supplier_costs supplier_cost_' . $i,'placeholder'=>'Product Cost ' . $i,'step'=>'any']) !!}
+                                        </div>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        {!! Form::label('total_cost', 'Total Cost ' . $i, ['class' => 'control-label']) !!}
+                                        <div class="input-group">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button">£</button>
+                                            </span>
+                                            {!! Form::number('total_cost_' . $i, null, ['class' => 'form-control total_costs total_cost_' . $i,'placeholder'=>'Total Cost ' . $i,'step'=>'any']) !!}
+                                        </div>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>    
+                            @endfor
+                            
+                            <div class="row modifier_select">
+                                
+                                <div class="form-group col-md-4 {{ $errors->has('quantity') ? 'has-error' : ''}}">
+                                    {!! Form::label('quantity', 'Quantity', ['class' => 'control-label required-input']) !!}
+                                    {!! Form::number('quantity',null, ['class' => 'form-control', 'min' => 0, 'step' => 1]) !!}
+                                    {!! $errors->first('quantity', '<p class="help-block">:message</p>') !!}
                                     <div class="help-block with-errors"></div>
                                 </div>
-
-                                <div class="form-group  col-md-4 {{ $errors->has('tax_rate_id') ? 'has-error' : ''}}">
-                                    {!! Form::label('tax_rate_id', 'Product Tax', ['class' => 'control-label required-input']) !!}
-                                        @if(isset($product))
-                                            {!! Form::select('tax_rate_id', getTaxRatesDropdown(),null, ['class' => 'form-control select2','required' => 'required']) !!}
-                                        @else
-                                            {!! Form::select('tax_rate_id', getTaxRatesDropdown(),null, ['class' => 'form-control select2','required' => 'required']) !!}
-                                        @endif
-                                        {!! $errors->first('tax_rate_id', '<p class="help-block">:message</p>') !!}
-                                        <div class="help-block with-errors"></div>
-                                </div>
-
-                            </div>
-
-                            <div class="row variant_checked">
-                                <div class="form-group col-md-4 {{ $errors->has('supplier_id') ? 'has-error' : ''}}">
-                                    {!! Form::label('supplier_id', 'Supplier Name', ['class' => 'control-label']) !!}
-                                        {!! Form::select('supplier_id', getSuppliersDropdown(),null, ['class' => 'form-control select2']) !!}
-                                        {!! $errors->first('supplier_id', '<p class="help-block">:message</p>') !!}
-                                        <div class="help-block with-errors"></div>
-                                </div>
-
-
-                                <div class="form-group col-md-4 {{ $errors->has('discount_type') ? 'has-error' : ''}}">
-                                    {!! Form::label('discount_type', 'Discount Type', ['class' => 'control-label']) !!}
-                                        {!! Form::select('discount_type', ['0'=>'Select Discount Type','1'=>'Percentage','2'=>'Fixed'],null, ['class' => 'form-control select2']) !!}
-                                        {!! $errors->first('discount_type', '<p class="help-block">:message</p>') !!}
-                                        <div class="help-block with-errors"></div>
-                                </div>
-
-                                <div class="form-group col-md-4 {{ $errors->has('discount') ? 'has-error' : ''}}">
-                                    {!! Form::label('discount', 'Max Discount', ['class' => 'control-label']) !!}
-                                        {!! Form::number('discount', null, ['class' => 'form-control','placeholder'=>'Max Discount','min' => '0']) !!}
-                                        {!! $errors->first('discount', '<p class="help-block">:message</p>') !!}
-                                        <div class="help-block with-errors"></div>
-                                </div>
-
-                            </div>
-
-                            <div class="row">
+                                
                                 <div class="form-group col-md-4 hide_cost {{ $errors->has('cost') ? 'has-error' : ''}}">
                                     {!! Form::label('cost', 'Product Cost', ['class' => 'control-label required-input']) !!}
                                     <div class="input-group">
@@ -175,35 +166,82 @@
                                     <div class="help-block with-errors"></div>
                                 </div>
                                 
-                                <div class="form-group col-md-4 {{ $errors->has('shipping_id') ? 'has-error' : ''}}">
+                            </div>
+
+                            <div class="row variant_checked">
+                                
+                                <div class="form-group  col-md-4 {{ $errors->has('tax_rate_id') ? 'has-error' : ''}}">
+                                    {!! Form::label('tax_rate_id', 'Product Tax', ['class' => 'control-label required-input']) !!}
+                                        @if(isset($product))
+                                            {!! Form::select('tax_rate_id', getTaxRatesDropdown(),null, ['class' => 'form-control select2','required' => 'required']) !!}
+                                        @else
+                                            {!! Form::select('tax_rate_id', getTaxRatesDropdown(),null, ['class' => 'form-control select2','required' => 'required']) !!}
+                                        @endif
+                                        {!! $errors->first('tax_rate_id', '<p class="help-block">:message</p>') !!}
+                                        <div class="help-block with-errors"></div>
+                                </div>
+
+                                <div class="form-group col-md-4 {{ $errors->has('discount_type') ? 'has-error' : ''}}">
+                                    {!! Form::label('discount_type', 'Discount Type', ['class' => 'control-label']) !!}
+                                        {!! Form::select('discount_type', ['0'=>'Select Discount Type','1'=>'Percentage','2'=>'Fixed'],null, ['class' => 'form-control select2']) !!}
+                                        {!! $errors->first('discount_type', '<p class="help-block">:message</p>') !!}
+                                        <div class="help-block with-errors"></div>
+                                </div>
+
+                                <div class="form-group col-md-4 {{ $errors->has('discount') ? 'has-error' : ''}}">
+                                    {!! Form::label('discount', 'Max Discount', ['class' => 'control-label']) !!}
+                                        {!! Form::number('discount', null, ['class' => 'form-control','placeholder'=>'Max Discount','min' => '0']) !!}
+                                        {!! $errors->first('discount', '<p class="help-block">:message</p>') !!}
+                                        <div class="help-block with-errors"></div>
+                                </div>
+                                
+                                <div class="form-group col-md-4 {{ $errors->has('prefix') ? 'has-error' : ''}}">
+                                    {!! Form::label('category_id', 'Category', ['class' => 'control-label required-input']) !!}
+                                        {!! Form::select('category_id', getParentCategories()->prepend('Select Category',0),null, ['class' => 'form-control select2 changescategory']) !!}
+                                        {!! $errors->first('category_id', '<p class="help-block">:message</p>') !!}
+                                        <div class="help-block with-errors"></div>
+                                </div>
+
+                                <div class="form-group col-md-4 {{ $errors->has('prefix') ? 'has-error' : ''}}">
+                                    {!! Form::label('sub_category_id', 'Sub Category', ['class' => 'control-label required-input']) !!}
+                                    {!! Form::select('sub_category_id', [],null, ['class' => 'form-control select2 subcategory']) !!}
+                                    {!! $errors->first('sub_category_id', '<p class="help-block">:message</p>') !!}
+                                    <div class="help-block with-errors"></div>
+                                </div>
+
+                                
+                                 <div class="form-group col-md-4 {{ $errors->has('shipping_id') ? 'has-error' : ''}}">
                                     {!! Form::label('shipping_id', 'Shipping Charges', ['class' => 'control-label required-input']) !!}
                                     {!! Form::select('shipping_id', $shippings ,null, ['class' => 'form-control select2','required' => 'required']) !!}
                                     {!! $errors->first('shipping_id', '<p class="help-block">:message</p>') !!}
                                     <div class="help-block with-errors"></div>
                                 </div>
                             </div>
-
-                            <div class="row">
-
                                 
-
+                            <div class="row">    
+                                 <div class="form-group col-md-4 {{ $errors->has('slug') ? 'has-error' : ''}}">
+                                    {!! Form::label('slug', 'Slug', ['class' => 'col-md-3 control-label']) !!}
+                                    {!! Form::text('slug', null, ['class' => 'form-control','rows'=>'3']) !!}
+                                    {!! $errors->first('slug', '<p class="help-block">:message</p>') !!}
+                                    <div class="help-block with-errors"></div>
+                                </div>
                                 
-
                                 <div class="form-group col-md-4 {{ $errors->has('new_arrivals') ? 'has-error' : ''}}">
                                     {!! Form::label('new_arrivals', 'New Arrivals', ['class' => 'control-label required-input']) !!}
                                     {!! Form::select('new_arrivals', ['1'=>'Yes','0'=>'No'],null, ['class' => 'form-control select2','required' => 'required']) !!}
                                     {!! $errors->first('new_arrivals', '<p class="help-block">:message</p>') !!}
                                     <div class="help-block with-errors"></div>
                                 </div>
-
-
+                            
                                 <div class="form-group col-md-4 {{ $errors->has('is_featured') ? 'has-error' : ''}}">
                                     {!! Form::label('is_featured', 'Is Featured', ['class' => 'control-label required-input']) !!}
                                     {!! Form::select('is_featured', ['1'=>'Yes','0'=>'No'],null, ['class' => 'form-control select2','required' => 'required']) !!}
                                     {!! $errors->first('is_featured', '<p class="help-block">:message</p>') !!}
                                     <div class="help-block with-errors"></div>
                                 </div>
-
+                            </div>
+                            
+                            <div class="row">        
                                 <div class="form-group col-md-4 {{ $errors->has('is_hot') ? 'has-error' : ''}}">
                                     {!! Form::label('is_hot', 'Is Hot', ['class' => 'control-label required-input']) !!}
                                     {!! Form::select('is_hot', ['1'=>'Yes','0'=>'No'],null, ['class' => 'form-control select2','required' => 'required']) !!}
@@ -211,15 +249,16 @@
                                     <div class="help-block with-errors"></div>
                                 </div>
 
+                                <div class="form-group col-md-8 modifier_select {{ $errors->has('tags') ? 'has-error' : ''}}">
+                                    {!! Form::label('tags', 'Tags', ['class' => 'control-label ']) !!}
+                                        {!! Form::textarea('tags', (isset($product)?$product->product_tags->pluck('name')->implode(','):'') , ['class' => 'form-control']) !!}
+                                        {!! $errors->first('tags', '<p class="help-block">:message</p>') !!}
+                                        <div class="help-block with-errors"></div>
                                 </div>
-                            <div class="form-group col-md-12 modifier_select {{ $errors->has('tags') ? 'has-error' : ''}}">
-                                {!! Form::label('tags', 'Tags', ['class' => 'control-label ']) !!}
-                                    {!! Form::textarea('tags', (isset($product)?$product->product_tags->pluck('name')->implode(','):'') , ['class' => 'form-control']) !!}
-                                    {!! $errors->first('tags', '<p class="help-block">:message</p>') !!}
-                                    <div class="help-block with-errors"></div>
                             </div>
-
-                            <div class="form-group {{ $errors->has('meta_title') ? 'has-error' : ''}}">
+                            
+                            <div class="row">  
+                                <div class="form-group {{ $errors->has('meta_title') ? 'has-error' : ''}}">
 
                                 {!! Form::label('meta_title', 'Meta Title', ['class' => 'col-md-3 control-label']) !!}
 
@@ -252,21 +291,7 @@
                                 </div>
 
                             </div>
-                            <div class="form-group {{ $errors->has('slug') ? 'has-error' : ''}}">
-
-                                {!! Form::label('slug', 'Slug', ['class' => 'col-md-3 control-label']) !!}
-
-                                <div class="col-md-9">
-
-                                    {!! Form::textarea('slug',null, ['class' => 'form-control','rows'=>'3']) !!}
-
-                                    {!! $errors->first('slug', '<p class="help-block">:message</p>') !!}
-
-                                    <div class="help-block with-errors"></div>
-
-                                </div>
-
-                            </div>
+                           
 
                             <div class="row modifier_select" >
                                 <div class="form-group col-md-12">
@@ -335,10 +360,86 @@
     var token = $('meta[name="csrf-token"]').attr('content');
     var baseUrl = "{{url('admin/products')}}";
     var category_select = $('#category_id');
-    var category_id = "{{$product->category_id ?? ''}}"
-    var sub_category_id = "{{$product->sub_category_id ?? ''}}"
+    var category_id = "{{$product->category_id ?? ''}}";
+    var sub_category_id = "{{$product->sub_category_id ?? ''}}";
+    
+    function calculateSupplierCost()
+    {
+        var c, q, sc1, sc2, sc3, sc4, sq1, sq2, sq3, sq4, tc1, tc2, tc3, tc4;
+        c = q = sc1 = sc2 = sc3 = sc4 = sq1 = sq2 = sq3 = sq4 = tc1 = tc2 = tc3 = tc4 = 0;
+        var sc1 = $('.supplier_cost_1').val();
+        var sc2 = $('.supplier_cost_2').val();
+        var sc3 = $('.supplier_cost_3').val();
+        var sc4 = $('.supplier_cost_4').val();
+        var sq1 = $('.supplier_quantity_1').val();
+        var sq2 = $('.supplier_quantity_2').val();
+        var sq3 = $('.supplier_quantity_3').val();
+        var sq4 = $('.supplier_quantity_4').val();
+        
+        if (sc1 > 0 || sc2 > 0 || sc3 > 0 || sc4 > 0) {
+            c++;
+        }
+        if (sq1 > 0 || sq2 > 0 || sq3 > 0 || sq4 > 0) {
+            q++;
+        }
+        
+        if (sc1>0 && sq1>0) {
+            sq1 = parseInt(sq1);
+            tc1 = parseFloat(sc1) * sq1;
+        }
+        $('.total_cost_1').val(tc1.toFixed(2));
+        
+        if (sc2>0 && sq2>0) {
+            sq2 = parseInt(sq2);
+            tc2 = parseFloat(sc2) * sq2;
+        }
+        $('.total_cost_2').val(tc2.toFixed(2));
+        
+        if (sc3>0 && sq3>0) {
+            sq3 = parseInt(sq3);
+            tc3 = parseFloat(sc3) * sq3;
+        }
+        $('.total_cost_3').val(tc3.toFixed(2));
+        
+        if (sc4>0 && sq4>0) {
+            sq4 = parseInt(sq4);
+            tc4 = parseFloat(sc4) * sq4;
+        }
+        $('.total_cost_4').val(tc4.toFixed(2));
+        
+        var tc = tc1 + tc2 + tc3 + tc4;
+        var sq = sq1 + sq2 + sq3 + sq4;
+        if (tc > 0 && c > 0 && sq > 0 && q > 0) {
+            console.log('tc ' + tc);
+            console.log('sq ' + sq);
+            var pTotalCost = (tc/sq);
+            console.log('pTotalCost ' + pTotalCost);
+            $("#cost").val(pTotalCost.toFixed(2));
+            $("#quantity").val(sq);
+        }
+    }
+    
     $(document).ready(function(){
+        
+        $('.supplier_costs, .supplier_quantities').on("change", function(e) {
+            calculateSupplierCost();
+        });
+        
+        $('#name').on("change", function(e) {
+            var Text = $(this).val();
+            Text = Text.toLowerCase();
+            Text = Text.replace(/ /g, '-');
+            Text = Text.replace(/[^\w-]+/g, '');
+            $("#slug").val(Text);  
+        });
 
+        $('#code').on("keypress", function(e) {
+            if (e.keyCode == 13) {               
+              e.preventDefault();
+              return false;
+            }
+        });
+        
         $('#discount_type').change();
 
         if(category_id !=''){

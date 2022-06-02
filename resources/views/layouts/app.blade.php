@@ -83,32 +83,6 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
                 });
-
-                $("body").on('click',".single_add_to_cart_button",function (e) {
-
-                    e.preventDefault();
-                    if($(this).attr('disabled') =='disabled'){
-                        return false;
-                    }
-                    var id = $(this).attr('data-id');
-                    var qty =1;
-                    console.log(qty);
-                    // show_loader();
-                    $.ajax({
-                        url: '{{ url('cart-add') }}',
-                        method: "POST",
-                        data: {id: id, quantity: qty},
-                        success: function (response) {
-                            if(response.status){
-                                success_message("Item successfully added to your cart");
-                                getCartHistory()
-                            } else {
-                                error_message(response.message);
-                            }
-                        }
-                    });
-                });
-
             })
 
         </script>

@@ -47,11 +47,12 @@
                             <tr>
                                 <th></th>
                                 <th>Image</th>
-                                <th>Code</th>
+                                <th>Bar Code</th>
                                 <th>Name</th>
                                 <th>Supplier</th>
+                                <th>Brand</th>
                                 <th>Cost</th>
-                                <th>Price</th>
+                                <th>Selling Price</th>
                                 @if(auth()->user()->can('edit products') || auth()->user()->can('view product stocks') || auth()->user()->can('delete products'))
                                 <th>Action</th>
                                 @endif
@@ -64,11 +65,12 @@
                             <tr>
                                 <th></th>
                                 <th>Image</th>
-                                <th>Code</th>
+                                <th>Bar Code</th>
                                 <th>Name</th>
                                 <th>Supplier</th>
+                                <th>Brand</th>
                                 <th>Cost</th>
-                                <th>Price</th>
+                                <th>Selling Price</th>
                                 @if(auth()->user()->can('edit products') || auth()->user()->can('view product stocks') || auth()->user()->can('delete products'))
                                 <th>Action</th>
                                 @endif
@@ -133,6 +135,7 @@ $(document).ready(function () {
             {data: 'code', className: 'text-center'},
             {data: 'name'},                 
             {data: 'supplier', className: 'text-center'},                
+            {data: 'brand.name', className: 'text-center'},                
             {data: 'cost', className: 'text-center'},                 
             {data: 'price', className: 'text-center'},    
             @if(auth()->user()->can('edit products') || auth()->user()->can('view product stocks') || auth()->user()->can('delete products'))                  

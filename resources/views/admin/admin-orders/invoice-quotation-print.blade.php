@@ -93,6 +93,7 @@
 
                             </div>
                         </div>
+                    <div class="adm-table">    
                         <table class="table table-invoice" >
                             <thead>
                             <tr>
@@ -139,6 +140,7 @@
 
                             </tbody>
                         </table>
+                    </div>    
                         <div class="row">
                             <div class="col-md-8 col-xs-7 payment-method">
                                 @php

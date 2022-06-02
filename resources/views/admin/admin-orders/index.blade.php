@@ -39,13 +39,14 @@
                             </div>
                         </span>
                         
-                        <span class="tools pull-right" style="margin-right: 12px;margin-top: -6px;">
+                        <span class="tools pull-right quote-btn" style="margin-right: 12px;">
                             <a href="{{ url('admin/admin-orders/create') }}" class="btn btn-info btn-sm" data-toggle="tooltip" title="Create Quotation">
                                 <i class="fa fa-plus" aria-hidden="true"></i> Create Quotation
                             </a>
                          </span>
                     </header>
                     <div class="panel-body">
+                        <div class="adm-table">
                         <table id="datatable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
@@ -68,7 +69,8 @@
                             </tbody>
                             
                         </table>
-                    </div>
+                    </div>    
+                     </div>
                 </section>
             </div>
         </div>

@@ -48,17 +48,21 @@ class ProductsController extends Controller
      */
     public function index(Request $request)
     {
-
         if($request->ajax()){
             $products = Product::with([
-              'products' => function ($query) {
-                  $query->orderBy('id', 'asc');
-              },
-              'products.product_images',
-              'products.store_products',
-              'store_products.store',
-              'category_products.category',
-              'product_images'
+                'products' => function ($query) {
+                    $query->orderBy('id', 'asc');
+                },
+                'products.product_images',
+                'products.store_products',
+                'store_products.store',
+                'category_products.category',
+                'product_images',
+                'brand',
+                'supplier',
+                'supplier_2',
+                'supplier_3',
+                'supplier_4'
             ])->where('product_id',0)->orderBy('updated_at','desc');
 
             return DataTables::of($products)
@@ -86,12 +90,20 @@ class ProductsController extends Controller
                         return '<img width="35" src="'. getProductDefaultImage($product->id) .'" />';
                 })
                 ->addColumn('supplier', function ($product) {
-                    return @$product->supplier->name;
+                    $suppliers = @$product->supplier->name;
+                    if (@$product->supplier->name && @$product->supplier_2->name) {
+                        $suppliers .= ', '.@$product->supplier_2->name;
+                    }
+                    if (@$product->supplier_3->name) {
+                        $suppliers .= ', '.@$product->supplier_3->name;
+                    }
+                    if (@$product->supplier_4->name) {
+                        $suppliers .= ', '.@$product->supplier_4->name;
+                    }
+                    return  $suppliers;
                 })
                 ->addColumn('action', function ($product) {
-                  $action = '';
-                    if(Auth::user()->can('edit products'))
-                        $action .= '<a href="products/make-copy/'. Hashids::encode($product->id).'" class="text-success" data-toggle="tooltip" title="Make a Copy"><i class="fa fa-lg fa-copy"></i></a>';
+                    $action = '<a href="products/make-copy/'. Hashids::encode($product->id).'" class="text-success" data-toggle="tooltip" title="Make a Copy"><i class="fa fa-lg fa-copy"></i></a>';
                     if(Auth::user()->can('edit products'))
                         $action .= '<a href="products/'. Hashids::encode($product->id).'/edit" class="text-primary" data-toggle="tooltip" title="Edit Product"><i class="fa fa-lg fa-edit"></i></a>';
                     if(Auth::user()->can('view product stocks'))
@@ -208,23 +220,43 @@ class ProductsController extends Controller
     {
 
         $requestData = $request->all();
-
+        
         $requestData['sku'] = empty($requestData['sku']) ? 0 : $requestData['sku'];
         $requestData['cost'] = empty($requestData['cost']) ? 0 : $requestData['cost'];
         $requestData['price'] = empty($requestData['price']) ? 0 : $requestData['price'];
         $requestData['wholesaler_price'] = empty($requestData['wholesaler_price']) ? 0 : $requestData['wholesaler_price'];
         $requestData['discount_type'] = empty($requestData['discount_type']) ? '0' : $requestData['discount_type'];
         $requestData['discount'] = empty($requestData['discount']) ? 0 : $requestData['discount'];
-        $requestData['supplier_id'] = empty($requestData['supplier_id']) ? 0 : $requestData['supplier_id'];
+        
         $requestData['brand_id'] = empty($requestData['brand_id']) ? 0 : $requestData['brand_id'];
         $requestData['is_variants'] = (@$requestData['is_variants']==1) ? 1 : 0;
         $requestData['meta_title'] = $requestData['meta_title'];
         $requestData['slug'] = $requestData['slug'];
         $requestData['meta_description'] = $requestData['meta_description'];
 
+        $requestData['supplier_id'] = ($request->filled('supplier_id_1')) ? $request->supplier_id_1 : 0;
+        $requestData['supplier_cost_1'] = empty($requestData['supplier_cost_1']) ? 0 : $requestData['supplier_cost_1'];
+        $requestData['supplier_id_2'] = ($request->filled('supplier_id_2')) ? $request->supplier_id_2 : 0;
+        $requestData['supplier_cost_2'] = empty($requestData['supplier_cost_2']) ? 0 : $requestData['supplier_cost_2'];
+        $requestData['supplier_id_3'] = ($request->filled('supplier_id_3')) ? $request->supplier_id_3 : 0;
+        $requestData['supplier_cost_3'] = empty($requestData['supplier_cost_3']) ? 0 : $requestData['supplier_cost_3'];
+        $requestData['supplier_id_4'] = ($request->filled('supplier_id_4')) ? $request->supplier_id_4 : 0;
+        $requestData['supplier_cost_4'] = empty($requestData['supplier_cost_4']) ? 0 : $requestData['supplier_cost_4'];
+        
         $product = Product::create($requestData);
 
         if($product){
+            
+            // save new store product
+            $store_id = 1;
+            $new_quantity = $requestData['quantity'];
+            $store_product_create['product_id'] = $product->id;
+            $store_product_create['store_id'] = $store_id;
+            $store_product_create['quantity'] = $new_quantity;
+
+            $store_products = StoreProduct::create($store_product_create);
+
+            updateProductStockByData($product->id, $store_id, $new_quantity, 1, 1, 0, 0, 'Add Product');
             
             if ($request->filled('sub_category_id')) {
                 // save category products
@@ -308,8 +340,14 @@ class ProductsController extends Controller
             'product_images'
         ])->findOrFail($id);
 
-        //dd($product->toArray());
-
+        $product->quantity = 0;
+        $product->supplier_id_1 = $product->supplier_id;
+                
+        $store_product_data = StoreProduct::where('product_id', $product->id)->first();
+        if($store_product_data){
+            $product->quantity = $store_product_data->quantity;
+        }       
+                
         $images = $product->product_images->sortBy('id');
         $brands = Brand::pluck('name','id')->prepend('Select Brand','');
         $shippings = Shipping::pluck('name','id');
@@ -336,9 +374,7 @@ class ProductsController extends Controller
         //$rules['barcode_symbology'] = 'required';
         $rules['product_images'] = 'required|numeric';
         $rules['shipping_id'] = 'required|numeric';
-
-
-
+        $rules['quantity'] = 'required|numeric';
         $rules['cost'] = 'required|numeric';
         $rules['price'] = 'required|numeric';
         $rules['wholesaler_price'] = 'numeric';
@@ -346,8 +382,43 @@ class ProductsController extends Controller
         $this->validate($request, $rules);
 
         $product = Product::findOrFail($id);
-
+        
         $requestData = $request->all();
+        
+        if ($product) {
+            // update store stock
+
+            $new_quantity = $requestData['quantity'];
+            $store_id = 1;
+
+            // Check store product exist or not
+            $store_product_data = StoreProduct::where('product_id', $product->id)->where('store_id', $store_id)->first();
+            if($store_product_data){
+
+                        if($new_quantity > $store_product_data->quantity){
+                           // stock add
+                           $add_quantity = $new_quantity - $store_product_data->quantity;
+                           updateProductStockByData($product->id, $store_id, $add_quantity, 1, 2, 0, 0, 'Edit Product');
+                        }elseif($new_quantity < $store_product_data->quantity){
+                           // stock remove
+                           $remove_quantity = $store_product_data->quantity - $new_quantity;
+                           updateProductStockByData($product->id, $store_id, $remove_quantity, 2, 2, 0, 0, 'Edit Product');
+                        }
+                    }else{
+
+                        // save new store product
+                        $store_product_create['product_id'] = $product->id;
+                        $store_product_create['store_id'] = $store_id;
+                        $store_product_create['quantity'] = $new_quantity;
+
+                        $store_products = StoreProduct::create($store_product_create);
+
+                        updateProductStockByData($product->id, $store_id, $new_quantity, 1, 1, 0, 0, 'Add Product');
+                    }
+
+        }
+        
+        
 
         $requestData['sku'] = empty($requestData['sku']) ? 0 : $requestData['sku'];
         $requestData['cost'] = empty($requestData['cost']) ? 0 : $requestData['cost'];
@@ -355,14 +426,21 @@ class ProductsController extends Controller
         $requestData['wholesaler_price'] = empty($requestData['wholesaler_price']) ? 0 : $requestData['wholesaler_price'];
         $requestData['discount_type'] = empty($requestData['discount_type']) ? '0' : $requestData['discount_type'];
         $requestData['discount'] = empty($requestData['discount']) ? 0 : $requestData['discount'];
-        $requestData['supplier_id'] = empty($requestData['supplier_id']) ? 0 : $requestData['supplier_id'];
         $requestData['brand_id'] = empty($requestData['brand_id']) ? 0 : $requestData['brand_id'];
         $requestData['is_variants'] = (@$requestData['is_variants']==1) ? 1 : 0;
         $requestData['meta_title'] = $requestData['meta_title'];
         $requestData['slug'] = $requestData['slug'];
         $requestData['meta_description'] = $requestData['meta_description'];
 
-
+        $requestData['supplier_id'] = ($request->filled('supplier_id_1')) ? $request->supplier_id_1 : 0;
+        $requestData['supplier_cost_1'] = empty($requestData['supplier_cost_1']) ? 0 : $requestData['supplier_cost_1'];
+        $requestData['supplier_id_2'] = ($request->filled('supplier_id_2')) ? $request->supplier_id_2 : 0;
+        $requestData['supplier_cost_2'] = empty($requestData['supplier_cost_2']) ? 0 : $requestData['supplier_cost_2'];
+        $requestData['supplier_id_3'] = ($request->filled('supplier_id_3')) ? $request->supplier_id_3 : 0;
+        $requestData['supplier_cost_3'] = empty($requestData['supplier_cost_3']) ? 0 : $requestData['supplier_cost_3'];
+        $requestData['supplier_id_4'] = ($request->filled('supplier_id_4')) ? $request->supplier_id_4 : 0;
+        $requestData['supplier_cost_4'] = empty($requestData['supplier_cost_4']) ? 0 : $requestData['supplier_cost_4'];
+        
         $product->update($requestData);
         
         // remove store products and category products and product stock and product tags

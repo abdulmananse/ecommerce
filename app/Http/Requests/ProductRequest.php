@@ -32,6 +32,7 @@ class ProductRequest extends FormRequest
             'price' => 'required|numeric',
             'wholesaler_price' => 'numeric',
             'shipping_id' =>  'required|numeric',
+            'quantity' =>  'required|numeric',
         ];
 
         return $data;

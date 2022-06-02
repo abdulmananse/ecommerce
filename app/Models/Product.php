@@ -123,6 +123,33 @@ class Product extends Model
     	return $this->belongsTo(Supplier::class);
     }
     
+    /**
+     * belongs To relation User
+     */
+
+    public function supplier_2()
+    {
+    	return $this->belongsTo(Supplier::class, 'supplier_id_2');
+    }
+    
+    /**
+     * belongs To relation User
+     */
+
+    public function supplier_3()
+    {
+    	return $this->belongsTo(Supplier::class, 'supplier_id_3');
+    }
+    
+    /**
+     * belongs To relation User
+     */
+
+    public function supplier_4()
+    {
+    	return $this->belongsTo(Supplier::class, 'supplier_id_4');
+    }
+    
     public function sub_category()
     {
     	return $this->belongsTo(SubCategory::class, 'sub_category_id');
@@ -331,7 +358,16 @@ class Product extends Model
      */
 
     protected $fillable = [
-        'name', 'product_id', 'code', 'ean_number', 'sku', 'shipping_id', 'brand_id', 'supplier_id', 'tax_rate_id', 'type', 'barcode_symbology', 'cost', 'price', 'is_variants', 'discount_type', 'discount', 'detail', 'invoice_detail', 'is_active','is_default','is_main_price','is_main_tax','full_detail','tecnical_specs','new_arrivals','is_featured','is_hot'
+        'name', 'product_id', 'code', 'ean_number', 'sku',
+        'supplier_id', 
+        'supplier_cost_1', 
+        'supplier_id_2', 
+        'supplier_cost_2',
+        'supplier_id_3', 
+        'supplier_cost_3', 
+        'supplier_id_4', 
+        'supplier_cost_4', 
+        'brand_id', 'shipping_id', 'tax_rate_id', 'type', 'barcode_symbology', 'cost', 'price', 'is_variants', 'discount_type', 'discount', 'detail', 'invoice_detail', 'is_active','is_default','is_main_price','is_main_tax','full_detail','tecnical_specs','new_arrivals','is_featured','is_hot'
         ,'meta_title','meta_description','slug','category_id','sub_category_id'
         ];
 

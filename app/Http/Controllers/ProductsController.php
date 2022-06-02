@@ -14,6 +14,7 @@ use App\Items;
 use App\Models\Store;
 use App\Models\Brand;
 use App\Models\Category_products;
+use App\Models\StoreProduct;
 use App\Models\ProductView;
 use App\Models\ProductVariant;
 use Illuminate\Support\Facades\DB;
@@ -189,6 +190,14 @@ class ProductsController extends Controller
         }
 
         if($product){
+            
+            $product->quantity = 0;
+            $store_product_data = StoreProduct::where('product_id', $product->id)->first();
+            
+            if($store_product_data){
+                $product->quantity = $store_product_data->quantity;
+            } 
+            
             $product_views['product_id'] = $product->id;
             $product_views['ip'] = \Request::getClientIp();
 

@@ -108,7 +108,7 @@
                         <form action="{{route('admin.update.invoice')}}" method="post">
                             @csrf
                             <input type="hidden" name="order_id" value="{{$order->id}}">
-
+  <div class="adm-table">
                         <table class="table table-invoice" >
                             <thead>
                             <tr>
@@ -158,6 +158,7 @@
 
                             </tbody>
                         </table>
+                    </div>    
                         </form>
                         <div class="row">
                             <div class="col-md-8 col-xs-7 payment-method">

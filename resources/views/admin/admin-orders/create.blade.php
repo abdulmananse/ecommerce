@@ -211,6 +211,7 @@
                                 products = _.uniqBy(products);
                                 _el.attr("disabled", true);    
                             } else {
+                                _el.val('').change();
                                 errorMessage('This product is not available for sale');
                             }
                             
