@@ -102,7 +102,33 @@ $(document).ready(function () {
             extend: 'print',
             title: 'Customer Report',
             className: 'btn btn-sm btn-round btn-info',
-            footer: true
+            footer: true,
+            customize: function ( win ) {
+                $(win.document.body)
+                    .css( 'font-size', '10pt' )
+                    .prepend('<div class="row invoice-to">\
+                            <div class="col-md-6 col-sm-6 pull-left">\
+                                <h4>Admin Details:</h4>\
+                                <p>\
+                                    <b>Company Name:</b> The Super Van<br>\
+                                    <b>Phone:</b> +44 141 374 0365<br>\
+                                    <b>Email:</b> info@fonology.co.uk<br>\
+                                    <b>Address:</b> 61c Main Street, Thornliebank<br/> G46 7RX Glasgow, UK.</p>\
+                                </div>\
+                                <div class="col-md-6 col-sm-6 pull-right">\
+                                <h4>Customer Details:</h4>\
+                                <p>\
+                                    <b>Name:</b> Abdul Shakoor<br>\
+                                    <b>Shop Name:</b> Croftfoot Licensed Grocers<br>\
+                                    <b>Phone:</b> 07417539943<br>\
+                                    <b>Address:</b> 497-499 Castlemilk Road, G44 5LX, Croftfoot, Glasgow</p>\
+                            </div>\
+                            <div class="col-md-4 col-sm-5 pull-right"></div></div>');
+
+                $(win.document.body).find( 'table' )
+                    .addClass( 'compact' )
+                    .css( 'font-size', 'inherit' );
+            }
         },{
             extend: 'pdf',
             text: '<span data-toggle="tooltip" title="Export PDF"><i class="fa fa-lg fa-file-pdf-o"></i> PDF</span>',

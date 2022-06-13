@@ -8,7 +8,7 @@
                 <!--breadcrumbs start -->
                 <ul class="breadcrumb">
                     <li><a href="{{ url('admin/dashboard') }}"><i class="fa fa-home"></i> Dashboard</a></li>
-                    <li class="active">Admins</li>
+                    <li class="active">Sale Reps</li>
                 </ul>
                 <!--breadcrumbs end -->
             </div>
@@ -18,10 +18,10 @@
             <div class="col-sm-12">
                 <section class="panel">
                     <header class="panel-heading">
-                        Admins
-                        @can('add admins')
+                        Sale Reps
+                        @can('add sale reps')
                             <span class="tools pull-right">
-                                <a href="{{ url('/admin/admins/create') }}" class="btn btn-info btn-sm" data-toggle="tooltip" title="Add New Admin">
+                                <a href="{{ url('/admin/sale-reps/create') }}" class="btn btn-info btn-sm" data-toggle="tooltip" title="Add New">
                                     <i class="fa fa-plus" aria-hidden="true"></i> Add New
                                 </a>
                              </span>
@@ -33,8 +33,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Role</th>
-                                @can('edit admins')
+                                @can('edit sale reps')
                                 <th>Action</th>
                                 @endcan
                             </tr>
@@ -46,8 +45,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Role</th>
-                                @can('edit admins')
+                                @can('edit sale reps')
                                 <th>Action</th>
                                 @endcan
                             </tr>
@@ -67,12 +65,11 @@
 @section('scripts')
 <script type="text/javascript">
 $("document").ready(function () {
-    var datatable_url = "{{url('admin/admins')}}";
+    var datatable_url = "{{url('admin/sale-reps')}}";
     var datatable_columns = [
         {data: 'name'},
         {data: 'email'},
-        {data: 'role'},
-        @can('edit admins')
+        @can('edit sale reps')
         {data: 'action', orderable: false, searchable: false}
         @endcan        
         ];

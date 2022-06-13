@@ -25,6 +25,19 @@ class User extends Authenticatable
         return $this->first_name.' '.$this->last_name;
     }
     
+    public function getFullNameWithEmailAttribute($value)
+    {
+        return $this->first_name.' '.$this->last_name.' ('.$this->email.')';
+    }
+    
+    public function getWholesalerNameAttribute($value)
+    {
+        if (empty($this->owner_name)) {
+            return $this->first_name.' '.$this->last_name;
+        }
+        return $this->owner_name;
+    }
+    
  public function getAmountSumAttribute(){
    
     return $this->transactions->sum('amount');
@@ -56,7 +69,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'email', 'password','phone', 'type','address'
+        'first_name', 'last_name', 'email', 'password','phone','mobile', 'type','address',
+        'owner_name', 'shop_name', 'town', 'city', 'postal_code', 'notes'
     ];
 
     /**

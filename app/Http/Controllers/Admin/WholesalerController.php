@@ -205,7 +205,12 @@ class WholesalerController extends Controller
                     return '<img width="30" src="' . checkImage('customers/thumbs/' . $customer->profile_image) . '" />';
                 })
                 ->addColumn('action', function ($order) {
-                    return '<a href="orders?type=wholesaler_order&user_id=' . Hashids::encode($order->id) . '" target="_blank" class="btn btn-xs btn-warning">Orders</a> | <a href="' . url('admin/update-status/wholesaler/'.Hashids::encode($order->id)). '"  class="btn btn-xs btn-success"><i class="fa fa-edit"></i></a>';
+                    $action = '';
+                    if(Auth::user()->can('view orders'))
+                        $action .= '<a href="orders?type=wholesaler_order&user_id=' . Hashids::encode($order->id) . '" target="_blank" class="btn btn-xs btn-warning">Orders</a> | ';
+                    
+                    $action .= '<a href="' . url('admin/update-status/wholesaler/'.Hashids::encode($order->id)). '"  class="btn btn-xs btn-success"><i class="fa fa-edit"></i></a>';
+                    return $action;
                 })
                 ->editColumn('id', 'ID: {{$id}}')
                 ->rawColumns(['profile_image', 'action','name','email'])

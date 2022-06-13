@@ -182,6 +182,9 @@ class ProductsController extends Controller
                     case 5:
                         return "Adjustment";
                         break;
+                    case 6:
+                        return "Van Store";
+                        break;
                     default:
                         return "Add Product";
                 }

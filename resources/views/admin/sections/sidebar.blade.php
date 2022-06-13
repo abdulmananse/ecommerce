@@ -26,6 +26,14 @@
                     </a>
                 </li>
                 @endcan
+                @can('view sale reps')
+                <li>
+                    <a  href="{{ url('admin/sale-reps') }}" {{ setActive(['admin/sale-reps']) }}>
+                        <i class="fa fa-users"></i>
+                        <span>Sale Representatives</span>
+                    </a>
+                </li>
+                @endcan
                 @can('view customers')
                 <li>
                     <a  href="{{ url('admin/customers') }}" {{ setActive(['admin/customers']) }}>
@@ -34,30 +42,39 @@
                     </a>
                 </li>
                 @endcan
-
-                        @can('view drop_shipper')
+                @can('view drop_shipper')
                     <li>
                         <a  href="{{ route('admin.shipper.orders')  }}" {{ setActive(['admin/shipper-orders']) }}>
-                            <i class="fa fa-users"></i>
+                            <i class="fa fa-file-text"></i>
                             <span>Invoice</span>
                         </a>
                     </li>
                 @endcan
-                
+                @can('view customer orders')
                 <li>
                     <a  href="{{ url('admin/order-users')  }}" {{ setActive(['admin/order-users']) }}>
                         <i class="fa fa-users"></i>
                         <span>Customers</span>
                     </a>
                 </li>
+                @endcan
+                @can('view quotations')
                 <li>
                     <a  href="{{ url('admin/admin-orders')  }}" {{ setActive(['admin/admin-orders']) }}>
                         <i class="fa fa-shopping-cart"></i>
                         <span>Quotations</span>
                     </a>
                 </li>
-                    
-                @can('view wholesaler')
+                 @endcan  
+                 @can('view van stores')
+                <li>
+                    <a  href="{{ url('admin/van-store')  }}" {{ setActive(['admin/van-store']) }}>
+                        <i class="fa fa-shopping-cart"></i>
+                        <span>Van Store</span>
+                    </a>
+                </li>
+                 @endcan 
+                @can('view retailers')
                     <li>
                         <a  href="{{ route('admin.retailer.orders')  }}" {{ setActive(['admin/retailer-orders']) }}>
                             <i class="fa fa-users"></i>
@@ -106,14 +123,15 @@
                     </a>
                 </li>
                 @endcan
-
+                @can('view user invoices')
                 <li>
                     <a  href="{{ url('admin/get-users') }}" {{ setActive(['admin/get-users']) }}>
                         <i class="fa fa-file-text"></i>
                         <span>User Invoices</span>
                     </a>
                 </li>
-                
+                @endcan
+                @can('view products')
                 <li class="sub-menu">
                     <a href="javascript:void(0);" {{ setActive(['admin/products','admin/categories','admin/subcategories','admin/stores']) }}>
                         <i class="fa fa-shopping-cart"></i>
@@ -129,12 +147,12 @@
                         @can('view categories')
                         <li {{ setActive(['admin/subcategories']) }}><a href="{{ url('admin/subcategories') }}">Sub Categories</a></li>
                         @endcan
-                        @can('view stores')
+                        @can('view stores123')
                         <li {{ setActive(['admin/stores']) }}><a href="{{ url('admin/stores') }}">Stores</a></li>
                         @endcan
                     </ul>
                 </li>
-                
+                @endcan
                 
                 @can('view orders')
                 <li>
@@ -166,7 +184,7 @@
                     </a>
                 </li>
                 @endcan
-                @can('view promotions')
+                @can('view promotions123')
                 <li>
                     <a  href="{{ url('admin/promotions') }}" {{ setActive(['admin/promotions']) }}>
                         <i class="fa fa-bullhorn"></i>
@@ -174,7 +192,7 @@
                     </a>
                 </li>
                 @endcan
-                @can('view_comments')
+                @can('view_comments123')
                     <li>
                         <a  href="{{ url('admin/product-feedback') }}" {{ setActive(['admin/product-feedback']) }}>
                             <i class="fa fa-comments-o"></i>
@@ -182,11 +200,6 @@
                         </a>
                     </li>
                 @endcan
-
-
-
-
-
                 @can('view reports')
                 <li class="sub-menu">
                     <a href="javascript:void(0);" {{ setActive(['admin/reports']) }}>
@@ -202,7 +215,7 @@
                     </ul>
                 </li>
                 @endcan
-                @can('view pages')
+                @can('view pages123')
                 <li>
                     <a  href="{{ url('admin/pages') }}" {{ setActive(['admin/pages']) }}>
                         <i class="fa fa-home"></i>
@@ -210,7 +223,7 @@
                     </a>
                 </li>
                 @endcan
-                @can('view faqs')
+                @can('view faqs123')
                 <li>
                     <a  href="{{ url('admin/faqs') }}" {{ setActive(['admin/faqs']) }}>
                         <i class="fa fa-question-circle"></i>
@@ -218,7 +231,7 @@
                     </a>
                 </li>
                 @endcan
-                @can('view newsletters')
+                @can('view newsletters123')
                 <li class="sub-menu">
                     <a href="javascript:void(0);" {{ setActive(['admin/newsletters','admin/subscribers']) }}>
                         <i class="fa fa-newspaper-o"></i>
@@ -232,38 +245,38 @@
                     </ul>
                 </li>
                 @endcan
-
+                @can('view settings')
                 <li class="sub-menu">
                     <a href="javascript:void(0);" {{ setActive(['admin/brands','admin/shippings','admin/couriers','admin/settings','admin/sliders','admin/currencies','admin/tax-rates','admin/variants','admin/roles','admin/permissions']) }}>
                         <i class="fa fa-cogs"></i>
                         <span>Settings</span>
                     </a>
                     <ul class="sub">
-                        @can('view brands')
+                        @can('view brands123')
                         <li {{ setActive(['admin/brands']) }}><a href="{{ url('admin/brands') }}">Brands</a></li>
                         @endcan
                         @can('view couriers')
                         <li {{ setActive(['admin/couriers']) }}><a href="{{ url('admin/couriers') }}">Couriers</a></li>
                         @endcan
-                        @can('view shippings')
+                        @can('view shippings123')
                         <li {{ setActive(['admin/shippings']) }}><a href="{{ url('admin/shippings') }}">Shippings</a></li>
                         @endcan
-                        @can('view sliders')
+                        @can('view sliders123')
                         <li {{ setActive(['admin/sliders']) }}><a href="{{ url('admin/sliders') }}">Sliders</a></li>
                         @endcan
-                        @can('view currencies')
+                        @can('view currencies123')
                         <li {{ setActive(['admin/currencies']) }}><a href="{{ url('admin/currencies') }}">Currencies</a></li>
                         @endcan
-                        @can('view tax rates')
+                        @can('view tax rates123')
                         <li {{ setActive(['admin/tax-rates']) }}><a href="{{ url('admin/tax-rates') }}">Tax Rates</a></li>
                         @endcan
-                        @can('view attributes')
+                        @can('view attributes123')
                         <li {{ setActive(['admin/variants']) }}><a href="{{ url('admin/variants') }}">Attributes</a></li>
                         @endcan
-                        @can('view roles')
+                        @can('view roles123')
                          <li {{ setActive(['admin/roles']) }}><a href="{{ url('admin/roles') }}">Roles</a></li>
                          @endcan
-                        @can('view permissions')
+                        @can('view permissions123')
                         <li {{ setActive(['admin/permissions']) }}><a href="{{ url('admin/permissions') }}">Permissions</a></li>
                         @endcan
                         @can('view settings')
@@ -271,8 +284,7 @@
                         @endcan
                     </ul>
                 </li>
-
-
+                @endcan
             </ul>
         </div>
         <!-- sidebar menu end-->

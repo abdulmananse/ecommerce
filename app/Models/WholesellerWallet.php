@@ -17,6 +17,10 @@ class WholesellerWallet extends Model
 
     protected $guarded = ['id'];
     
+    protected $fillable = [
+        'user_id', 'order_id','credit','debit'
+    ];
+    
      public function user()
     {
         return $this->belongsToMany(Models\User::class,'user_id');

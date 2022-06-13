@@ -67,7 +67,11 @@
                                 </p>
                                 <h4>Customer Details:</h4>
                                 <p>
+                                    @if(@$user->owner_name)
+                                    <b>Name:</b> {{ @$user->owner_name }}<br>
+                                    @else
                                     <b>Name:</b> {{ @$user->first_name }} {{ @$user->last_name }}<br>
+                                    @endif
                                     @if(@$user->shop_name)
                                         <b>Shop Name:</b> {{ @$user->shop_name }}<br>
                                     @endif

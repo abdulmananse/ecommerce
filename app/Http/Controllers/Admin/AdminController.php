@@ -38,6 +38,9 @@ class AdminController extends Controller
             $admins = Admin::get();
 
             return DataTables::of($admins)
+                ->addColumn('role', function ($admin) {
+                    return $admin->getRoleNames()->first();
+                })  
                 ->addColumn('action', function ($admin) {
                 $action = '';
                 if(Auth::user()->can('edit admins'))
@@ -103,10 +106,15 @@ class AdminController extends Controller
      */
     public function edit($id)
     {
-
+        
         $id = decodeId($id);
 
         $admin = Admin::findOrFail($id);
+        $admin->role = 0;
+        $role = $admin->getRoleNames()->first();
+        if ($role) {
+            $admin->role = $role;
+        }
         $roles = Role::pluck('name','name');
 
         return view('admin.admins.edit', compact('admin','roles'));
@@ -137,8 +145,6 @@ class AdminController extends Controller
             DB::table('model_has_roles')->where('model_id',$id)->delete();
             $admin->assignRole($requestData['role']);
         }
-
-
 
         $admin->update($requestData);
 

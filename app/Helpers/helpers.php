@@ -20,6 +20,8 @@ use App\Models\Shipping;
 use App\Models\Transaction;
 use App\Models\Brand;
 use App\Models\WholesellerWallet;
+use App\Models\VanStoreStockHistory;
+use App\Models\VanStoreProduct;
 
 if (! function_exists('isActiveRoute')) {
 
@@ -1245,7 +1247,7 @@ if (! function_exists('getStoreProductsData')) {
 
 if (! function_exists('updateProductStock')) {
 
-    function updateProductStock($product_id, $store_id)
+    function updateProductStock($product_id, $store_id = 1)
     {
         $stocks = Stock::where('product_id',$product_id)->where('store_id',$store_id)->get();
         if($stocks){
@@ -1261,6 +1263,38 @@ if (! function_exists('updateProductStock')) {
 
 
             $stock_product = StoreProduct::where('product_id',$product_id)->where('store_id',$store_id);
+
+            $stock_data = $stock_product->update(['quantity'=>$quantity]);
+            if($stock_data){
+                $stock_product_data = $stock_product->first();
+                if($stock_product_data->quantity<1){
+                   $stock_product->delete();
+                }
+            }
+        }
+
+    }
+
+}
+
+if (! function_exists('updateVanStoreProductStock')) {
+
+    function updateVanStoreProductStock($product_id, $admin_id)
+    {
+        $stocks = VanStoreStockHistory::where('product_id',$product_id)->where('admin_id', $admin_id)->get();
+        if($stocks){
+            $quantity = 0;
+
+            foreach($stocks as $stock){
+
+                if($stock->stock_type == 1)
+                    $quantity = $quantity + $stock->quantity;
+                elseif($stock->stock_type == 2)
+                    $quantity = $quantity - $stock->quantity;
+            }
+
+
+            $stock_product = VanStoreProduct::where('product_id',$product_id)->where('admin_id', $admin_id);
 
             $stock_data = $stock_product->update(['quantity'=>$quantity]);
             if($stock_data){
@@ -1383,12 +1417,8 @@ if (! function_exists('updateOrderProductsStock')) {
 
 if (! function_exists('updateProductStockByData')) {
 
-
-
     function updateProductStockByData($product_id, $store_id, $quantity, $stock_type, $origin, $order_id = 0, $user_id = 0, $note = NULL)
-
     {
-
         $store_data['order_id'] = $order_id;
         $store_data['product_id'] = $product_id;
         $store_data['store_id'] = $store_id;
@@ -1401,14 +1431,28 @@ if (! function_exists('updateProductStockByData')) {
         $stock = Stock::create($store_data);
         if($stock)
             updateProductStock($product_id, $store_id);
-
+        
     }
-
-
-
 }
 
+if (! function_exists('updateVanStoreProductStockByData')) {
 
+    function updateVanStoreProductStockByData($product_id, $quantity, $stock_type, $origin, $order_id = 0, $admin_id = 0, $note = NULL)
+    {
+        $store_data['order_id'] = $order_id;
+        $store_data['product_id'] = $product_id;
+        $store_data['admin_id'] = $admin_id;
+        $store_data['quantity'] = $quantity;
+        $store_data['stock_type'] = $stock_type;
+        $store_data['origin'] = $origin;
+        $store_data['note'] = $note;
+
+        $stock = VanStoreStockHistory::create($store_data);
+        if($stock)
+            updateVanStoreProductStock($product_id, $admin_id);
+        
+    }
+}
 
 if (! function_exists('find_key_value')) {
 

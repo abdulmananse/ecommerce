@@ -19,6 +19,11 @@ class OrderUserController extends Controller
     
     public $resource = 'admin/order-users';
     
+    public function __construct()
+   {
+        $this->middleware('permission:view customer orders', ['only' => ['index']]);
+    }
+    
     /**
      * Display a listing of the resource.
      *

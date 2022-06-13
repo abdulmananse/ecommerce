@@ -89,7 +89,9 @@
                         </table>
                         
                         <div class="row">
-                            
+                            <div class="col-md-3">
+                                {!! Form::select('payment_method', ['cash' => 'Cash', 'card' => 'Card', 'bank' => 'Bank', '2pay' => '2Pay'], null, ['class' => 'form-control', 'required' => 'required']) !!}
+                            </div>
                             <div class="col-md-4 col-xs-5 invoice-block pull-right">
                                 <ul class="unstyled amounts">
                                     <li style="display: none;">Gross Total: <span class="gross_total">0</span></li>
@@ -172,57 +174,59 @@
             let _el = $(this);
             var _parent = $(this).parents('.product_row');
             var val = this.value;
-            
-            if (_.includes(products, this.value)) {
-                _el.find('option[value=""]').removeAttr("selected");
-                _el.find('option[value=""]').attr("selected", "selected");
-                errorMessage('You have already select this option please select other option');
-                return false;
-            } else {
-                
-                loadingOverlay(_el);
-        
-                $.ajax({
-                    type: "GET",
-                    url: '{{ url("admin/get-product-details")}}' + '/' + val,
-                    dataType: "json",
-                    success: function (data, textStatus, jqXHR) {
-                        if (data.success) {
-                            
-                            var product = data.product;
-                            if (product.quantity && product.quantity.quantity > 0) {
-                                _parent.find(".product_id").val(product.id);
-                                _parent.find(".product_unit_price").attr('data-value', product.price);
-                                _parent.find(".product_unit_price").attr('data-discounted_price', product.discountedPrice);
-                                //_parent.find(".product_unit_price").text(product.price);
-                                _parent.find('.product_price').val(product.price);
-                                
-                                if (typeof product.tax_rate.rate !== "undefined") {
-                                    _parent.find(".product_unit_price").attr('data-tax_rate', product.tax_rate.rate);
+            if (val > 0) {
+                if (_.includes(products, this.value)) {
+                    _el.find('option[value=""]').removeAttr("selected");
+                    _el.find('option[value=""]').attr("selected", "selected");
+                    errorMessage('You have already select this option please select other option');
+                    return false;
+                } else {
+
+                    loadingOverlay(_el);
+
+                    $.ajax({
+                        type: "GET",
+                        url: '{{ url("admin/get-product-details")}}' + '/' + val,
+                        dataType: "json",
+                        success: function (data, textStatus, jqXHR) {
+                            if (data.success) {
+
+                                var product = data.product;
+                                if (product.final_quantity && product.final_quantity > 0) {
+                                    _parent.find(".product_id").val(product.id);
+                                    _parent.find(".product_unit_price").attr('data-value', product.price);
+                                    _parent.find(".product_unit_price").attr('data-discounted_price', product.discountedPrice);
+                                    //_parent.find(".product_unit_price").text(product.price);
+                                    _parent.find('.product_price').val(product.price);
+
+                                    if (typeof product.tax_rate.rate !== "undefined") {
+                                        _parent.find(".product_unit_price").attr('data-tax_rate', product.tax_rate.rate);
+                                    }
+
+                                    _parent.find(".product_quantity").val(1);
+                                    _parent.find(".product_quantity").attr('max', product.final_quantity);
+
+                                    calculateAmount();
+
+                                    var wrapped = _(products).push(val);
+                                    wrapped.commit();
+                                    products = _.uniqBy(products);
+                                    _el.attr("disabled", true);    
+                                } else {
+                                    _el.val('').change();
+                                    errorMessage('This product is not available for sale');
                                 }
-                                
-                                _parent.find(".product_quantity").val(1);
-                                _parent.find(".product_quantity").attr('max', product.quantity.quantity);
-                                
-                                calculateAmount();
-                                
-                                var wrapped = _(products).push(val);
-                                wrapped.commit();
-                                products = _.uniqBy(products);
-                                _el.attr("disabled", true);    
+
+
                             } else {
-                                _el.val('').change();
-                                errorMessage('This product is not available for sale');
+                                errorMessage(data.message);
                             }
-                            
-                            
-                        } else {
-                            errorMessage(data.message);
+                            stopOverlay(_el);
                         }
-                        stopOverlay(_el);
-                    }
-                });
+                    });
+                }
             }
+            
         });
         
         $(document).on('change', '.product_quantity', function (e) {

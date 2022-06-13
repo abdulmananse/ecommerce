@@ -71,7 +71,12 @@
                                 </p>
                                 <h4>Customer Details:</h4>
                                 <p>
+                                    @if(@$user['owner_name'])
+                                    <b>Name:</b> {{ @$user['owner_name'] }}<br>
+                                    @else
                                     <b>Name:</b> {{ @$user['first_name'] }} {{ @$user['last_name'] }}<br>
+                                    @endif
+                                    
                                     @if(@$user['shop_name'])
                                         <b>Shop Name:</b> {{ @$user['shop_name'] }}<br>
                                     @endif
@@ -162,6 +167,7 @@
                         </form>
                         <div class="row">
                             <div class="col-md-8 col-xs-7 payment-method">
+                                <h4>Payment</h4>
                                 @php
                                     $payment_method = @$trans_details['payer'];
                                     $payment_status = 'Pending';
@@ -177,8 +183,13 @@
                                         $tax = number_format($tax,2);
                                     }
                                 @endphp
-
+                                @if($order->payment_method == '2pay')
+                                <p>Payment Method : Wallet</p>
+                                @endif
                                 
+                                @if($order->payment_method != 'none')
+                                <p>Payment Mode : {{ ucwords($order->payment_method) }}</p>
+                                @endif
                             </div>
                             <div class="col-md-4 col-xs-5 invoice-block pull-right">
                                 <ul class="unstyled amounts">

@@ -3,9 +3,11 @@
     <type>org.netbeans.modules.php.project</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/php-project/1">
-            <name>Ecommerce</name>
+            <name>Van</name>
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>endcan</word>
+            <word>endif</word>
             <word>php</word>
         </spellchecker-wordlist>
     </configuration>

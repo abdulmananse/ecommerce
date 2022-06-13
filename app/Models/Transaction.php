@@ -9,7 +9,9 @@ class Transaction extends Model
     protected $fillable = [
         'user_id',
         'paypal_id',
+        'payment_method',
         'cart_id',
+        'admin_id',
         'parent_id',
         'qty',
         'cost',

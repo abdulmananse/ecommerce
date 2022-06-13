@@ -14,7 +14,6 @@ use App\Models\Courier;
 use App\Models\VanStoreProduct;
 use App\Models\ShoppingCart;
 use App\Models\ShoppingCartHistory;
-use App\Models\WholesellerWallet;
 use Illuminate\Http\Request;
 use Session, Hashids, DataTables;
 use App\Models\Email;
@@ -24,10 +23,10 @@ use function foo\func;
 use Carbon\Carbon;
 use Log;
 
-class AdminOrderController extends Controller
+class VanStoreController extends Controller
 {
 
-    public $resource = 'admin/admin-orders';
+    public $resource = 'admin/van-store';
 
     /**
      * Display a listing of the resource.
@@ -36,112 +35,17 @@ class AdminOrderController extends Controller
      */
     public function index(Request $request)
     {   
-        
+        $adminId = Auth::guard('admin')->id();
         if ($request->ajax()) {
 
-            $id = $request->input('user_id');
-            $orders = Transaction::with(['cart'])->where('type', 'admin_order')->dateFilter();
-            
-            $admin = Auth::user();
-            if ($admin->hasRole(2)) {
-                $orders =$orders->where('admin_id', $admin->id);
-            }
-            
-            if ($id) {
-                $user_id = decodeId($id);
+            $products = VanStoreProduct::with('product')->where('admin_id', $adminId);
 
-                $orders =$orders->whereUserId($user_id)->orderBy('id', 'desc');
-            } else {
-                $orders =$orders->orderBy('id', 'desc');
-            }
-
-            return Datatables::of($orders->get())
-                ->addColumn('orders_details', function ($order) {
-                    return '<span class="details-control"></span>';
-                })
-                ->addColumn('username', function ($order) {
-                    $username = '';
-                    if ($order->cart) {
-                        $user = unserialize($order->cart->user_details);
-                        $username = @$user["first_name"].' '.@$user["last_name"];
-                        if (!empty(@$user['owner_name'])) {
-                            $username = $user['owner_name'];
-                        }
-                    }
-                    
-                    return $username;
-                })
-                ->addColumn('orderId', function ($order) {
-                    return '<u><a href="admin-orders/' . Hashids::encode($order->id) . '" class="text-success btn-order" data-toggle="tooltip" title="View Invoice">'. $order->id . '</a></u>';
-                })
-                ->addColumn('amount', function ($order) {
-                    $color ='';
-                    if($order['is_latest']){
-                        $color='red';
-                    }else{
-                        $color ='black';
-                    }
-                    $amount = $order->amount > 0 ? $order->amount : 0;
-                    return "<a style='color: $color'>".'£'.".$amount</a>";
-                })
-                ->addColumn('barcode_image', function ($order) {
-                    $user =  User::where('id',$order->user_id)->first();
-
-                    if($user and $order->label_image and $user->type !='wholesaler'){
-                        return '<a href="'.url($order->label_image).'" download><img src="'.url($order->label_image).'" alt="'.$order->label_image.'" width="100" height="200"></a>';
-                    }else{
-                        return '';
-                    }
-                })
-                ->addColumn('status', function ($order) {
-
-                        $options = '<option value="">Select Status</option>';
-
-
-                         $cartid=$order->cart['id'];
-                         $transaction_id = $order->id;
-                        foreach (['pending','dispatched','delivered'] as $value){
-                             $selected ='';
-                             if($value ==='pending'){
-                                  $selected = ($order->cart and $order->cart->delivery_status == "pending") ? "selected" : "";
-
-                             }
-
-                             if ($value ==='dispatched'){
-                                 $selected = ($order->cart and $order->cart->delivery_status == "dispatched") ? "selected" : "";
-
-                             }
-
-                             if($value ==='delivered'){
-                                   $selected = ($order->cart and $order->cart->delivery_status == "delivered") ? "selected" : "";
-                             }
-
-                            $options.=' <option   '.$selected.' value='.$value.'>'.$value.'</option>';
-                        }
-
-                      return '<select name="status" class="status_update" data-id='.$cartid.' data-transaction-id='.$transaction_id.'>
-                               ' . $options . '
-                            </select>';
-
-                })
+            return Datatables::of($products)
                 ->addColumn('action', function ($order) {
-                    $label='';
-                    if($order->label_image){
-                        $label = url($order->label_image);
-                    }
                     $action = '';
-
-                    $action .='<a href="admin-orders/' . Hashids::encode($order->id) . '" class="text-success btn-order" data-toggle="tooltip" title="View Quotation"><i class="fa fa-eye fa-lg"></i></a>';
-                    $action .='<a href="admin-orders/quotation/' . Hashids::encode($order->id) . '" class="text-primary btn-order" data-toggle="tooltip" title="Generate Invoice"><i class="fa fa-file fa-lg"></i></a>';
-                    $action .='<a href="' .url('admin/update-status-order/'.Hashids::encode($order->id) ). '" class="text-success btn-order" data-toggle="tooltip" title="Update Status"><i class="fa fa-edit"></i></a>';
-                    // $action .='<a href="' .url('admin/update-delivery-status/'.Hashids::encode($order->cart_id) ). '" class="text-success btn-order" data-toggle="tooltip" title="Update Delivery Status"><i class="fa fa-edit"></i></a>';
-
-                    if(!empty($label)){
-                        $action .='|<a href="javascript:void(0)" image-url="'.$label.'" class="text-success bt-download" data-toggle="tooltip" title="Download"><i class="fa fa-print fa-lg"></i></a>';
-                    }
                     return $action;
                 })
-                ->rawColumns(['discounted_price','amount', 'orders_details', 'orderId', 'email', 'status', 'action','barcode_image','courier_service'])
+                ->rawColumns(['action'])
                 ->make(true);
         }
 
@@ -155,7 +59,7 @@ class AdminOrderController extends Controller
      */
     public function create()
     {
-        $customers = User::where('type', 'wholesaler')->get()->pluck('wholesaler_name', 'id')->prepend('Select Customer', '');
+        $customers = OrderUser::pluck('owner_name', 'id')->prepend('Select Customer', '');
         $products = Product::has('quantity')->pluck('name', 'id')->prepend('Select Product', '');
         
         return view($this->resource . '/create', get_defined_vars());
@@ -170,120 +74,37 @@ class AdminOrderController extends Controller
      */
     public function store(Request $request)
     {
-        $paymentMethod = 'none';
-        if ($request->filled('payment_method')) {
-            $paymentMethod = $request->payment_method;
-        }
-        $customerId = $request->customer_id;
-        $customer = User::find($customerId);
-        $admin = Auth::user();
-        $cartData['user_id'] = $customerId;
-        if ($customer) {
-            $cartData['user_details'] = serialize($customer->toArray());
-        }
-        
+        $adminId = Auth::guard('admin')->id();
         $productQuantity = $request->product_quantity;
-        $productPrice = $request->product_price;
-        $productData = [];
-        $historyData = array();
-        $tax        = 0;
-        $cost       = 0;
-        $discount   = 0;
-        $totalQty   = 0;
-        $totalAmount   = 0;
         foreach($request->product_id as $key => $productId) {
             $product = Product::with('tax_rate')->find($productId);
             if ($product) {
-                //$price = $product->price;
-                $price = isset($productPrice[$key]) ? $productPrice[$key] : $product->price;
-                
                 $qty = isset($productQuantity[$key]) ? $productQuantity[$key] : 1;
-                $taxRate = getVatCharges(); //$product->tax_rate
-                if ($taxRate > 0) {
-                    $tax = ($tax + (($taxRate / 100) * $price) * $qty);
-                }
-                $cost       = ($cost + ($price * $qty));
-                $discount   = $discount + (($price - $product->discountedPrice) * $qty);
-                $totalQty = $totalQty + $qty;
-                
-                $productData[] = [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'price' => $price, //$product->discountedPrice,
-                    'quantity' => $qty,
-                ];
-                
-                $input['product_id']            = $product->id;
-                $input['quantity']              = $qty;
-                $input['amount_per_item']       = $price; //$product->discountedPrice;
-                $input['created_at']            = Carbon::now();
-                $input['updated_at']            = Carbon::now();
-                array_push($historyData, $input);
-            }
-        }
-        
-        $cartData['cart_details'] = serialize($productData);
-        $cartData['payment_status'] = 'pending';
-        $cartData['delivery_status'] = 'pending';
-        
-        $shoppingCart = ShoppingCart::create($cartData);
-        if ($shoppingCart) {
-            
-            //$totalAmount = ($cost - $discount) + $tax;
-            $totalAmount = $cost;
-            
-            $transaction['user_id']   = $customerId;
-            $transaction['cart_id']   = $shoppingCart->id;
-            $transaction['qty']       = $totalQty;
-            $transaction['cost']      = number_format($cost, 2);
-            $transaction['discount']  = number_format($discount, 2);
-            $transaction['tax']       = number_format($tax, 2);
-            $transaction['paypal_id'] = 0;
-            $transaction['payment_method'] = $paymentMethod;
-            $transaction['amount']    = number_format($totalAmount, 2);
-            $transaction['is_latest']  = 1;
-            $transaction['trans_details']  = null;
-            $transaction['type']  = 'admin_order';
-            if ($admin->hasRole(2)) {
-                $transaction['admin_id']  = $admin->id;
-            }
-            // create transaction
-            $transaction = Transaction::create($transaction);
-            
-            if ($transaction) {
-                $historyData = collect($historyData);
-                $historyData = $historyData->map(function ($item) use ($transaction) {
-                    $item['transaction_id'] = $transaction->id;
-                    
-                    $admin = Auth::user();
-                    if ($admin->hasRole(1)) {
-                        // remove product quantity from main store
-                        updateProductStockByData($item['product_id'], 1, $item['quantity'], 2, 3, $transaction->id, $transaction->user_id, 'Quotation created by admin');
-                    }
-                    if ($admin->hasRole(2)) {
-                        // remove product quantity to van store
-                        updateVanStoreProductStockByData($item['product_id'], $item['quantity'], 2, 3, $transaction->id, $admin->id, 'Quotation created by van store');
-                    }
-                    
-                    return $item;
-                });
-                ShoppingCartHistory::insert($historyData->toArray()); 
+                $productExist = VanStoreProduct::where([
+                    'admin_id' => $adminId,
+                    'product_id' => $productId,
+                ])->first();
                 
                 
-                if ($paymentMethod == '2pay') {
-                    WholesellerWallet::create([
-                        'debit' => $transaction->amount,
-                        'user_id' => $customerId,
-                        'order_id' => $transaction->id,
+                if ($productExist) {
+                    $productExist->update(['quantity' => ($productExist->quantity + $qty)]);
+                } else {
+                    VanStoreProduct::create([
+                        'admin_id' => $adminId,
+                        'product_id' => $productId,
+                        'quantity' => $qty,
                     ]);
                 }
-                
+                // remove product quantity from main store
+                updateProductStockByData($productId, 1, $qty, 2, 6, 0, $adminId, 'Product move to store van');
+                // Add product quantity to van store
+                updateVanStoreProductStockByData($productId, $qty, 1, 1, 0, $adminId, 'Add Product');
             }
         }
         
         return response()->json([
             'success'  => true,
-            'message'  => 'Quotation successfully created'
+            'message'  => 'Products successfully created'
         ], $this->successStatus);
     }
 
@@ -432,22 +253,7 @@ class AdminOrderController extends Controller
     public function getProductDetails($id)
     {
         $product = Product::with('quantity', 'tax_rate')->find($id);
-        $product->final_quantity = 0;
-        
-        $admin = Auth::user();
-        if ($admin->hasRole(1)) {
-            if ($product->quantity) {
-                $product->final_quantity = $product->quantity->quantity;
-            }
-        }
-        if ($admin->hasRole(2)) {
-            $vsp = VanStoreProduct::where(['product_id' => $id, 'admin_id' => $admin->id])->first();
-            if ($vsp) {
-                $product->final_quantity = $vsp->quantity;
-            }
-        }
-        
-        if ($product) { 
+        if ($product) {
             return response()->json([
                 'success'  => true,
                 'product'  => $product

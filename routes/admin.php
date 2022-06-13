@@ -38,6 +38,9 @@ Route::group(['namespace' => 'Admin'], function () {
     Route::post('update-invoice','OrdersController@updateInvoice')->name('update.invoice');
     Route::get('products/make-copy/{product_id}','ProductsController@makeCopy');
     
+    Route::resource('van-store','VanStoreController');
+    Route::get('get-van-store-product-row', 'VanStoreController@getProductRow');
+    
     Route::resource('manage-stocks', 'StockController');
     Route::get('get-store-products', 'StockController@getStoreProducts');
 
@@ -63,6 +66,7 @@ Route::group(['namespace' => 'Admin'], function () {
     Route::resource('promotions', 'PromotionController');
 
     Route::resource('admins', 'AdminController');
+    Route::resource('sale-reps', 'SaleRepController');
     Route::get('profile', 'ProfileController@index');
 
     Route::get('get-users', 'ProfileController@getInvoiceList');
@@ -134,7 +138,10 @@ Route::group(['namespace' => 'Admin'], function () {
 
     Route::get('update-status/{name}/{id?}', 'AdminController@updateStatusPayment');
     Route::get('update-status-order/{id}', 'AdminController@updateStatusOrder');
-     Route::get('update-delivery-status/{id}', 'AdminController@updateDeliveryStatus');
+    Route::get('update-delivery-status/{id}', 'AdminController@updateDeliveryStatus');
+    
+    Route::get('send-email', 'HomeController@sendEmailView');
+    Route::post('send-email', 'HomeController@sendEmail');
 
 });
 
