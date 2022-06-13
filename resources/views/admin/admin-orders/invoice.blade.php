@@ -184,7 +184,7 @@
                                     }
                                 @endphp
                                 @if($order->payment_method == '2pay')
-                                <p>Payment Method : Wallet</p>
+                                <p>Payment Method : Wallet</p> 
                                 @endif
                                 
                                 @if($order->payment_method != 'none')

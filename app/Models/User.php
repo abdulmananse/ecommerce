@@ -32,10 +32,14 @@ class User extends Authenticatable
     
     public function getWholesalerNameAttribute($value)
     {
+        $shopName = '';
         if (empty($this->owner_name)) {
             return $this->first_name.' '.$this->last_name;
         }
-        return $this->owner_name;
+        if (!empty($this->shop_name)) {
+            $shopName = ' (' . $this->shop_name . ')';
+        }
+        return $this->owner_name . $shopName;
     }
     
  public function getAmountSumAttribute(){

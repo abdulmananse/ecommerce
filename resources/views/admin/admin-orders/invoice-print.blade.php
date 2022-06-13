@@ -148,6 +148,7 @@
                     </div>    
                         <div class="row">
                             <div class="col-md-8 col-xs-7 payment-method">
+                                <h4>Payment</h4>
                                 @php
                                     $payment_method = @$trans_details['payer'];
                                     $payment_status = 'Pending';
@@ -158,7 +159,14 @@
                                         $payment_class = 'label-success';
                                     }
                                 @endphp
-
+                                
+                                @if($order->payment_method == '2pay')
+                                <p>Payment Method : Wallet</p>
+                                @endif
+                                
+                                @if($order->payment_method != 'none')
+                                <p>Payment Mode : {{ ucwords($order->payment_method) }}</p>
+                                @endif
                             </div>
                             <div class="col-md-4 col-xs-5 invoice-block pull-right">
                                 <ul class="unstyled amounts">

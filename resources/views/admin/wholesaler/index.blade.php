@@ -33,7 +33,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Company Name</th>
+                                <th>Shop Name</th>
                                 <th>Contact #</th>
                                   <th>Address</th>
                                 <th>Cost Percentage</th>
@@ -51,7 +51,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Company Name</th>
+                                <th>Shop Name</th>
                                 <th>Contact #</th>
                                  <th>Address</th>
                                 <th>Cost Percentage</th>
@@ -109,7 +109,7 @@ $("document").ready(function () {
     var datatable_columns = [
         {data: 'name'},
         {data: 'email'},
-        {data: 'company_name'},
+        {data: 'shop_name'},
         {data: 'phone'},
          {data: 'address'},
         {data: 'percentage_1'},

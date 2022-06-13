@@ -270,7 +270,7 @@ class AdminOrderController extends Controller
                 ShoppingCartHistory::insert($historyData->toArray()); 
                 
                 
-                if ($paymentMethod == '2pay') {
+                if ($paymentMethod == '2pay') { 
                     WholesellerWallet::create([
                         'debit' => $transaction->amount,
                         'user_id' => $customerId,
