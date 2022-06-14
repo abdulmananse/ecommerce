@@ -604,6 +604,13 @@ class AdminOrderController extends Controller
         Transaction::where('id',\request()->order_id)->update(['updated_columns' => json_encode($data)]);
         return back()->with('success','Successfully updated');
     }
+    
+    public function getWalletAmount($id)
+    {
+        $walletAmount = 'Wallet: £0.00';
+        
+        return '<a href="'. url("admin/orders?type=admin_order&payment_method=2pay&user_id=" . Hashids::encode($id)) .'" target="_blank">Wallet: £'.number_format(getWholsellerDataWallet($id), 2).'</a>';
+    }
 
 
 }

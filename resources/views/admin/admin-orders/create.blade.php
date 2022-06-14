@@ -43,8 +43,11 @@
                                 <h4>Customer:</h4>
                                 <p>
                                     <div class="col-md-6">
-                                        {!! Form::select('customer_id', $customers, null, ['class' => 'form-control select2', 'required' => 'required']) !!}
+                                        {!! Form::select('customer_id', $customers, null, ['class' => 'form-control select2 customer_id', 'required' => 'required']) !!}
                                         <label id="customer_id-error" class="error" for="customer_id"></label>
+                                    </div>
+                                    <div class="col-md-6 customer_wallet" style="display:none;">
+                                        <label></label>
                                     </div>
                                 </p>
                             </div>
@@ -63,6 +66,7 @@
                                 <th>Item Description</th>
                                 <th class="text-center">Unit Price</th>
                                 <th class="text-center">Quantity</th>
+                                <th class="text-center">Total Quantity</th>
                                 <th class="text-center">Total</th>
                                 <th class="text-center"><i class="btn btn-sm fa fa-plus loadRow text-success"></i></th>
                             </tr>
@@ -82,6 +86,7 @@
                                         <input required type='number' style='width:50px' name='product_quantity[]' class='product_quantity' value="1" step="1" min="1" />
                                         <label id="product_quantity[0]-error" class="error" for="product_quantity[0]"></label>
                                     </td>
+                                    <td class="text-center quantity_total">0</td>
                                     <td class="text-center product_total">0</td>
                                     <td class="text-center"><i class="btn btn-sm fa fa-close removeRow text-danger"></td>
                                 </tr>
@@ -169,6 +174,31 @@
             loadNewStatRow($(this));
         });
         
+        $(document).on('change', '.customer_id', function (e) {
+            
+            let _el = $(this);
+            var val = this.value;
+            
+            if (val>0) {
+                loadingOverlay($(".customer_wallet"));
+                $.ajax({
+                    type: "GET",
+                    url: '{{ url("admin/get-wallet-amount")}}' + '/' + val,
+                    dataType: "json",
+                    complete: function (data, textStatus, jqXHR) {
+                        console.log(data.responseText);
+                        $(".customer_wallet").show();
+                        $(".customer_wallet label").html(data.responseText);
+                        stopOverlay($(".customer_wallet"));
+                    }
+                });
+            } else {
+                $(".customer_wallet").hide();
+                $(".customer_wallet label").text('Wallet: £00.0');
+            }
+            
+        });
+        
         $(document).on('change', '.products', function (e) {
             
             let _el = $(this);
@@ -205,6 +235,7 @@
 
                                     _parent.find(".product_quantity").val(1);
                                     _parent.find(".product_quantity").attr('max', product.final_quantity);
+                                    _parent.find(".quantity_total").text(product.final_quantity);
 
                                     calculateAmount();
 

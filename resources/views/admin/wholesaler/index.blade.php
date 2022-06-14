@@ -8,7 +8,7 @@
                 <!--breadcrumbs start -->
                 <ul class="breadcrumb">
                     <li><a href="{{ url('admin/dashboard') }}"><i class="fa fa-home"></i> Dashboard</a></li>
-                    <li class="active">Wholesaler</li>
+                    <li class="active">Shopkeepers</li>
                 </ul>
                 <!--breadcrumbs end -->
             </div>
@@ -18,12 +18,12 @@
             <div class="col-sm-12">
                 <section class="panel">
                     <header class="panel-heading">
-                        Wholesaler
+                        Shopkeepers
                         @can('add wholesaler')
                             <span class="tools pull-right">
-<!--                                <a href="{{ url('/admin/wholesaler/create') }}" class="btn btn-info btn-sm" data-toggle="tooltip" title="Add New Wholesaler">
+                                <a href="{{ url('/admin/wholesaler/create') }}" class="btn btn-info btn-sm" data-toggle="tooltip" title="Add New Shopkeeper">
                                     <i class="fa fa-plus" aria-hidden="true"></i> Add New
-                                </a>-->
+                                </a>
                              </span>
                         @endcan
                     </header>

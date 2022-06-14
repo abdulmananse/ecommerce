@@ -26,7 +26,7 @@ class OrdersController extends Controller
 
     public function __construct()
     {
-        $this->middleware('permission:view orders', ['only' => ['index']]);
+        //$this->middleware('permission:view orders', ['only' => ['index']]);
         $this->middleware('permission:change order status', ['only' => ['changStatus']]);
         $this->middleware('permission:view order invoice', ['only' => ['show']]);
         $this->middleware('permission:change order invoice courier', ['only' => ['updateProductCourier']]);
@@ -46,9 +46,12 @@ class OrdersController extends Controller
             $type = ($request->filled('type')) ? $request->type : 'customer_order';
             
             $orders = Transaction::with(['cart.user', 'purchasedItems.product.product_images'])->where('type', $type)->dateFilter();
+            if ($request->filled('payment_method')) {
+                $orders->where('payment_method', $request->payment_method);
+            }
+            
             if ($id) {
                 $user_id = decodeId($id);
-
                 $orders =$orders->whereUserId($user_id)->orderBy('id', 'desc');
             } else {
                 $orders =$orders->orderBy('id', 'desc');

@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-lg-12">
         <section class="panel">
-            <header class="panel-heading">Wholesaler</header>
+            <header class="panel-heading">Shopkeeper</header>
             <div class="panel-body">
                 <div class="position-center" style="width:65%;">
 
@@ -33,15 +33,15 @@
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
-                    <div class="form-group {{ $errors->has('company_name') ? 'has-error' : ''}}">
-                        {!! Form::label('company_name', 'Company Name', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
+                    <div class="form-group {{ $errors->has('shop_name') ? 'has-error' : ''}}">
+                        {!! Form::label('shop_name', 'Shop Name', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
-                            {!! Form::text('company_name', null, ['class' => 'form-control','placeholder' => 'Company Name']) !!}
-                            {!! $errors->first('company_name', '<p class="help-block">:message</p>') !!}
+                            {!! Form::text('shop_name', null, ['class' => 'form-control','placeholder' => 'Shop Name']) !!}
+                            {!! $errors->first('shop_name', '<p class="help-block">:message</p>') !!}
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
-                    <div class="form-group {{ $errors->has('vat_number') ? 'has-error' : ''}}">
+                    <div class="hidden form-group {{ $errors->has('vat_number') ? 'has-error' : ''}}">
                         {!! Form::label('vat_number', 'Vat #', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
                             {!! Form::text('vat_number', null, ['class' => 'form-control','placeholder' => 'Vat #']) !!}
@@ -58,7 +58,7 @@
                         </div>
 
                     </div>
-                    <div class="form-group  {{ $errors->has('quantity_1') ? 'has-error' : ''}}">
+                    <div class="hidden form-group  {{ $errors->has('quantity_1') ? 'has-error' : ''}}">
                         {!! Form::label('quantity_1', 'Quantity & Cost (%) 1', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
                             <div class="col-lg-6 col-md-6 col-sm-6">
@@ -73,7 +73,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group  {{ $errors->has('quantity_2') ? 'has-error' : ''}}">
+                    <div class="hidden form-group  {{ $errors->has('quantity_2') ? 'has-error' : ''}}">
                         {!! Form::label('quantity_2', 'Quantity & Cost (%) 2', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
                             <div class="col-lg-6 col-md-6 col-sm-6">
@@ -88,7 +88,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group  {{ $errors->has('quantity_3') ? 'has-error' : ''}}">
+                    <div class="hidden form-group  {{ $errors->has('quantity_3') ? 'has-error' : ''}}">
                         {!! Form::label('quantity_3', 'Quantity & Cost (%) 3', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
                             <div class="col-lg-6 col-md-6 col-sm-6">
@@ -103,7 +103,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group {{ $errors->has('mark_up') ? 'has-error' : ''}}">
+                    <div class="hidden form-group {{ $errors->has('mark_up') ? 'has-error' : ''}}">
                         {!! Form::label('mark_up', 'Markup', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
                             {!! Form::number('mark_up', null, ['class' => 'form-control','placeholder' => 'Markup','min' => '0']) !!}

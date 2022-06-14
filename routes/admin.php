@@ -142,6 +142,8 @@ Route::group(['namespace' => 'Admin'], function () {
     
     Route::get('send-email', 'HomeController@sendEmailView');
     Route::post('send-email', 'HomeController@sendEmail');
-
+    
+    
+    Route::get('get-wallet-amount/{id}','AdminOrderController@getWalletAmount');
 });
 

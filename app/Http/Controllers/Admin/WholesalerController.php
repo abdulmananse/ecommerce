@@ -102,7 +102,7 @@ class WholesalerController extends Controller
 
        $user = User::create($requestData);
 
-        Session::flash('success', 'Wholesaler added!');
+        Session::flash('success', 'Shopkeeper added!');
 
         return redirect('admin/wholesaler');
     }
@@ -148,7 +148,7 @@ class WholesalerController extends Controller
         $user = User::findOrFail($id);
         $user->update($requestData);
 
-        Session::flash('success', 'Wholesaler updated!');
+        Session::flash('success', 'Shopkeeper updated!');
 
         return redirect('admin/wholesaler');
     }
@@ -168,10 +168,10 @@ class WholesalerController extends Controller
 
         if($user){
             $user->delete();
-            $response['message'] = 'Wholesaler deleted!';
+            $response['message'] = 'Shopkeeper deleted!';
             $status = $this->successStatus;
         }else{
-            $response['message'] = 'Wholesaler not exist against this id!';
+            $response['message'] = 'Shopkeeper not exist against this id!';
             $status = $this->errorStatus;
         }
 

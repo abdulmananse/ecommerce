@@ -9,7 +9,7 @@
                 <!--breadcrumbs start -->
                 <ul class="breadcrumb">
                     <li><a href="{{ url('admin/dashboard') }}"><i class="fa fa-home"></i> Dashboard</a></li>
-                    <li><a href="{{ url('admin/wholesaler') }}">Wholesaler</a></li>
+                    <li><a href="{{ url('admin/wholesaler') }}">Shopkeepers</a></li>
                     <li class="active">Add</li>
                 </ul>
                 <!--breadcrumbs end -->
