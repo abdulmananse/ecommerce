@@ -87,4 +87,9 @@ class HomeController extends Controller
         Session::flash('success', 'Email successfully sent!');
         return redirect('admin/send-email');
     }
+    
+    public function profitCalculator(Request $request)
+    {
+        return view('admin.profit-calculator');
+    }
 }

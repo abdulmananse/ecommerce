@@ -786,12 +786,14 @@ class CartController extends Controller
 
             $tax        = 0;
             $cost       = 0;
+            $tCost       = 0;
             $discount   = 0;
             foreach($cartContents as $row){
                 $product = Product::with('tax_rate')->findOrFail($row->id);
 
                 $qty        = $row->quantity;
                 $tax        = ($tax + (($product->tax_rate->rate / 100) * $product->price) * $qty);
+                $tCost = ($tCost + ($product->cost * $qty));
                 $cost       = ($cost + ($product->cost * $qty));
                 $discount   = $discount + (($product->price - $product->discountedPrice) * $qty);
 
@@ -803,6 +805,7 @@ class CartController extends Controller
             $transaction['cart_id']   = $data->id;
             $transaction['qty']       = $totalQty;
             $transaction['cost']      = $cost;
+            $transaction['cost_of_goods'] = $tCost;
             $transaction['discount']  = $request->discount;
             $transaction['tax']       = $request->vat_amount;
             $transaction['paypal_id'] = $request->trans_id;
@@ -943,12 +946,14 @@ class CartController extends Controller
 
             $tax        = 0;
             $cost       = 0;
+            $tCost       = 0;
             $discount   = 0;
             foreach($cartContents as $row){
                 $product = Product::with('tax_rate')->findOrFail($row->id);
 
                 $qty        = $row->quantity;
                 $tax        = ($tax + (($product->tax_rate->rate / 100) * $product->price) * $qty);
+                $tCost = ($tCost + ($product->cost * $qty));
                 $cost       = ($cost + ($product->cost * $qty));
                 $discount   = $discount + (($product->price - $product->discountedPrice) * $qty);
 
@@ -968,6 +973,7 @@ class CartController extends Controller
             $transaction['cart_id']   = $data->id;
             $transaction['qty']       = $totalQty;
             $transaction['cost']      = $cost;
+            $transaction['cost_of_goods']      = $tCost;
             $transaction['discount']  = $request->discount;
             $transaction['tax']       = $request->vat_amount;
             $transaction['paypal_id'] = $walletId->id;

@@ -44,7 +44,9 @@ class SaleRepController extends Controller
                         $action .= '<a href="sale-reps/'. Hashids::encode($admin->id).'/edit" class="text-primary" data-toggle="tooltip" title="Edit Sale Rep"><i class="fa fa-lg fa-edit"></i></a>';
                     if(Auth::user()->can('delete sale reps'))
                         $action .= '<a href="sale-reps/'.Hashids::encode($admin->id).'" class="text-danger btn-delete" data-toggle="tooltip" title="Delete Sale Rep" ><i class="fa fa-lg fa-trash"></i></a>';
-                
+                    if(Auth::user()->can('login sale reps'))
+                        $action .= '<a href="login-sale-reps/'.Hashids::encode($admin->id).'" class="text-primary" data-toggle="tooltip" title="Login as Sale Rep" ><i class="fa fa-sign-in fa-lg"></i></a>';
+                    
                     return $action;
                 })
                 ->editColumn('id', 'ID: {{$id}}')
@@ -146,7 +148,7 @@ class SaleRepController extends Controller
      */
     public function destroy($id)
     {
-        $id = decodeId($id)[0];
+        $id = decodeId($id);
 
         $admin = Admin::find($id);
 
@@ -161,5 +163,22 @@ class SaleRepController extends Controller
 
         return response()->json(['result'=>$response], $status);
 
+    }
+    
+    /**
+     * User login
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function login($id)
+    {
+        session(['back_to_admin' => Auth::guard('admin')->id()]);
+        
+        $id = decodeId($id);
+        Auth::guard('admin')->loginUsingId($id);
+        
+        Session::flash('success', 'Successfully login as sale reps!');
+        return redirect()->route('admin.home');
     }
 }

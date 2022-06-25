@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 
 use App\Country;
+use App\Admin;
 use App\User;
 use App\Models\Stock;
 use App\Models\Store;
@@ -732,6 +733,14 @@ if (! function_exists('registeredUsers')) {
 
 }
 
+if (! function_exists('totalShopkeepers')) {
+    function totalShopkeepers()
+    {
+        $user = User::where('type', 'wholesaler')->count();
+        return number_format($user);
+    }
+}
+
 
 
 if (! function_exists('allRecords')) {
@@ -931,6 +940,28 @@ if (! function_exists('totalSales')) {
 
         $orders = Transaction::count();
         return number_format($orders);
+
+    }
+}
+
+if (! function_exists('totalStockWorth')) {
+    function totalStockWorth()
+    {
+        $total = 0;
+        $products = Product::with('store_products')->has('store_products')->get();
+        foreach($products as $product) {
+            $total = $total + $product->store_products->sum('quantity')*$product->price;
+        }
+        return number_format($total);
+
+    }
+}
+
+if (! function_exists('totalSaleReps')) {
+    function totalSaleReps()
+    {
+        $saleReps = Admin::role(2)->count();
+        return $saleReps;
 
     }
 }
@@ -1893,4 +1924,25 @@ if(!function_exists('numberFormatToFloat')){
     function numberFormatToFloat($number){
         return filter_var($number, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
     }
+}
+
+
+/**
+* Get Role Name
+*
+* @return mix
+*/
+if (!function_exists('roleName')) {
+
+    function roleName()
+    {
+        $roleName = '';
+        $user = Auth::guard('admin')->user();
+        if (@$user->getRoleNames()->first()) {
+            $roleName = $user->getRoleNames()->first();
+        }
+            
+        return $roleName;
+    }
+
 }

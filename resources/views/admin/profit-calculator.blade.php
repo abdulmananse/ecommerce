@@ -18,7 +18,7 @@
             <div class="col-md-12">
                 <!--breadcrumbs start -->
                 <ul class="breadcrumb">
-                    <li class="active"><i class="fa fa-home"></i> Dashboard</li>
+                    <li class="active"><i class="fa fa-home"></i> Profit Calculator</li>
                 </ul>
                 <!--breadcrumbs end -->
             </div>
@@ -28,23 +28,23 @@
             <div class="col-sm-12">
                 <section class="panel">
                     <header class="panel-heading">
-                        Retail Dashboard
+                        Profit Calculator
                         <span class="pull-right">
                             <div id="reportrange" class="pull-right report-range">
                                 <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;
                                 <span></span> <b class="caret"></b>
                             </div>
                         </span>
-                        <!-- {!! getStoreDropdownHtml() !!} -->
                     </header>
                     <div class="panel-body retail-dashboard">
+                        
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="mini-stat clearfix">
                                     <span class="mini-stat-icon pink"><i class="fa fa-money"></i></span>
                                     <div class="mini-stat-info" data-toggle="tooltip" title="Total income from products sold">
                                         <span id="total_income">0</span>
-                                        TOTAL PROFIT
+                                        Total PROFIT/LOSS
                                     </div>
                                 </div>
                             </div>  
@@ -53,7 +53,7 @@
                                     <span class="mini-stat-icon orange"><i class="fa fa-shopping-cart"></i></span>
                                     <div class="mini-stat-info" data-toggle="tooltip" title="Total sales in this time period">
                                         <span id="total_sales">0</span>
-                                        TOTAL SALE
+                                        Total SALE
                                     </div>
                                 </div>
                             </div>
@@ -68,7 +68,16 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="mini-stat clearfix">
-                                    <span class="mini-stat-icon tar"><i class="fa fa-money"></i></span>
+                                    <span class="mini-stat-icon orange"><i class="fa fa-shopping-cart"></i></span>
+                                    <div class="mini-stat-info" data-toggle="tooltip" title="Number of sales in this time period">
+                                        <span id="total_sale_count">0</span>
+                                        SALE COUNT
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mini-stat clearfix">
+                                    <span class="mini-stat-icon orange"><i class="fa fa-money"></i></span>
                                     <div class="mini-stat-info" data-toggle="tooltip" title="Average amounts per sale">
                                         <span id="total_expenses">0</span>
                                         TOTAL EXPENSES
@@ -77,10 +86,10 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="mini-stat clearfix">
-                                    <span class="mini-stat-icon orange"><i class="fa fa-shopping-cart"></i></span>
-                                    <div class="mini-stat-info" data-toggle="tooltip" title="Number of sales in this time period">
-                                        <span id="total_sale_count">0</span>
-                                        SALE COUNT
+                                    <span class="mini-stat-icon orange"><i class="fa fa-money"></i></span>
+                                    <div class="mini-stat-info" data-toggle="tooltip" title="Average amounts per sale">
+                                        <span id="sale_rep_expenses">0</span>
+                                        SALE REP EXPENSES
                                     </div>
                                 </div>
                             </div>
@@ -103,7 +112,7 @@
                                 </div>
                             </div>
                             
-                            <div class="col-md-3">
+                            <div class="col-md-3 hidden">
                                 <div class="mini-stat clearfix">
                                     <span class="mini-stat-icon pink"><i class="fa fa-money"></i></span>
                                     <div class="mini-stat-info" data-toggle="tooltip" title="Total amount discounted for this time period">
@@ -112,7 +121,7 @@
                                     </div>
                                 </div>
                             </div>  
-                            <div class="col-md-3">
+                            <div class="col-md-3 hidden">
                                 <div class="mini-stat clearfix">
                                     <span class="mini-stat-icon orange">%</span>
                                     <div class="mini-stat-info" data-toggle="tooltip" title="Total amount discounted for this time period">
@@ -121,8 +130,8 @@
                                     </div>
                                 </div>
                             </div>
-                            @if($show)
-                            <div class="col-md-3">
+                            
+                            <div class="col-md-3 hidden">
                                 <div class="mini-stat clearfix">
                                     <span class="mini-stat-icon tar"><i class="fa fa-shopping-cart"></i></span>
                                     <div class="mini-stat-info" data-toggle="tooltip" title="Average amounts per sale">
@@ -131,7 +140,7 @@
                                     </div>
                                 </div>
                             </div>                           
-                            <div class="col-md-3">
+                            <div class="col-md-3 hidden">
                                 <div class="mini-stat clearfix">
                                     <span class="mini-stat-icon green"><i class="fa fa-at"></i></span>
                                     <div class="mini-stat-info" data-toggle="tooltip" title="Average number of products per sale">
@@ -140,144 +149,17 @@
                                     </div>
                                 </div>
                             </div>
-                            @endif
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12 profitCalculator">
+
+                            </div>
                         </div>
                     </div>
                 </section>
             </div>
         </div>   
-         
-        <div class="row">
-            <div class="col-sm-12">
-                <section class="panel">
-                    <header class="panel-heading">
-                        Overall Summary
-                    </header>
-                    <div class="panel-body">
-                        <div class="row">
-                            @if($show)
-                            <div class="col-md-3">
-                                <a href="{{ url('admin/stores') }}">
-                                    <div class="mini-stat clearfix">
-                                        <span class="mini-stat-icon orange"><i class="fa fa-home"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span>{{ totalStores() }}</span>
-                                            Stores
-                                        </div>
-                                    </div>
-                                </a>    
-                            </div>
-                            @endif
-                            <div class="col-md-3">
-                                <a href="{{ url('admin/products') }}">
-                                    <div class="mini-stat clearfix">
-                                        <span class="mini-stat-icon green"><i class="fa fa-shopping-cart"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span>{{ totalProducts() }}</span>
-                                            Total Products
-                                        </div>
-                                    </div>
-                                </a>    
-                            </div>
-                            <div class="col-md-3">
-                                <a href="{{ url('admin/products') }}">
-                                    <div class="mini-stat clearfix">
-                                        <span class="mini-stat-icon pink"><i class="fa fa-file-text"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span style="font-size: 20px;">{{ totalStockWorth() }}</span>
-                                            Total Stock Worth
-                                        </div>
-                                    </div>
-                                </a>    
-                            </div>  
-                            <div class="col-md-3">
-                                <a href="{{ url('admin/orders') }}">
-                                    <div class="mini-stat clearfix">
-                                        <span class="mini-stat-icon pink"><i class="fa fa-file-text"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span>{{ totalSales() }}</span>
-                                            Sales
-                                        </div>
-                                    </div>
-                                </a>    
-                            </div>
-                            @if($role == 'Admin')
-                            <div class="col-md-3">
-                                <a href="{{ url('admin/sale-reps') }}">
-                                    <div class="mini-stat clearfix">
-                                        <span class="mini-stat-icon tar"><i class="fa fa-car"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span>{{ totalSaleReps() }}</span>
-                                            All Van
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            @endif
-                            @if($show)
-                            <div class="col-md-3">
-                                <a href="{{ url('admin/categories') }}">
-                                    <div class="mini-stat clearfix">
-                                        <span class="mini-stat-icon tar"><i class="fa fa-sitemap"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span>{{ totalCategories() }}</span>
-                                            Total Categories
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            @endif
-                            <div class="col-md-3">
-                                <a href="{{ url('admin/suppliers') }}">
-                                    <div class="mini-stat clearfix">
-                                        <span class="mini-stat-icon tar"><i class="fa fa-users"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span>{{ totalSuppliers() }}</span>
-                                            Total Suppliers
-                                        </div>
-                                    </div>
-                                </a>    
-                            </div>
-                            <div class="col-md-3">
-                                <a href="{{ url('admin/brands') }}">
-                                    <div class="mini-stat clearfix">
-                                        <span class="mini-stat-icon tar"><i class="fa fa-bitcoin"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span>{{ totalBrands() }}</span>
-                                            Total Brands
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>  
-                            <div class="col-md-3">
-                                <a href="{{ url('admin/wholesaler') }}">
-                                    <div class="mini-stat clearfix">
-                                        <span class="mini-stat-icon green"><i class="fa fa-users"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span>{{ totalShopkeepers() }}</span>
-                                            Total Shopkeepers
-                                        </div>
-                                    </div>
-                                </a>    
-                            </div>	
-                            @if($show)
-                            <div class="col-md-3">
-                                <a href="{{ url('admin/customers') }}">
-                                    <div class="mini-stat clearfix">
-                                        <span class="mini-stat-icon pink"><i class="fa fa-users"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span>{{ registeredUsers() }}</span>
-                                            Total Customers
-                                        </div>
-                                    </div>
-                                </a>    
-                            </div>
-                            @endif
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </div>       
     </section>
 </section>
       
@@ -301,6 +183,16 @@
         var store_id = $('#store_reports').val();
         
         $.ajax({
+            url :  '{{ url("admin/balance-sheet") }}',
+            type: 'post',
+            data: 'from_date='+start.format('YYYY/MM/DD')+'&to_date='+end.format('YYYY/MM/DD'),
+            dataType: "json",
+            complete: function (data, textStatus, jqXHR) {
+                $(".profitCalculator").html(data.responseText);
+            }
+        });
+        
+        $.ajax({
             url :  '{{ url("admin/reports/retail-dashboard") }}',
             type: 'post',
             data: 'store_id='+store_id+'&from_date='+start.format('YYYY/MM/DD')+'&to_date='+end.format('YYYY/MM/DD'),
@@ -319,6 +211,7 @@
                 $('#basket_value').text(data.basket_value);
                 $('#basket_size').text(data.basket_size); 
                 $('#total_expenses').text(data.total_expenses); 
+                $('#sale_rep_expenses').text(data.sale_rep_expenses); 
         
                 $(".retail-dashboard").LoadingOverlay("hide");
                

@@ -10,7 +10,135 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
-                @can('view calculator')
+                @can('view admins')
+                <li class="sub-menu">
+                    <a href="javascript:void(0);" {{ setActive(['admin/admins','admin/sale-reps']) }}>
+                        <i class="fa fa-users"></i>
+                        <span>Admins</span>
+                    </a>
+                    <ul class="sub">
+                        <li {{ setActive(['admin/admins']) }}><a href="{{ url('admin/admins') }}">Admins</a></li>
+                        @can('view sale reps')
+                        <li {{ setActive(['admin/sale-reps']) }}><a href="{{ url('admin/sale-reps') }}">Sale Representatives</a></li>
+                        @endcan
+                    </ul>
+                </li>
+                @endcan
+                @can('view profit calculator')
+                <li>
+                    <a  href="{{ url('admin/profit-calculator') }}" {{ setActive(['admin/profit-calculator']) }}>
+                        <i class="fa fa-calculator"></i>
+                        <span>Profit Calculator</span>
+                    </a>
+                </li>
+                @endcan
+                
+                @can('view suppliers')
+                <li class="sub-menu">
+                    <a href="javascript:void(0);" {{ setActive(['admin/suppliers','admin/purchase-orders']) }}>
+                        <i class="fa fa-users"></i>
+                        <span>Suppliers</span>
+                    </a>
+                    <ul class="sub">
+                        <li {{ setActive(['admin/suppliers']) }}><a href="{{ url('admin/suppliers') }}">Suppliers</a></li>
+                        @can('view purchase orders')
+                        <li {{ setActive(['admin/purchase-orders']) }}><a href="{{ url('admin/purchase-orders') }}">Purchase Orders</a></li>
+                        @endcan
+                    </ul>
+                </li>
+                @endcan
+               
+                
+                @can('view products')
+                <li class="sub-menu">
+                    <a href="javascript:void(0);" {{ setActive(['admin/products','admin/categories','admin/subcategories','admin/stores','admin/brands']) }}>
+                        <i class="fa fa-shopping-cart"></i>
+                        <span>Products</span>
+                    </a>
+                    <ul class="sub">
+                        @can('view products')
+                        <li {{ setActive(['admin/products']) }}><a href="{{ url('admin/products') }}">Products</a></li>
+                        @endcan
+                        @can('view categories')
+                        <li {{ setActive(['admin/categories']) }}><a href="{{ url('admin/categories') }}">Categories</a></li>
+                        @endcan
+                        @can('view categories')
+                        <li {{ setActive(['admin/subcategories']) }}><a href="{{ url('admin/subcategories') }}">Sub Categories</a></li>
+                        @endcan
+                        @can('view brands')
+                        <li {{ setActive(['admin/brands']) }}><a href="{{ url('admin/brands') }}">Brands</a></li>
+                        @endcan
+                        @can('view stores123')
+                        <li {{ setActive(['admin/stores']) }}><a href="{{ url('admin/stores') }}">Stores</a></li>
+                        @endcan
+                    </ul>
+                </li>
+                @endcan
+                
+                @can('view quotations')
+                <li class="sub-menu">
+                    <a href="javascript:void(0);" {{ setActive(['admin/admin-orders','admin/purchase-orders']) }}>
+                        <i class="fa fa-shopping-cart"></i>
+                        <span>Quotations</span>
+                    </a>
+                    <ul class="sub">
+                        <li {{ setActive(['admin/admin-orders']) }}><a href="{{ url('admin/admin-orders') }}">Quotations</a></li>
+                        @can('view drop_shipper')
+                        <li {{ setActive(['admin/shipper-orders']) }}><a href="{{ route('admin.shipper.orders') }}">Invoice</a></li>
+                        @endcan
+                    </ul>
+                </li>
+                @endcan
+                
+                @can('view expenses')
+                <li class="sub-menu">
+                    <a href="javascript:void(0);" {{ setActive(['admin/expenses','admin/expense-types']) }}>
+                        <i class="fa fa-money"></i>
+                        <span>Expenses</span>
+                    </a>
+                    <ul class="sub">
+                        <li {{ setActive(['admin/expenses']) }}><a href="{{ url('admin/expenses') }}">Expenses</a></li>
+                        @can('view expense types')
+                        <li {{ setActive(['admin/expense-types']) }}><a href="{{ url('admin/expense-types') }}">Expense Types</a></li>
+                        @endcan
+                    </ul>
+                </li>
+                @endcan
+                
+                @can('view wholesaler')
+                <li class="sub-menu">
+                    <a href="javascript:void(0);" {{ setActive(['admin/shopkeepers','admin/wholesalers']) }}>
+                        <i class="fa fa-users"></i>
+                        <span>Customers</span>
+                    </a>
+                    <ul class="sub">
+                        <li {{ setActive(['admin/shopkeepers']) }}><a href="{{ url('admin/shopkeepers') }}">Shopkeepers</a></li>
+                        <li {{ setActive(['admin/wholesalers']) }}><a href="{{ url('admin/wholesalers') }}">Wholesalers</a></li>
+                    </ul>
+                </li>
+                @endcan
+                
+                @can('view retailers')
+                <li class="sub-menu">
+                    <a href="javascript:void(0);" {{ setActive(['admin/retailer-orders','admin/shopkeeper-orders', 'whole-saler-orders']) }}>
+                        <i class="fa fa-file-text"></i>
+                        <span>Orders</span>
+                    </a>
+                    <ul class="sub">
+                        @can('view retailers')
+                        <li>
+                            <a  href="{{ route('admin.retailer.orders')  }}" {{ setActive(['admin/retailer-orders']) }}>Website Orders ({{checkNewOrder('retailer')}})</a>
+                        </li>
+                        @endcan
+                        <li {{ setActive(['admin/shopkeeper-orders']) }}><a href="{{ url('admin/shopkeeper-orders') }}">Shopkeeper Orders ({{checkNewOrder('wholesaler')}})</a></li>
+                        @can('view wholesaler')
+                        <li {{ setActive(['admin/whole-saler-orders']) }}><a href="{{ url('admin/whole-saler-orders') }}">Wholesaler Orders ({{checkNewOrder('wholesaler')}})</a></li>
+                        @endcan
+                    </ul>
+                </li>
+                @endcan
+                
+                @can('view calculator123')
                 <li>
                     <a  href="{{ url('admin/calculator') }}" {{ setActive(['admin/calculator']) }}>
                         <i class="fa fa-calculator"></i>
@@ -18,23 +146,8 @@
                     </a>
                 </li>
                 @endcan
-                @can('view admins')
-                <li>
-                    <a  href="{{ url('admin/admins') }}" {{ setActive(['admin/admins']) }}>
-                        <i class="fa fa-users"></i>
-                        <span>Admins</span>
-                    </a>
-                </li>
-                @endcan
-                @can('view sale reps')
-                <li>
-                    <a  href="{{ url('admin/sale-reps') }}" {{ setActive(['admin/sale-reps']) }}>
-                        <i class="fa fa-users"></i>
-                        <span>Sale Representatives</span>
-                    </a>
-                </li>
-                @endcan
-                @can('view customers')
+                
+                @can('view customers123')
                 <li>
                     <a  href="{{ url('admin/customers') }}" {{ setActive(['admin/customers']) }}>
                         <i class="fa fa-users"></i>
@@ -42,15 +155,9 @@
                     </a>
                 </li>
                 @endcan
-                @can('view drop_shipper')
-                    <li>
-                        <a  href="{{ route('admin.shipper.orders')  }}" {{ setActive(['admin/shipper-orders']) }}>
-                            <i class="fa fa-file-text"></i>
-                            <span>Invoice</span>
-                        </a>
-                    </li>
-                @endcan
-                @can('view customer orders')
+                 
+                
+                @can('view customer orders123')
                 <li>
                     <a  href="{{ url('admin/order-users')  }}" {{ setActive(['admin/order-users']) }}>
                         <i class="fa fa-users"></i>
@@ -58,14 +165,8 @@
                     </a>
                 </li>
                 @endcan
-                @can('view quotations')
-                <li>
-                    <a  href="{{ url('admin/admin-orders')  }}" {{ setActive(['admin/admin-orders']) }}>
-                        <i class="fa fa-shopping-cart"></i>
-                        <span>Quotations</span>
-                    </a>
-                </li>
-                 @endcan  
+                 
+                
                  @can('view van stores')
                 <li>
                     <a  href="{{ url('admin/van-store')  }}" {{ setActive(['admin/van-store']) }}>
@@ -74,48 +175,25 @@
                     </a>
                 </li>
                  @endcan 
-                @can('view retailers')
-                    <li>
-                        <a  href="{{ route('admin.retailer.orders')  }}" {{ setActive(['admin/retailer-orders']) }}>
-                            <i class="fa fa-users"></i>
-                            <span>Website Orders ({{checkNewOrder('retailer')}})</span>
-                        </a>
-                    </li>
-                @endcan
-               @can('view wholesaler')
-                    <li>
-                        <a  href="{{ route('admin.whole.saler.orders')  }}" {{ setActive(['admin/whole-saler-orders']) }}>
-                            <i class="fa fa-users"></i>
-                            <span>Shopkeeper Orders ({{checkNewOrder('wholesaler')}})</span>
-                        </a>
-                    </li>
-                @endcan
-          {{--      @can('view drop_shipper')
+                
+                
+                @can('view drop_shipper123')
                     <li>
                         <a  href="{{ route('admin.shipper.orders')  }}" {{ setActive(['admin/shipper-orders']) }}>
                             <i class="fa fa-users"></i>
                             <span>Drop Shipper Orders ({{checkNewOrder('dropshipper')}})</span>
                         </a>
                     </li>
-                @endcan--}}
-                @can('view wholesaler')
-                    <li>
-                        <a  href="{{ url('admin/wholesaler') }}" {{ setActive(['admin/wholesaler']) }}>
-                            <i class="fa fa-users"></i>
-                            <span>Shopkeepers</span>
-                        </a>
-                    </li>
                 @endcan
-            {{--    @can('view drop_shipper')
+                @can('view drop_shipper123')
                 <li>
                     <a  href="{{ url('admin/drop-shipper') }}" {{ setActive(['admin/drop-shipper']) }}>
                         <i class="fa fa-users"></i>
                         <span>Drop Shipper</span>
                     </a>
                 </li>
-                @endcan--}}
-
-                @can('view courier_assignment')
+                @endcan
+                @can('view courier_assignment123')
                 <li>
                     <a  href="{{ url('admin/courier-assignment') }}" {{ setActive(['admin/courier-assignment']) }}>
                         <i class="fa fa-paper-plane"></i>
@@ -131,30 +209,9 @@
                     </a>
                 </li>
                 @endcan
-                @can('view products')
-                <li class="sub-menu">
-                    <a href="javascript:void(0);" {{ setActive(['admin/products','admin/categories','admin/subcategories','admin/stores']) }}>
-                        <i class="fa fa-shopping-cart"></i>
-                        <span>Products</span>
-                    </a>
-                    <ul class="sub">
-                        @can('view products')
-                        <li {{ setActive(['admin/products']) }}><a href="{{ url('admin/products') }}">Products</a></li>
-                        @endcan
-                        @can('view categories')
-                        <li {{ setActive(['admin/categories']) }}><a href="{{ url('admin/categories') }}">Categories</a></li>
-                        @endcan
-                        @can('view categories')
-                        <li {{ setActive(['admin/subcategories']) }}><a href="{{ url('admin/subcategories') }}">Sub Categories</a></li>
-                        @endcan
-                        @can('view stores123')
-                        <li {{ setActive(['admin/stores']) }}><a href="{{ url('admin/stores') }}">Stores</a></li>
-                        @endcan
-                    </ul>
-                </li>
-                @endcan
                 
-                @can('view orders')
+                
+                @can('view orders123')
                 <li>
                     <a  href="{{ url('admin/orders') }}" {{ setActive(['admin/orders']) }}>
                         <i class="fa fa-file-text"></i>
@@ -168,7 +225,7 @@
                     </a>
                 </li> -->
                 @endcan
-                @can('view manage stocks')
+                @can('view manage stocks123')
                 <li>
                     <a  href="{{ url('admin/manage-stocks') }}" {{ setActive(['admin/manage-stocks']) }}>
                         <i class="fa fa-filter"></i>
@@ -176,14 +233,7 @@
                     </a>
                 </li>
                 @endcan
-                @can('view suppliers')
-                <li>
-                    <a  href="{{ url('admin/suppliers') }}" {{ setActive(['admin/suppliers']) }}>
-                        <i class="fa fa-users"></i>
-                        <span>Suppliers</span>
-                    </a>
-                </li>
-                @endcan
+                
                 @can('view promotions123')
                 <li>
                     <a  href="{{ url('admin/promotions') }}" {{ setActive(['admin/promotions']) }}>
@@ -200,6 +250,7 @@
                         </a>
                     </li>
                 @endcan
+                
                 @can('view reports')
                 <li class="sub-menu">
                     <a href="javascript:void(0);" {{ setActive(['admin/reports']) }}>
@@ -247,18 +298,17 @@
                 @endcan
                 @can('view settings')
                 <li class="sub-menu">
-                    <a href="javascript:void(0);" {{ setActive(['admin/brands','admin/shippings','admin/couriers','admin/settings','admin/sliders','admin/currencies','admin/tax-rates','admin/variants','admin/roles','admin/permissions']) }}>
+                    <a href="javascript:void(0);" {{ setActive(['admin/shippings','admin/couriers','admin/settings','admin/sliders','admin/currencies','admin/tax-rates','admin/variants','admin/roles','admin/permissions']) }}>
                         <i class="fa fa-cogs"></i>
                         <span>Settings</span>
                     </a>
                     <ul class="sub">
-                        @can('view brands123')
-                        <li {{ setActive(['admin/brands']) }}><a href="{{ url('admin/brands') }}">Brands</a></li>
-                        @endcan
+                        
+                        
                         @can('view couriers')
                         <li {{ setActive(['admin/couriers']) }}><a href="{{ url('admin/couriers') }}">Couriers</a></li>
                         @endcan
-                        @can('view shippings123')
+                        @can('view shippings')
                         <li {{ setActive(['admin/shippings']) }}><a href="{{ url('admin/shippings') }}">Shippings</a></li>
                         @endcan
                         @can('view sliders123')
@@ -267,7 +317,7 @@
                         @can('view currencies123')
                         <li {{ setActive(['admin/currencies']) }}><a href="{{ url('admin/currencies') }}">Currencies</a></li>
                         @endcan
-                        @can('view tax rates123')
+                        @can('view tax rates')
                         <li {{ setActive(['admin/tax-rates']) }}><a href="{{ url('admin/tax-rates') }}">Tax Rates</a></li>
                         @endcan
                         @can('view attributes123')

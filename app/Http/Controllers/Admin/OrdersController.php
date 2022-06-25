@@ -409,6 +409,7 @@ class OrdersController extends Controller
                 $quotationData = $transaction->toArray();
                 
                 $quotationData['cost'] = numberFormatToFloat($transaction->cost);
+                $quotationData['cost_of_goods'] = numberFormatToFloat($transaction->cost_of_goods);
                 $quotationData['discount'] = numberFormatToFloat($transaction->discount);
                 $quotationData['tax'] = numberFormatToFloat($transaction->tax);
                 $quotationData['amount'] = numberFormatToFloat($transaction->amount);

@@ -188,6 +188,7 @@ class AdminOrderController extends Controller
         $historyData = array();
         $tax        = 0;
         $cost       = 0;
+        $tCost       = 0;
         $discount   = 0;
         $totalQty   = 0;
         $totalAmount   = 0;
@@ -195,6 +196,7 @@ class AdminOrderController extends Controller
             $product = Product::with('tax_rate')->find($productId);
             if ($product) {
                 //$price = $product->price;
+                
                 $price = isset($productPrice[$key]) ? $productPrice[$key] : $product->price;
                 
                 $qty = isset($productQuantity[$key]) ? $productQuantity[$key] : 1;
@@ -202,6 +204,7 @@ class AdminOrderController extends Controller
                 if ($taxRate > 0) {
                     $tax = ($tax + (($taxRate / 100) * $price) * $qty);
                 }
+                $tCost = ($tCost + ($product->cost * $qty));
                 $cost       = ($cost + ($price * $qty));
                 $discount   = $discount + (($price - $product->discountedPrice) * $qty);
                 $totalQty = $totalQty + $qty;
@@ -236,6 +239,7 @@ class AdminOrderController extends Controller
             $transaction['cart_id']   = $shoppingCart->id;
             $transaction['qty']       = $totalQty;
             $transaction['cost']      = number_format($cost, 2);
+            $transaction['cost_of_goods']      = number_format($tCost, 2);
             $transaction['discount']  = number_format($discount, 2);
             $transaction['tax']       = number_format($tax, 2);
             $transaction['paypal_id'] = 0;
@@ -608,8 +612,14 @@ class AdminOrderController extends Controller
     public function getWalletAmount($id)
     {
         $walletAmount = 'Wallet: £0.00';
+        $wallet = getWholsellerDataWallet($id);
+        if ($wallet<0) {
+            $walletAmount = '-£'.number_format(abs($wallet), 2);
+        } else {
+            $walletAmount = '£'.number_format($wallet, 2);
+        }
         
-        return '<a href="'. url("admin/orders?type=admin_order&payment_method=2pay&user_id=" . Hashids::encode($id)) .'" target="_blank">Wallet: £'.number_format(getWholsellerDataWallet($id), 2).'</a>';
+        return '<a href="'. url("admin/orders?type=admin_order&payment_method=2pay&user_id=" . Hashids::encode($id)) .'" target="_blank">Wallet: '. $walletAmount .'</a>';
     }
 
 

@@ -18,7 +18,7 @@
                 <div class="form-group {{ $errors->has('product_id') ? 'has-error' : ''}}">
                     {!! Form::label('product_id', 'Product', ['class' => 'col-md-3 control-label required-input']) !!}
                     <div class="col-md-9">                                                 
-                        {!! Form::select('product_id', [], null, ['class' => 'form-control select2','required' => 'required']) !!}                        
+                        {!! Form::select('product_id', $products, null, ['class' => 'form-control select2','required' => 'required']) !!}                        
                         {!! $errors->first('product_id', '<p class="help-block">:message</p>') !!}
                         <div class="help-block with-errors"></div>
                     </div>

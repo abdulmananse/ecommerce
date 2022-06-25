@@ -53,6 +53,7 @@ class ProductsController extends Controller
                 'products' => function ($query) {
                     $query->orderBy('id', 'asc');
                 },
+                'quantity',
                 'products.product_images',
                 'products.store_products',
                 'store_products.store',

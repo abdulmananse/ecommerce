@@ -88,8 +88,8 @@ class StockController extends Controller
      */
     public function create()
     {   
-
-        return view('admin.stocks.create');                
+        $products = Product::pluck('name', 'id');
+        return view('admin.stocks.create', get_defined_vars());                
     }
 
     /**

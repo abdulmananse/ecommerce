@@ -8,7 +8,7 @@
                 <!--breadcrumbs start -->
                 <ul class="breadcrumb">
                     <li><a href="{{ url('admin/dashboard') }}"><i class="fa fa-home"></i> Dashboard</a></li>
-                    <li class="active">Wholesalers</li>
+                    <li class="active">Shopkeepers</li>
                 </ul>
                 <!--breadcrumbs end -->
             </div>
@@ -18,10 +18,10 @@
             <div class="col-sm-12">
                 <section class="panel">
                     <header class="panel-heading">
-                        Wholesalers
-                        @can('add wholesaler')
+                        Shopkeepers
+                        @can('add shopkeepers')
                             <span class="tools pull-right">
-                                <a href="{{ url('/admin/customers/create?type=wholesaler') }}" class="btn btn-info btn-sm" data-toggle="tooltip" title="Add New Wholesaler">
+                                <a href="{{ url('/admin/customers/create?type=shopkeeper') }}" class="btn btn-info btn-sm" data-toggle="tooltip" title="Add New Shopkeeper">
                                     <i class="fa fa-plus" aria-hidden="true"></i> Add New
                                 </a>
                              </span>
@@ -105,7 +105,7 @@
     var token = $('meta[name="csrf-token"]').attr('content');
     var id= '';
 $("document").ready(function () {
-    var datatable_url = "{{url('admin/wholesalers')}}";
+    var datatable_url = "{{url('admin/shopkeepers')}}";
     var datatable_columns = [
         {data: 'name'},
         {data: 'email'},

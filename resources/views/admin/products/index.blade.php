@@ -51,6 +51,7 @@
                                 <th>Name</th>
                                 <th>Supplier</th>
                                 <th>Brand</th>
+                                <th>Quantity</th>
                                 <th>Cost</th>
                                 <th>Selling Price</th>
                                 @if(auth()->user()->can('edit products') || auth()->user()->can('view product stocks') || auth()->user()->can('delete products'))
@@ -69,6 +70,7 @@
                                 <th>Name</th>
                                 <th>Supplier</th>
                                 <th>Brand</th>
+                                <th>Quantity</th>
                                 <th>Cost</th>
                                 <th>Selling Price</th>
                                 @if(auth()->user()->can('edit products') || auth()->user()->can('view product stocks') || auth()->user()->can('delete products'))
@@ -136,6 +138,7 @@ $(document).ready(function () {
             {data: 'name'},                 
             {data: 'supplier', className: 'text-center'},                
             {data: 'brand.name', className: 'text-center'},                
+            {data: 'quantity.quantity', className: 'text-center'},                
             {data: 'cost', className: 'text-center'},                 
             {data: 'price', className: 'text-center'},    
             @if(auth()->user()->can('edit products') || auth()->user()->can('view product stocks') || auth()->user()->can('delete products'))                  

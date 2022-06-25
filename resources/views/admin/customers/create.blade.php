@@ -9,16 +9,16 @@
                 <!--breadcrumbs start -->
                 <ul class="breadcrumb">
                     <li><a href="{{ url('admin/dashboard') }}"><i class="fa fa-home"></i> Dashboard</a></li>
-                    <li><a href="{{ url('admin/wholesaler') }}">Shopkeepers</a></li>
+                    <li><a href="{{ url('admin/wholesaler') }}">Customers</a></li>
                     <li class="active">Add</li>
                 </ul>
                 <!--breadcrumbs end -->
             </div>
         </div>                
         
-            {!! Form::open(['url' => 'admin/wholesaler', 'data-toggle' => 'validator', 'data-disable' => 'false', 'class' => 'form-horizontal', 'files' => true]) !!}
+            {!! Form::open(['url' => 'admin/customers', 'data-toggle' => 'validator', 'data-disable' => 'false', 'class' => 'form-horizontal', 'files' => true]) !!}
 
-                @include ('admin.wholesaler.form')
+                @include ('admin.customers.form')
 
             {!! Form::close() !!}
             

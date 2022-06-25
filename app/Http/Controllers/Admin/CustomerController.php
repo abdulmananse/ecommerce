@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Hashids, DataTables;
 use App\User;
+use Session;
 
 class CustomerController extends Controller
 {
@@ -47,7 +48,46 @@ class CustomerController extends Controller
         }
         return view('admin.customers.index');
     }
+    
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function create()
+    {
+        return view('admin.customers.create');
+    }
+    
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
+            'email' => 'required|email|max:255|unique:users',
+            'password' => 'required|min:6'
+        ]);
 
+       $requestData = $request->all();
+       $requestData['password'] = bcrypt($requestData['password']);
+
+       $user = User::create($requestData);
+
+        Session::flash('success', 'Shopkeeper added!');
+
+        if ($request->type=='wholesaler') {
+            return redirect('admin/wholesaler');
+        }
+        return redirect('admin/shopkeepers');
+    }
+    
     public function retailerOrders()
     {
         if(request()->ajax()){

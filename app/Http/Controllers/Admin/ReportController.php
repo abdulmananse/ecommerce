@@ -22,6 +22,7 @@ use App\Models\Transaction;
 use App\Models\Product;
 use App\Store;
 use App\Models\StoreProduct;
+use App\Models\Expense;
 use App\Stock;
 use App\Order;
 use App\Customer;
@@ -47,32 +48,40 @@ class ReportController extends Controller
         {
 
             $orders = Transaction::query();
-            
-            // if(!empty($request->store_id)){
-            //     $store_id = Hashids::decode($request->store_id)[0];  
-            //     $orders->where('store_id', $store_id);
-            // }
+            $expenses = Expense::query();
             
             if(!empty($request->from_date)){
                 $orders->where('created_at', '>=' , date('Y-m-d', strtotime($request->from_date)).' 00:00:00');
+                $expenses->where('date', '>=' , date('Y-m-d', strtotime($request->from_date)));
             }
 
             if(!empty($request->to_date)){
                 $orders->where('created_at', '<=' , date('Y-m-d', strtotime($request->to_date)).' 23:59:59');
+                $expenses->where('date', '<=' , date('Y-m-d', strtotime($request->to_date)));
             }
             
-            $orders->get();        
+            //$orders->get();        
                                   
-            $total_orders = $orders->get();
+            //$total_orders = $orders->get();
+            $total_orders = $orders;
+            
             $sub_total = $orders->sum('amount');
-            // $cost_of_goods = $orders->sum('cost_of_goods');
-            $cost_of_goods = $orders->sum('amount');
+            $totalExpense = $expenses->sum('amount');
+            $saleRepExpense = $expenses->where('admin', 'no')->sum('amount');
+            
+            $cost_of_goods = $orders->sum('cost_of_goods');
+            //$cost_of_goods = $orders->sum('amount');
             // $discount = $orders->sum('discount');
             $discount = 0;
             
-            $report['total_income'] = number_format($sub_total,2);
-            $report['total_sales'] = $orders->count();
-            $report['total_profit'] = number_format($sub_total-$cost_of_goods,2);    
+            $total_income = $sub_total - $cost_of_goods - $totalExpense;
+            
+            $report['total_income'] = number_format($total_income,2);
+            $report['total_sales'] = number_format($sub_total,2);
+            $report['cost_of_goods'] = number_format($cost_of_goods,2);
+            
+            $report['total_sale_count'] = $orders->count();
+            $report['total_profit'] = number_format(($sub_total-$cost_of_goods-$totalExpense),2);    
             $report['total_discount'] = number_format($discount,2); 
             $report['discount_percentage'] = 0;        
             
@@ -85,6 +94,8 @@ class ReportController extends Controller
             $report['cash_sales'] = number_format($total_orders->sum('amount'),2);
             $report['card_sales'] = number_format($total_orders->sum('amount'),2);
             $report['total_customers'] = $total_orders->groupBy('user_id')->count();                   
+            $report['total_expenses'] = number_format($totalExpense,2);                 
+            $report['sale_rep_expenses'] = number_format($saleRepExpense,2);                 
                          
             $status = $this->successStatus;
                 
@@ -454,6 +465,34 @@ class ReportController extends Controller
 
             return response()->json(['result' => $report], $status);
         }    
-    }        
+    }    
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return JS0N Response
+     */
+    public function balanceSheet(Request $request)
+    {     
+    
+        $orders = Transaction::selectRaw('*, DATE(created_at) AS date, "sale" as type');
+        $expenses = Expense::query();
+
+        if(!empty($request->from_date)){
+            $orders->where('created_at', '>=' , date('Y-m-d', strtotime($request->from_date)).' 00:00:00');
+            $expenses->where('date', '>=' , date('Y-m-d', strtotime($request->from_date)));
+        }
+
+        if(!empty($request->to_date)){
+            $orders->where('created_at', '<=' , date('Y-m-d', strtotime($request->to_date)).' 23:59:59');
+            $expenses->where('date', '<=' , date('Y-m-d', strtotime($request->to_date)));
+        }
+            
+        $orders = $orders->get();        
+        $expenses = $expenses->get();        
+        $merged = collect($orders->merge($expenses))->sortBy('date')->groupBy('date');
+        //dd($merged->toArray());
+        return view('admin._profit-calculator', compact('merged'))->render();
+    } 
     
 }

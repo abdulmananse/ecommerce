@@ -228,5 +228,26 @@ class AdminController extends Controller
         ]);
         return back();
     }
+    
+    /**
+     * User login
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function login()
+    {
+        
+        if (session('back_to_admin')) {
+            $id = session('back_to_admin');
+            Auth::guard('admin')->loginUsingId($id);
+            session()->forget('back_to_admin');
+            
+            Session::flash('success', 'Successfully login as admin!');
+        } else {
+            Session::flash('error', 'Something went wrong!');
+        }
+        
+        return redirect()->route('admin.home');
+    }
 
 }

@@ -32,14 +32,14 @@
                 <section class="panel">
                     <header class="panel-heading">
                         Quotations
-                         <span class="pull-right">
+                        <span class="pull-right">
                             <div id="reportrange" class="pull-right report-range">
                                 <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;
                                 <span></span> <b class="caret"></b>
                             </div>
                         </span>
                         
-                        <span class="tools pull-right quote-btn" style="margin-right: 12px;">
+                        <span class="tools pull-right quote-btn" style="margin-right: 12px;margin-top: -6px;">
                             <a href="{{ url('admin/admin-orders/create') }}" class="btn btn-info btn-sm" data-toggle="tooltip" title="Create Quotation">
                                 <i class="fa fa-plus" aria-hidden="true"></i> Create Quotation
                             </a>
@@ -91,10 +91,11 @@
       $('#reportrange span').html(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
     }
     
-       cb(start, end);
+    cb(start, end);
+    
     $("document").ready(function () {
 
-loadDatatable(start.format('YYYY-MM-DD'),end.format('YYYY-MM-DD'))
+        loadDatatable(start.format('YYYY-MM-DD'),end.format('YYYY-MM-DD'))
        
         var reload_datatable = $("#datatable").dataTable( { bRetrieve : true } );
 
@@ -155,6 +156,7 @@ loadDatatable(start.format('YYYY-MM-DD'),end.format('YYYY-MM-DD'))
             });//..... end of ajax() .....//
         })
     });
+    
     function printImg(url) {
 
         var win = window.open('');
@@ -175,19 +177,19 @@ loadDatatable(start.format('YYYY-MM-DD'),end.format('YYYY-MM-DD'))
         }
     },cb);
     
-     $('#reportrange').on('cancel.daterangepicker', function(ev, picker) {
-    $('#reportrange').val('');
-    $reload_datatable.fnDraw();
+    $('#reportrange').on('cancel.daterangepicker', function(ev, picker) {
+        $('#reportrange').val('');
+        $reload_datatable.fnDraw();
     });
 
-  $('#reportrange').on('apply.daterangepicker', function(ev, picker) {
-   startdate = picker.startDate.format('YYYY-MM-DD');
-   enddate = picker.endDate.format('YYYY-MM-DD');
- 
-   
-    $('#datatable').DataTable().destroy();
-   loadDatatable(startdate,enddate)
- 
+    $('#reportrange').on('apply.daterangepicker', function(ev, picker) {
+        startdate = picker.startDate.format('YYYY-MM-DD');
+        enddate = picker.endDate.format('YYYY-MM-DD');
+
+
+         $('#datatable').DataTable().destroy();
+        loadDatatable(startdate,enddate)
+
     });
     function loadDatatable(start_date='',end_date=''){
         table = $('#datatable').DataTable({

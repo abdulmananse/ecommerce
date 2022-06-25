@@ -45,6 +45,7 @@ class SuppliersController extends Controller
                 })
                 ->addColumn('action', function ($supplier) {
                     $action = '';
+                    $action .= '<a href="purchase-orders/create?id='. Hashids::encode($supplier->id).'" class="text-success" data-toggle="tooltip" title="Create Purchase Order"><i class="fa fa-lg fa-calculator"></i></a>';
                     if(Auth::user()->can('edit suppliers'))
                         $action .= '<a href="suppliers/'. Hashids::encode($supplier->id).'/edit" class="text-primary" data-toggle="tooltip" title="Edit Supplier"><i class="fa fa-lg fa-edit"></i></a>';
                     if(Auth::user()->can('delete suppliers'))

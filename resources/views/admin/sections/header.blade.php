@@ -61,23 +61,19 @@
             </a>
 
             <ul class="dropdown-menu extended logout">
-
+                @if(@session('back_to_admin'))
+                <li><a href="{{ url('admin/login-as-admin') }}" ><i class="fa fa-sign-in"></i> Back To Admin Panel</a></li>
+                @endif
                 <li><a href="{{ url('admin/profile') }}"><i class=" fa fa-suitcase"></i>Profile</a></li>
-
                 <li><a href="{{ url('admin/change-password') }}"><i class=" fa fa-key"></i>Change Password</a></li>
                 @can('view settings')
                 <li><a href="{{ url('admin/settings') }}"><i class="fa fa-cog"></i> Settings</a></li>
                 @endcan
                 <li><a href="{{ url('admin/logout') }}" onclick="event.preventDefault(); document.getElementById('company-logout-form').submit();"><i class="fa fa-key"></i> Log Out</a></li>
 
-
-
                 <form id="company-logout-form" action="{{ url('admin/logout') }}" method="POST" style="display: none;">
-
                     {{ csrf_field() }}
-
                 </form>
-
             </ul>
 
         </li>

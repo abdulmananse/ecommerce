@@ -1,10 +1,17 @@
 <div class="row">
     <div class="col-lg-12">
         <section class="panel">
-            <header class="panel-heading">Shopkeeper</header>
+            <header class="panel-heading">Customer</header>
             <div class="panel-body">
                 <div class="position-center" style="width:65%;">
-
+                    <div class="form-group {{ $errors->has('type') ? 'has-error' : ''}}">
+                        {!! Form::label('type', 'Customer Type', ['class' => 'col-lg-3 col-sm-3 control-label required-input']) !!}
+                        <div class="col-lg-9 col-md-9 col-sm-9">
+                            {!! Form::select('type', ['shopkeeper' => 'Shopkeeper', 'wholesaler' => 'Wholesaler'], @request()->type, ['class' => 'form-control','placeholder' => 'Customer Type','required' => 'required']) !!}
+                            {!! $errors->first('type', '<p class="help-block">:message</p>') !!}
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
                     <div class="form-group {{ $errors->has('first_name') ? 'has-error' : ''}}">
                         {!! Form::label('first_name', 'First Name', ['class' => 'col-lg-3 col-sm-3 control-label required-input']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
@@ -38,6 +45,14 @@
                         <div class="col-lg-9 col-md-9 col-sm-9">
                             {!! Form::text('shop_name', null, ['class' => 'form-control','placeholder' => 'Shop Name']) !!}
                             {!! $errors->first('shop_name', '<p class="help-block">:message</p>') !!}
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="form-group {{ $errors->has('address') ? 'has-error' : ''}}">
+                        {!! Form::label('address', 'Address', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
+                        <div class="col-lg-9 col-md-9 col-sm-9">
+                            {!! Form::text('address', null, ['class' => 'form-control','placeholder' => 'Address']) !!}
+                            {!! $errors->first('address', '<p class="help-block">:message</p>') !!}
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
@@ -119,22 +134,13 @@
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
-                    @if(@!$user)
-
+                    @if(@$user)
+                    @else
                     <div class="form-group {{ $errors->has('password') ? 'has-error' : ''}}">
                         {!! Form::label('password', 'Password', ['class' => 'col-lg-3 col-sm-3 control-label required-input']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
                             {!! Form::password('password', ['class' => 'form-control','placeholder' => 'Password','required' => 'required','data-minlength' => 6]) !!}
                             {!! $errors->first('password', '<p class="help-block">:message</p>') !!}
-                            <div class="help-block with-errors"></div>
-                        </div>
-                    </div>
-
-                    <div class="form-group {{ $errors->has('password_confirmation') ? 'has-error' : ''}}">
-                        {!! Form::label('password_confirmation', 'Confirm Password', ['class' => 'col-lg-3 col-sm-3 control-label required-input']) !!}
-                        <div class="col-lg-9 col-md-9 col-sm-9">
-                            {!! Form::password('password_confirmation', ['class' => 'form-control','placeholder' => 'Confirm Password','required' => 'required','data-match'=>'#password']) !!}
-                            {!! $errors->first('password_confirmation', '<p class="help-block">:message</p>') !!}
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>

@@ -15,6 +15,7 @@ class Transaction extends Model
         'parent_id',
         'qty',
         'cost',
+        'cost_of_goods',
         'discount',
         'tax',
         'amount',

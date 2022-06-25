@@ -5,6 +5,8 @@ Route::redirect('home','dashboard');
 
 Route::group(['namespace' => 'Admin'], function () {
     Route::get('/dashboard', 'HomeController@index')->name('home');
+    Route::get('profit-calculator', 'HomeController@profitCalculator');
+    Route::post('balance-sheet', 'ReportController@balanceSheet');
     Route::get('calculator', 'CalculatorController@index');
 
     Route::resource('stores', 'StoreController');
@@ -43,8 +45,9 @@ Route::group(['namespace' => 'Admin'], function () {
     
     Route::resource('manage-stocks', 'StockController');
     Route::get('get-store-products', 'StockController@getStoreProducts');
-
-    Route::resource('wholesaler', 'WholesalerController');
+    
+    Route::resource('shopkeepers', 'ShopkeeperController');
+    Route::resource('wholesalers', 'WholesalerController');
     Route::GET('whole-saler-orders','WholesalerController@wholeSalerOrders')->name('whole.saler.orders');
     Route::POST('add-wallet-amount','WholesalerController@addWalletAmount')->name('add.wallet.amount');
     Route::resource('drop-shipper', 'DropShipperController');
@@ -62,11 +65,15 @@ Route::group(['namespace' => 'Admin'], function () {
     Route::resource('currencies', 'CurrencyController');
     Route::resource('tax-rates', 'TaxRatesController');
     Route::resource('sliders', 'SliderController');
+    
+    Route::resource('expense-types', 'ExpenseTypeController');
+    Route::resource('expenses', 'ExpenseController');
 
     Route::resource('promotions', 'PromotionController');
 
     Route::resource('admins', 'AdminController');
     Route::resource('sale-reps', 'SaleRepController');
+    Route::get('login-sale-reps/{id}', 'SaleRepController@login');
     Route::get('profile', 'ProfileController@index');
 
     Route::get('get-users', 'ProfileController@getInvoiceList');
@@ -124,6 +131,10 @@ Route::group(['namespace' => 'Admin'], function () {
     Route::get('users/import', 'OrderUserController@import');
     Route::post('users/import', 'OrderUserController@importUsers');
     
+    //Purchase orders
+    Route::resource('purchase-orders', 'PurchaseOrderController');
+    Route::get('purchase-orders/supplier/{id}','PurchaseOrderController@suppierPurchaseOrders');
+    Route::get('purchase-order-print/{id}','PurchaseOrderController@orderPrint');
     
     // Courier Assignment
     Route::resource('courier-assignment', 'CourierAssignmentsController');
@@ -139,6 +150,7 @@ Route::group(['namespace' => 'Admin'], function () {
     Route::get('update-status/{name}/{id?}', 'AdminController@updateStatusPayment');
     Route::get('update-status-order/{id}', 'AdminController@updateStatusOrder');
     Route::get('update-delivery-status/{id}', 'AdminController@updateDeliveryStatus');
+    Route::get('login-as-admin', 'AdminController@login');
     
     Route::get('send-email', 'HomeController@sendEmailView');
     Route::post('send-email', 'HomeController@sendEmail');
