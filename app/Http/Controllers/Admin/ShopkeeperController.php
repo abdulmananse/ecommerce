@@ -68,4 +68,43 @@ class ShopkeeperController extends Controller
 
         return view('admin.shopkeepers.index');
     }
+    
+    public function orders()
+    {
+        if(\request()->ajax()) {
+            $users = User::where('type', 'shopkeeper')->orderBy('updated_at','desc');
+            
+            return Datatables::of($users)
+                ->addColumn('name', function ($customer) {
+                    $name = $customer->first_name . ' ' . $customer->last_name;
+                    $color ='black';
+                    if($customer->is_latest){
+                        $color='red';
+                    }
+                    return "<a style='color:$color'>$name</a>";
+                })
+                ->addColumn('email', function ($customer) {
+                    $name = $customer->email;
+                    $color ='black';
+                    if($customer->is_latest){
+                        $color='red';
+                    }
+                    return "<a style='color:$color'>$name</a>";
+                })
+                ->addColumn('profile_image', function ($customer) {
+                    return '<img width="30" src="' . checkImage('customers/thumbs/' . $customer->profile_image) . '" />';
+                })
+                ->addColumn('action', function ($order) {
+                    $action = '';
+                    if(Auth::user()->can('view orders'))
+                        $action .= '<a href="orders?type=shopkeeper_order&user_id=' . Hashids::encode($order->id) . '" target="_blank" class="btn btn-xs btn-warning">Orders</a> | ';
+                    
+                    return $action;
+                })
+                ->editColumn('id', 'ID: {{$id}}')
+                ->rawColumns(['profile_image', 'action','name','email'])
+                ->make(true);
+        }
+        return view('admin.shopkeepers.orders');
+    }
 }

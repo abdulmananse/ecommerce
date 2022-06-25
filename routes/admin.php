@@ -47,6 +47,8 @@ Route::group(['namespace' => 'Admin'], function () {
     Route::get('get-store-products', 'StockController@getStoreProducts');
     
     Route::resource('shopkeepers', 'ShopkeeperController');
+    Route::GET('shopkeeper-orders','ShopkeeperController@orders')->name('shopkeepers.orders');
+    
     Route::resource('wholesalers', 'WholesalerController');
     Route::GET('whole-saler-orders','WholesalerController@wholeSalerOrders')->name('whole.saler.orders');
     Route::POST('add-wallet-amount','WholesalerController@addWalletAmount')->name('add.wallet.amount');
