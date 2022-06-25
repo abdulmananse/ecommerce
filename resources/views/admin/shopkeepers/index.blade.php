@@ -36,7 +36,7 @@
                                 <th>Shop Name</th>
                                 <th>Contact #</th>
                                   <th>Address</th>
-                                <th>Cost Percentage</th>
+                                <!--<th>Cost Percentage</th>-->
                                 <th>Wallet Amount</th>
                                 <th>Status</th>
                                 @can('edit wholesaler')
@@ -54,7 +54,7 @@
                                 <th>Shop Name</th>
                                 <th>Contact #</th>
                                  <th>Address</th>
-                                <th>Cost Percentage</th>
+                                <!--<th>Cost Percentage</th>-->
                                 <th>Wallet Amount</th>
                                 <th>Status</th>
                                 @can('edit wholesaler')
@@ -109,14 +109,14 @@ $("document").ready(function () {
     var datatable_columns = [
         {data: 'name'},
         {data: 'email'},
-        {data: 'shop_name'},
+        {data: 'shop_name'}, 
         {data: 'phone'},
          {data: 'address'},
-        {data: 'percentage_1'},
+//        {data: 'percentage_1'},
         {data: 'wallet_amount'},
         {data: 'is_active', orderable: false, searchable: false,width: "10%"},
         @can('edit wholesaler')
-        {data: 'action', orderable: false, searchable: false,width: "30%"}
+        {data: 'action', orderable: false, searchable: false}
         @endcan        
         ];
         

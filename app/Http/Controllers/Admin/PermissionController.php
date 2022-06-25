@@ -78,7 +78,7 @@ class PermissionController extends Controller
         
         Session::flash('success', 'Permission added!');   
         
-        return redirect('admin/permissions');
+        return redirect('admin/permissions/create');
     }
 
     /**
