@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Models\WholesellerWallet;
+use App\Models\UserWallet;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -33,7 +33,16 @@ class ShopkeeperController extends Controller
 
         if($request->ajax()){
 
-            $users = User::where('type','shopkeeper')->orderBy('updated_at','desc');
+            $users = User::where('type','shopkeeper');
+            
+            if($request->filled('order')) {
+                $orderBy = $request->order;
+                if ($orderBy[0]['column'] == 1) {
+                    $users->orderBy('first_name', $orderBy[0]['dir']);
+                }
+            } else {
+                $users->orderBy('updated_at','desc');
+            }
 
             return DataTables::of($users)
                 ->addColumn('is_active', function ($user) {
@@ -49,6 +58,9 @@ class ShopkeeperController extends Controller
                 ->addColumn('wallet_amount', function ($user) {
                     return number_format(getWholsellerDataWallet($user->id),'2','.','');
                 })
+                ->addColumn('2pay_amount', function ($user) {
+                    return number_format(get2PayAmount($user->id),'2','.','');
+                })
                 ->addColumn('action', function ($user) {
                 $action = '';
                 if(Auth::user()->can('edit shopkeepers'))
@@ -57,6 +69,7 @@ class ShopkeeperController extends Controller
                     $action .= '<a href="customers/'.Hashids::encode($user->id).'" class="text-danger btn-delete" data-toggle="tooltip" title="Delete Shopkeeper"><i class="fa fa-lg fa-trash"></i></a>';
 
                    $action .= '<a href="javascript:void(0)" class="text-primary walletAdd"  data-id="'.$user->id.'" data-toggle="tooltip" title="Add Wallet Amount"><i class="fa fa-google-wallet"></i></a>';
+                   $action .= '<a href="javascript:void(0)" class="text-success 2payAdd"  data-id="'.$user->id.'" data-toggle="tooltip" title="Add 2Pay Amount"><i class="fa fa-google-wallet"></i></a>';
 
                 return $action;
                 })
@@ -69,11 +82,23 @@ class ShopkeeperController extends Controller
         return view('admin.shopkeepers.index');
     }
     
-    public function orders()
+    public function orders(Request $request)
     {
         if(\request()->ajax()) {
-            $users = User::where('type', 'shopkeeper')->orderBy('updated_at','desc');
+            $users = User::where('type', 'shopkeeper');
             
+            if($request->filled('order')) {
+                $orderBy = $request->order;
+                if ($orderBy[0]['column'] == 1) {
+                    $users->orderBy('first_name', $orderBy[0]['dir']);
+                }
+                if ($orderBy[0]['column'] == 2) {
+                    $users->orderBy('email', $orderBy[0]['dir']);
+                }
+            } else {
+                $users->orderBy('is_latest','desc');
+            }
+
             return Datatables::of($users)
                 ->addColumn('name', function ($customer) {
                     $name = $customer->first_name . ' ' . $customer->last_name;

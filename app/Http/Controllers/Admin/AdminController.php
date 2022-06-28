@@ -35,7 +35,7 @@ class AdminController extends Controller
 
         if($request->ajax()){
 
-            $admins = Admin::get();
+            $admins = Admin::query();
 
             return DataTables::of($admins)
                 ->addColumn('role', function ($admin) {

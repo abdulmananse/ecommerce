@@ -71,7 +71,7 @@ $("document").ready(function () {
     var datatable_columns = [
         {data: 'name'},
         {data: 'email'},
-        {data: 'role'},
+        {data: 'role', orderable: false},
         @can('edit admins')
         {data: 'action', orderable: false, searchable: false}
         @endcan        

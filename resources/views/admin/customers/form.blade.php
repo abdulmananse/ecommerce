@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-lg-12">
         <section class="panel">
-            <header class="panel-heading">Customer</header>
+            <header class="panel-heading">{{ request()->type }}</header>
             <div class="panel-body">
                 <div class="position-center" style="width:65%;">
                     <div class="form-group {{ $errors->has('type') ? 'has-error' : ''}}">
@@ -31,12 +31,16 @@
                     <div class="form-group {{ $errors->has('email') ? 'has-error' : ''}}">
                         {!! Form::label('email', 'Email', ['class' => 'col-lg-3 col-sm-3 control-label required-input']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
-                            @if(@$user)
-                            {!! Form::email('email', null, ['class' => 'form-control','placeholder' => 'Email','readonly']) !!}
-                            @else
                             {!! Form::email('email', null, ['class' => 'form-control','placeholder' => 'Email','required' => 'required']) !!}
-                            @endif
                             {!! $errors->first('email', '<p class="help-block">:message</p>') !!}
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="form-group {{ $errors->has('phone') ? 'has-error' : ''}}">
+                        {!! Form::label('phone', 'Contact #', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
+                        <div class="col-lg-9 col-md-9 col-sm-9">
+                            {!! Form::text('phone', null, ['class' => 'form-control','placeholder' => 'Contact #']) !!}
+                            {!! $errors->first('phone', '<p class="help-block">:message</p>') !!}
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
@@ -48,6 +52,15 @@
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
+                    <div class="form-group {{ $errors->has('owner_name') ? 'has-error' : ''}}">
+                        {!! Form::label('owner_name', 'Owner Name', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
+                        <div class="col-lg-9 col-md-9 col-sm-9">
+                            {!! Form::text('owner_name', null, ['class' => 'form-control','placeholder' => 'Owner Name']) !!}
+                            {!! $errors->first('owner_name', '<p class="help-block">:message</p>') !!}
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    
                     <div class="form-group {{ $errors->has('address') ? 'has-error' : ''}}">
                         {!! Form::label('address', 'Address', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
@@ -56,76 +69,43 @@
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
-                    <div class="hidden form-group {{ $errors->has('vat_number') ? 'has-error' : ''}}">
-                        {!! Form::label('vat_number', 'Vat #', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
+                   
+                    <div class="form-group {{ $errors->has('town') ? 'has-error' : ''}}">
+                        {!! Form::label('town', 'Town', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
-                            {!! Form::text('vat_number', null, ['class' => 'form-control','placeholder' => 'Vat #']) !!}
-                            {!! $errors->first('vat_number', '<p class="help-block">:message</p>') !!}
+                            {!! Form::text('town', null, ['class' => 'form-control','placeholder' => 'Town']) !!}
+                            {!! $errors->first('town', '<p class="help-block">:message</p>') !!}
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
-                    <div class="form-group {{ $errors->has('phone') ? 'has-error' : ''}}">
-                        {!! Form::label('phone', 'Contact #', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
-                        <div class="col-lg-9 col-md-9 col-sm-9">
-                            {!! Form::text('phone', null, ['class' => 'form-control','placeholder' => 'Contact #']) !!}
-                            {!! $errors->first('phone', '<p class="help-block">:message</p>') !!}
-                            <div class="help-block with-errors"></div>
-                        </div>
 
-                    </div>
-                    <div class="hidden form-group  {{ $errors->has('quantity_1') ? 'has-error' : ''}}">
-                        {!! Form::label('quantity_1', 'Quantity & Cost (%) 1', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
+                    <div class="form-group {{ $errors->has('city') ? 'has-error' : ''}}">
+                        {!! Form::label('city', 'City', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
-                            <div class="col-lg-6 col-md-6 col-sm-6">
-                                {!! Form::number('quantity_1', null, ['class' => 'form-control','placeholder' => 'Quantity','min' => '0']) !!}
-                                {!! $errors->first('quantity_1', '<p class="help-block">:message</p>') !!}
-                                <div class="help-block with-errors"></div>
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6">
-                                {!! Form::number('percentage_1', null, ['class' => 'form-control','placeholder' => 'Percentage','min' => '0']) !!}
-                                {!! $errors->first('percentage_1', '<p class="help-block">:message</p>') !!}
-                                <div class="help-block with-errors"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="hidden form-group  {{ $errors->has('quantity_2') ? 'has-error' : ''}}">
-                        {!! Form::label('quantity_2', 'Quantity & Cost (%) 2', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
-                        <div class="col-lg-9 col-md-9 col-sm-9">
-                            <div class="col-lg-6 col-md-6 col-sm-6">
-                                {!! Form::number('quantity_2', null, ['class' => 'form-control','placeholder' => 'Quantity','min' => '0']) !!}
-                                {!! $errors->first('quantity_2', '<p class="help-block">:message</p>') !!}
-                                <div class="help-block with-errors"></div>
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6">
-                                {!! Form::number('percentage_2', null, ['class' => 'form-control','placeholder' => 'Percentage','min' => '0']) !!}
-                                {!! $errors->first('percentage_2', '<p class="help-block">:message</p>') !!}
-                                <div class="help-block with-errors"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="hidden form-group  {{ $errors->has('quantity_3') ? 'has-error' : ''}}">
-                        {!! Form::label('quantity_3', 'Quantity & Cost (%) 3', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
-                        <div class="col-lg-9 col-md-9 col-sm-9">
-                            <div class="col-lg-6 col-md-6 col-sm-6">
-                                {!! Form::number('quantity_3', null, ['class' => 'form-control','placeholder' => 'Quantity','min' => '0']) !!}
-                                {!! $errors->first('quantity_3', '<p class="help-block">:message</p>') !!}
-                                <div class="help-block with-errors"></div>
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6">
-                                {!! Form::number('percentage_3', null, ['class' => 'form-control','placeholder' => 'Percentage','min' => '0']) !!}
-                                {!! $errors->first('percentage_3', '<p class="help-block">:message</p>') !!}
-                                <div class="help-block with-errors"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="hidden form-group {{ $errors->has('mark_up') ? 'has-error' : ''}}">
-                        {!! Form::label('mark_up', 'Markup', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
-                        <div class="col-lg-9 col-md-9 col-sm-9">
-                            {!! Form::number('mark_up', null, ['class' => 'form-control','placeholder' => 'Markup','min' => '0']) !!}
-                            {!! $errors->first('mark_up', '<p class="help-block">:message</p>') !!}
+                            {!! Form::text('city', null, ['class' => 'form-control','placeholder' => 'City']) !!}
+                            {!! $errors->first('city', '<p class="help-block">:message</p>') !!}
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
+
+                    <div class="form-group {{ $errors->has('postal_code') ? 'has-error' : ''}}">
+                        {!! Form::label('postal_code', 'Postal Code', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
+                        <div class="col-lg-9 col-md-9 col-sm-9">
+                            {!! Form::text('postal_code', null, ['class' => 'form-control','placeholder' => 'Postal Code']) !!}
+                            {!! $errors->first('postal_code', '<p class="help-block">:message</p>') !!}
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group {{ $errors->has('notes') ? 'has-error' : ''}}">
+                        {!! Form::label('notes', 'Notes', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
+                        <div class="col-lg-9 col-md-9 col-sm-9">
+                            {!! Form::textarea('notes', null, ['class' => 'form-control','placeholder' => 'Notes', 'rows' => 2]) !!}
+                            {!! $errors->first('notes', '<p class="help-block">:message</p>') !!}
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+
                     <div class="form-group {{ $errors->has('is_active') ? 'has-error' : ''}}">
                         {!! Form::label('is_active', 'Status', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">

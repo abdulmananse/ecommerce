@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 
 
 use App\Models\Transaction;
-use App\Models\WholesellerWallet;
+use App\Models\UserWallet;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -150,7 +150,7 @@ class ProfileController extends Controller
                     return '£'. round($transactions->sum('amount'),2);
                 })
                 ->addColumn('wallet_amount',function($order){
-                    $data = WholesellerWallet::whereUserId($order->id)->get();
+                    $data = UserWallet::whereUserId($order->id)->get();
 
                     return  '£'. round(($data->sum('credit') - $data->sum('debit')),2);
 

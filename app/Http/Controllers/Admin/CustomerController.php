@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Hashids, DataTables;
 use App\User;
 use Session;
+use App\Models\UserWallet;
+use App\Models\User2Pay;
 
 class CustomerController extends Controller
 {
@@ -54,8 +56,11 @@ class CustomerController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function create()
+    public function create(Request $reques)
     {
+        if (!$reques->filled('type')) {
+            return redirect()->back();
+        }
         return view('admin.customers.create');
     }
     
@@ -75,17 +80,91 @@ class CustomerController extends Controller
             'password' => 'required|min:6'
         ]);
 
-       $requestData = $request->all();
-       $requestData['password'] = bcrypt($requestData['password']);
+        $requestData = $request->all();
+        $requestData['password'] = bcrypt($requestData['password']);
 
-       $user = User::create($requestData);
-
+        $user = User::create($requestData);
+        
+        if ($request->type=='wholesaler') {
+            Session::flash('success', 'Wholesaler added!');
+            return redirect('admin/wholesalers');
+        }
         Session::flash('success', 'Shopkeeper added!');
+        return redirect('admin/shopkeepers');
+    }
+    
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     *
+     * @return \Illuminate\View\View
+     */
+    public function edit($id)
+    {
+          
+        $id = decodeId($id);
+        
+        $user = User::find($id);
+        request()->request->add(['type' => $user->type]);            
+        return view('admin.customers.edit', compact('user'));
+    }
+    
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function update($id, Request $request)
+    {
+        $id = decodeId($id);
+
+        $this->validate($request, [
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
+            'email' => 'required|email|max:255|unique:users,email,'.$id,
+        ]);
+
+        $requestData = $request->all();
+
+        $user = User::findOrFail($id);
+        $user->update($requestData);
 
         if ($request->type=='wholesaler') {
-            return redirect('admin/wholesaler');
+            Session::flash('success', 'Wholesaler updated!');
+            return redirect('admin/wholesalers');
         }
+        Session::flash('success', 'Shopkeeper updated!');
         return redirect('admin/shopkeepers');
+    }
+    
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function destroy($id)
+    {
+        $id = decodeId($id);
+
+        $user = User::find($id);
+
+        if($user){
+            $user->delete();
+            $response['message'] = ucfirst($user->type) . ' deleted!';
+            $status = $this->successStatus;
+        }else{
+            $response['message'] = ucfirst($user->type) . ' not exist against this id!';
+            $status = $this->errorStatus;
+        }
+
+        return response()->json(['result'=>$response], $status);
+
     }
     
     public function retailerOrders()
@@ -121,5 +200,25 @@ class CustomerController extends Controller
 
         }
         return view('admin.customers.retailer_orders');
+    }
+    
+    public function addWalletAmount()
+    {
+        UserWallet::create([
+            'credit' => \request()->amount,
+            'user_id' => \request()->id
+        ]);
+
+        return ['status' => true, 'message' => 'Successfully Inserted'];
+    }
+    
+    public function add2PayAmount()
+    {
+        User2Pay::create([
+            'credit' => \request()->amount,
+            'user_id' => \request()->id
+        ]);
+
+        return ['status' => true, 'message' => 'Successfully Inserted'];
     }
 }

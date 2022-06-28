@@ -38,6 +38,7 @@
                                   <th>Address</th>
                                 <!--<th>Cost Percentage</th>-->
                                 <th>Wallet Amount</th>
+                                <th>2Pay</th>
                                 <th>Status</th>
                                 @can('edit wholesaler')
                                 <th>Action</th>
@@ -56,6 +57,7 @@
                                  <th>Address</th>
                                 <!--<th>Cost Percentage</th>-->
                                 <th>Wallet Amount</th>
+                                <th>2Pay</th>
                                 <th>Status</th>
                                 @can('edit wholesaler')
                                 <th>Action</th>
@@ -94,6 +96,34 @@
                 </div>
             </div>
         </div>
+        
+        <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="2pay_model" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+                        <h4 class="modal-title">Add 2Pay Amount</h4>
+                    </div>
+                    <div class="modal-body">
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group is_main_price">
+                                        {!! Form::label('amount', '2Pay Amount', ['class' => 'control-label col-lg-4 required-input ']) !!}
+                                        <div class="col-lg-7">
+                                            {!! Form::number('amount', null, ['class' => 'form-control 2payInput','min' => '0']) !!}
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                               <div class="row">
+                                   <button type="button" class="btn btn-info pull-right 2PaySubmitData">Submit</button>
+                               </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 </section>
       
@@ -113,7 +143,8 @@ $("document").ready(function () {
         {data: 'phone'},
          {data: 'address'},
 //        {data: 'percentage_1'},
-        {data: 'wallet_amount'},
+        {data: 'wallet_amount', orderable: false},
+        {data: '2pay_amount', orderable: false},
         {data: 'is_active', orderable: false, searchable: false,width: "10%"},
         @can('edit wholesaler')
         {data: 'action', orderable: false, searchable: false}
@@ -125,8 +156,13 @@ $("document").ready(function () {
     $("body").on("click",'.walletAdd',function () {
         id = $(this).attr('data-id');
         $('#attribute_model').modal('show');
-    })
-
+    });
+    
+    $("body").on("click",'.2payAdd',function () {
+        id = $(this).attr('data-id');
+        $('#2pay_model').modal('show');
+    });
+    
     $('.submitData').on('click', function (e) {
 
         if(e.isDefaultPrevented()) {
@@ -149,6 +185,34 @@ $("document").ready(function () {
                     $(".walletInput").val('');
                     $('#datatable').DataTable().ajax.reload();
                     toastr.success("Amount Added to user wallet!");
+                }
+
+            });
+        }
+    });
+    
+    $('.2PaySubmitData').on('click', function (e) {
+
+        if(e.isDefaultPrevented()) {
+
+        }else{
+
+            e.preventDefault();
+            if($(".2PayInput").val() == ''){
+                toastr.error("Please Enter 2Pay Amount!");
+                return false;
+            }
+            var attribute_id = $("#attribute").val();
+
+            $.ajax({
+                url :'{{ route('admin.add.2pay.amount') }}',
+                type: 'post',
+                data: {'_token': token,'id':id,amount:$(".2payInput").val()},
+                success: function (result) {
+                    $('#2pay_model').modal('hide');
+                    $(".2PayInput").val('');
+                    $('#datatable').DataTable().ajax.reload();
+                    toastr.success("Amount Added to user 2Pay!");
                 }
 
             });

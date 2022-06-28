@@ -14,7 +14,7 @@ use App\Models\Courier;
 use App\Models\VanStoreProduct;
 use App\Models\ShoppingCart;
 use App\Models\ShoppingCartHistory;
-use App\Models\WholesellerWallet;
+use App\Models\UserWallet;
 use Illuminate\Http\Request;
 use Session, Hashids, DataTables;
 use App\Models\Email;
@@ -82,7 +82,7 @@ class AdminOrderController extends Controller
                         $color ='black';
                     }
                     $amount = $order->amount > 0 ? $order->amount : 0;
-                    return "<a style='color: $color'>".'£'.".$amount</a>";
+                    return "<a style='color: $color'>".'£'."$amount</a>";
                 })
                 ->addColumn('barcode_image', function ($order) {
                     $user =  User::where('id',$order->user_id)->first();
@@ -155,7 +155,7 @@ class AdminOrderController extends Controller
      */
     public function create()
     {
-        $customers = User::where('type', 'wholesaler')->get()->pluck('wholesaler_name', 'id')->prepend('Select Customer', '');
+        $customers = User::whereIn('type', ['wholesaler','shopkeeper'])->get()->pluck('wholesaler_name', 'id')->prepend('Select Customer', '');
         $products = Product::has('quantity')->pluck('name', 'id')->prepend('Select Product', '');
         
         return view($this->resource . '/create', get_defined_vars());
@@ -275,7 +275,7 @@ class AdminOrderController extends Controller
                 
                 
                 if ($paymentMethod == '2pay') { 
-                    WholesellerWallet::create([
+                    UserWallet::create([
                         'debit' => $transaction->amount,
                         'user_id' => $customerId,
                         'order_id' => $transaction->id,
@@ -612,14 +612,26 @@ class AdminOrderController extends Controller
     public function getWalletAmount($id)
     {
         $walletAmount = 'Wallet: £0.00';
+        $payAmount = '2Pay: £0.00';
+        
         $wallet = getWholsellerDataWallet($id);
+        $twopay = get2PayAmount($id);
+        
         if ($wallet<0) {
             $walletAmount = '-£'.number_format(abs($wallet), 2);
         } else {
             $walletAmount = '£'.number_format($wallet, 2);
         }
         
-        return '<a href="'. url("admin/orders?type=admin_order&payment_method=2pay&user_id=" . Hashids::encode($id)) .'" target="_blank">Wallet: '. $walletAmount .'</a>';
+        if ($twopay<0) {
+            $payAmount = '-£'.number_format(abs($twopay), 2);
+        } else {
+            $payAmount = '£'.number_format($twopay, 2);
+        }
+        
+        return '<a href="'. url("admin/orders?type=admin_order&payment_method=wallet&user_id=" . Hashids::encode($id)) .'" target="_blank">Wallet: '. $walletAmount .'</a>'
+                . '<br/>'
+                . '<a href="'. url("admin/orders?type=admin_order&payment_method=2pay&user_id=" . Hashids::encode($id)) .'" target="_blank">2Pay: '. $payAmount .'</a>';
     }
 
 

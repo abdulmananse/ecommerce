@@ -20,7 +20,8 @@ use App\Models\Currency;
 use App\Models\Shipping;
 use App\Models\Transaction;
 use App\Models\Brand;
-use App\Models\WholesellerWallet;
+use App\Models\UserWallet;
+use App\Models\User2Pay;
 use App\Models\VanStoreStockHistory;
 use App\Models\VanStoreProduct;
 
@@ -1782,8 +1783,21 @@ if (! function_exists('getWholsellerDataWallet')) {
 
     function getWholsellerDataWallet($id)
     {
-         $debit = WholesellerWallet::where('user_id',$id)->sum('debit');
-         $credit = WholesellerWallet::where('user_id',$id)->sum('credit');
+         $debit = UserWallet::where('user_id',$id)->sum('debit');
+         $credit = UserWallet::where('user_id',$id)->sum('credit');
+        $debit = ($debit)?$debit:0;
+        $credit = ($credit)?$credit:0;
+
+        return ($credit-$debit);
+    }
+}
+
+if (! function_exists('get2PayAmount')) {
+
+    function get2PayAmount($id)
+    {
+         $debit = User2Pay::where('user_id',$id)->sum('debit');
+         $credit = User2Pay::where('user_id',$id)->sum('credit');
         $debit = ($debit)?$debit:0;
         $credit = ($credit)?$credit:0;
 

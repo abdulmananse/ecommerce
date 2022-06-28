@@ -10,7 +10,7 @@ use App\Models\Newsletter_subscriber;
 use App\Models\ShoppingCart;
 use App\Models\TaxRate;
 use App\Models\Transaction;
-use App\Models\WholesellerWallet;
+use App\Models\UserWallet;
 use App\User;
 use Cart;
 use App\Models\Product;
@@ -963,7 +963,7 @@ class CartController extends Controller
 //            make transaction entry
 
             $this->updateUserStatus();
-            $walletId= WholesellerWallet::create([
+            $walletId= UserWallet::create([
                 'debit' =>  $request->amount,
                 'user_id' => Auth::id(),
                 'created_at' => Carbon::now(),

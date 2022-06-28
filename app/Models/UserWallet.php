@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class WholesellerWallet extends Model
+class UserWallet extends Model
 {
-    protected $table = 'wholeseller_wallets';
+    protected $table = 'user_wallets';
 
     /**
      * The database primary key value.

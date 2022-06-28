@@ -79,7 +79,7 @@
                 <li class="sub-menu">
                     <a href="javascript:void(0);" {{ setActive(['admin/admin-orders','admin/purchase-orders']) }}>
                         <i class="fa fa-shopping-cart"></i>
-                        <span>Quotations</span>
+                        <span>Sales</span>
                     </a>
                     <ul class="sub">
                         <li {{ setActive(['admin/admin-orders']) }}><a href="{{ url('admin/admin-orders') }}">Quotations</a></li>
@@ -107,7 +107,7 @@
                 
                 @can('view wholesaler')
                 <li class="sub-menu">
-                    <a href="javascript:void(0);" {{ setActive(['admin/shopkeepers','admin/wholesalers']) }}>
+                    <a href="javascript:void(0);" {{ setActive(['admin/shopkeepers','admin/wholesalers','admin/customers']) }}>
                         <i class="fa fa-users"></i>
                         <span>Customers</span>
                     </a>

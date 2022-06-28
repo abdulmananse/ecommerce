@@ -51,13 +51,15 @@ Route::group(['namespace' => 'Admin'], function () {
     
     Route::resource('wholesalers', 'WholesalerController');
     Route::GET('whole-saler-orders','WholesalerController@wholeSalerOrders')->name('whole.saler.orders');
-    Route::POST('add-wallet-amount','WholesalerController@addWalletAmount')->name('add.wallet.amount');
     Route::resource('drop-shipper', 'DropShipperController');
     Route::get('shipper-orders', 'DropShipperController@dropShipperOrders')->name('shipper.orders');
     Route::resource('courier-assignment', 'CourierAssignmentsController');
     Route::resource('subcategories', 'SubCategoriesController');
     Route::POST('load-subcategory', 'SubCategoriesController@loadSubCategory')->name('load.subcategory');
     Route::resource('customers', 'CustomerController');
+    Route::post('add-wallet-amount','CustomerController@addWalletAmount')->name('add.wallet.amount');
+    Route::post('add-2pay-amount','CustomerController@add2PayAmount')->name('add.2pay.amount');
+    
     Route::get('retailer-orders','CustomerController@retailerOrders')->name('retailer.orders');
     Route::resource('variants', 'VariantController');
     Route::resource('suppliers', 'SuppliersController');
