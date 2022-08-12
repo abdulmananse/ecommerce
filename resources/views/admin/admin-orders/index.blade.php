@@ -59,7 +59,7 @@
                                     
                                     
                                     @if(auth()->user()->can('change order status'))
-                                    <th> Status </th>
+                                    {{-- <th> Status </th> --}}
                                     @endif
                                     <th> Action </th>
                                 </tr>
@@ -197,6 +197,7 @@
             serverSide: true,
             ordering: true,
             responsive: true,
+            pageLength: -1,
             ajax: {
               url:url,
               data:{from_date:start_date,to_date:end_date}
@@ -209,9 +210,9 @@
                 {data: 'cost'},
                 {data: 'tax'},
                 @if(auth()->user()->can('change order status'))
-                {data: 'status', width: "10%", orderable: false, searchable: false},
+                // {data: 'status', width: "10%", orderable: false, searchable: false},
                 @endif
-                {data: 'action', width: "8%", orderable: false, searchable: false}
+                {data: 'action', width: "10%", orderable: false, searchable: false}
             ],
           order: []
         });

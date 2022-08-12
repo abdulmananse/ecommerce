@@ -120,6 +120,7 @@ $(document).ready(function () {
         serverSide: true,
         ordering: true,
         responsive: true,
+        pageLength: -1,
         ajax: {
                   url: "{{url('admin/reports/product')}}",
                   data : function(d){
@@ -155,10 +156,10 @@ $(document).ready(function () {
  
             // Update footer
             $( api.column( 3 ).footer() ).html( '<b>'+stockTotal +'</b>' );
-            $( api.column( 4 ).footer() ).html( '<b>'+stockValueTotal +'</b>' );
-            $( api.column( 5 ).footer() ).html( '<b>'+itemValueTotal +'</b>' );
+            $( api.column( 4 ).footer() ).html( '<b>'+stockValueTotal.toFixed(2) +'</b>' );
+            $( api.column( 5 ).footer() ).html( '<b>'+itemValueTotal.toFixed(2) +'</b>' );
             $( api.column( 6 ).footer() ).html( '<b>'+reorderPointTotal +'</b>' );
-            $( api.column( 7 ).footer() ).html( '<b>'+reorderAmountTotal +'</b>' );
+            $( api.column( 7 ).footer() ).html( '<b>'+reorderAmountTotal.toFixed(2) +'</b>' );
         }
       });        
         

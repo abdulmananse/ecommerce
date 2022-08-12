@@ -24,7 +24,12 @@ class User extends Authenticatable
     {
         return $this->first_name.' '.$this->last_name;
     }
-    
+
+    public function getNameWithIdAttribute($value)
+    {
+        return $this->customer_id.' - '.$this->name;
+    }
+
     public function getFullNameWithEmailAttribute($value)
     {
         return $this->first_name.' '.$this->last_name.' ('.$this->email.')';
@@ -73,10 +78,10 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'profile_image', 'email', 'password','phone', 'mobile',
+        'customer_id', 'first_name', 'last_name', 'profile_image', 'email', 'password','phone', 'mobile',
         'type', 'vat_number', 'company_name','wholesaler_type','quantity_1','percentage_1',
         'quantity_2','percentage_2','quantity_3','percentage_3','is_active','mark_up',
-        'is_latest','address', 'owner_name', 'shop_name', 'town', 'city', 'postal_code', 'notes'
+        'is_latest','address', 'name', 'shop_name', 'town', 'city', 'postal_code', 'notes'
     ];
 
     /**

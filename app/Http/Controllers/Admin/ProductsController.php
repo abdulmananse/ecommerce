@@ -48,6 +48,7 @@ class ProductsController extends Controller
      */
     public function index(Request $request)
     {
+        $brands = Brand::pluck('name','id')->prepend('Select Brand','');
         if($request->ajax()){
             $products = Product::with([
                 'products' => function ($query) {
@@ -64,7 +65,23 @@ class ProductsController extends Controller
                 'supplier_2',
                 'supplier_3',
                 'supplier_4'
-            ])->where('product_id',0)->orderBy('updated_at','desc');
+            ])->where('products.product_id',0);
+
+            if($request->filled('brand_id')) {
+                $products->where('brand_id', $request->brand_id);
+            }    
+
+            if($request->filled('barcode')) {
+                $products->where('code', $request->barcode);
+            } 
+
+            if($request->filled('product_name')) {
+                $products->where('name', 'like', "%".$request->product_name."%");
+            }
+
+            if(!$request->filled('order')) {
+                $products->orderBy('updated_at','desc');
+            }
 
             return DataTables::of($products)
                 ->editColumn('price', function ($stock) {
@@ -76,7 +93,7 @@ class ProductsController extends Controller
                     if($product->is_variants)
                         return '<span class="details-control"></span>';
                     else
-                        return '';
+                        return '<input type="checkbox" class="multipleDelete" value="'.$product->id.'" />';
                 })
                 ->addColumn('sku', function ($product) {
                     if(($product->is_variants) || ($product->type==3))
@@ -119,7 +136,7 @@ class ProductsController extends Controller
                 ->make(true);
         }
 
-        return view($this->resource.'/index');
+        return view($this->resource.'/index', compact('brands'));
     }
 
 
@@ -643,10 +660,9 @@ class ProductsController extends Controller
             $id = Hashids::decode($id)[0];
         }
 
-        $product = Product::find($id);
+        $deleted = $this->deleteProduct($id);
 
-        if($product){
-            $product->delete();
+        if($deleted){
             $response['message'] = 'Product deleted!';
             $status = $this->successStatus;
         }else{
@@ -657,6 +673,38 @@ class ProductsController extends Controller
         return response()->json(['result'=>$response], $status);
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     *
+     * @return JS0N Response
+     */
+    public function deleteMultiProducts(Request $request)
+    {
+        $productIds = $request->product_ids;
+        foreach($productIds as $productId) {
+            $this->deleteProduct($productId);
+        }
+
+        $response['message'] = 'Products deleted!';
+        $status = $this->successStatus;
+        return response()->json(['result'=>$response], $status);
+    }
+
+    private function deleteProduct($id) 
+    {
+        $product = Product::find($id);
+
+        if($product){
+            $product->delete();
+
+            return true;
+        } 
+        
+        return false;
+    }
+    
     /**
      * getAllStoreCategories function
      *

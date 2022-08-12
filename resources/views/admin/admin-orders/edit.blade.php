@@ -28,7 +28,7 @@
                 <section class="panel">
                     <div class="panel-body invoice" id="printData">
                             
-                        <form id="applicationForm" action="{{ route('admin.admin-orders.store') }}" method="post">
+                        <form id="applicationForm" action="{{ route('admin.admin-orders.update', $order->id) }}" method="PATCH">
                         @csrf
                         <div class="row invoice-to">
                             <div class="col-md-6 col-sm-6 pull-left">
@@ -38,7 +38,7 @@
                                 <h4>Customer:</h4>
                                 <p>
                                     <div class="col-md-6">
-                                        {!! Form::select('customer_id', $customers, null, ['class' => 'form-control select2 customer_id', 'required' => 'required', 'id' => 'customer_select2']) !!}
+                                        {!! Form::select('customer_id', $customers, $order->user_id, ['class' => 'form-control select2 customer_id', 'required' => 'required', 'id' => 'customer_select2']) !!}
                                         
                                         <label id="customer_id-error" class="error" for="customer_id"></label>
                                         <label id="customer_select2-error" class="error" for="customer_select2"></label>
@@ -69,30 +69,39 @@
                             </tr>
                             </thead>
                             <tbody>
+                                @foreach($order->purchasedItems as $key => $item)
+                                <?php
+                                    $max = $item->quantity;
+                                    $productQuantity = getProductQuantity($item->product_id);
+                                    if ($productQuantity>0) {
+                                        $max = $max + $productQuantity;
+                                    }
+                                ?>
                                 <tr class='product_row'>
                                     <td class="invoice">
-                                        {!! Form::select('product_name[0]', $products, null, ['class' => 'form-control select2 products', 'style' => 'width:250px', 'required' => 'required']) !!}
-                                        <label id="product_name[0]-error" class="error" for="product_name[0]"></label>
-                                        <input type="hidden" name="product_id[0]" value="0" class="product_id" />
+                                        {!! Form::select('product_name[$key]', $products, $item->product_id, ['class' => 'form-control select2 products', 'style' => 'width:250px', 'required' => 'required', 'disabled']) !!}
+                                        <label id="product_name[{{$key}}]-error" class="error" for="product_name[{{$key}}]"></label>
+                                        <input type="hidden" name="product_id[{{$key}}]" value="{{ $item->product_id }}" class="product_id" />
                                     </td>
                                     <td class="text-center product_unit_price" data-value="0" data-discounted_price="0" data-tax_rate="0" >
-                                        <input required type='number' style='width:60px' name='product_price[]' class='product_price' value="0" step="any" min="0" />
-                                        <label id="product_price[0]-error" class="error" for="product_price[0]"></label>
+                                        <input required type='number' style='width:60px' name='product_price[{{$key}}]' class='product_price' value="{{ $item->amount_per_item }}" step="any" min="0" />
+                                        <label id="product_price[{{$key}}]-error" class="error" for="product_price[{{$key}}]"></label>
                                     </td>
                                     <td class="text-center product_quantity_tr">
-                                        <input required type='number' style='width:50px' name='product_quantity[]' class='product_quantity' value="1" step="1" min="1" />
-                                        <label id="product_quantity[0]-error" class="error" for="product_quantity[0]"></label>
+                                        <input required type='number' style='width:50px' name='product_quantity[{{$key}}]' class='product_quantity' value="{{ $item->quantity }}" step="1" min="1" max="{{ $max }}" />
+                                        <label id="product_quantity[{{$key}}]-error" class="error" for="product_quantity[{{$key}}]"></label>
                                     </td>
                                     <td class="text-center quantity_total">0</td>
                                     <td class="text-center product_total">0</td>
                                     <td class="text-center"><i class="btn btn-sm fa fa-close removeRow text-danger"></td>
                                 </tr>
+                                @endforeach
                             </tbody>
                         </table>
                         
                         <div class="row">
                             <div class="col-md-3">
-                                {!! Form::select('payment_method', ['' => 'Select Payment', 'cash' => 'Cash', 'card' => 'Card', 'bank' => 'Bank', '2pay' => 'To Pay'], null, ['class' => 'form-control', 'required' => 'required']) !!}
+                                {!! Form::select('payment_method', ['' => 'Select Payment', 'cash' => 'Cash', 'card' => 'Card', 'bank' => 'Bank', '2pay' => 'To Pay'], $order->payment_method, ['class' => 'form-control', 'required' => 'required']) !!}
                             </div>
                             <div class="col-md-4 col-xs-5 invoice-block pull-right">
                                 <ul class="unstyled amounts">
@@ -106,7 +115,7 @@
                         
                         <div class="form-group">
                             <div class="col-lg-offset-2 col-lg-6">
-                                {!! Form::submit('Create Quotation', ['class' => 'btn btn-info pull-right admin-order-btn']) !!}
+                                {!! Form::submit('Update Quotation', ['class' => 'btn btn-info pull-right admin-order-btn']) !!}
                             </div>
                         </div>    
                             
@@ -128,10 +137,22 @@
 <script src="{{ asset('js/lodash.min.js') }}"></script>
 <script type="text/javascript">
     
-    var i = 1;
+    var i = {{count($order->purchasedItems)}};
     var products = [];
     var taxRate = {{ getVatCharges() }};
+
+    @foreach($order->purchasedItems as $item)
+    var wrapped = _(products).push({{ $item->product_id }});
+    wrapped.commit();
+    products = _.uniqBy(products);
+    @endforeach
+
     $(document).ready(function () {
+
+        setTimeout(function() {
+            calculateAmount();
+        }, 3000);
+        
 
         $("#applicationForm").validate({
             rules : {
@@ -201,9 +222,9 @@
             
             let _el = $(this);
             var _parent = $(this).parents('.product_row');
-            var val = this.value;
+            var val = parseInt(this.value);
             if (val > 0) {
-                if (_.includes(products, this.value)) {
+                if (_.includes(products, val)) {
                     _el.find('option[value=""]').removeAttr("selected");
                     _el.find('option[value=""]').attr("selected", "selected");
                     errorMessage('You have already select this option please select other option');
@@ -237,7 +258,7 @@
 
                                     calculateAmount();
 
-                                    var wrapped = _(products).push(val);
+                                    var wrapped = _(products).push(parseInt(val));
                                     wrapped.commit();
                                     products = _.uniqBy(products);
                                     _el.attr("disabled", true);    
@@ -314,7 +335,7 @@
         var totalDiscount = 0;
         var totalVat = 0;
         var totalAmount = 0;
-        
+        var quantityTotal = 0;
         $('.table-invoice tbody tr.product_row').each(function() {
             let _product = $(this);
             var product_id = _product.find(".product_id").val();
@@ -325,7 +346,9 @@
                 //var taxRate = _product.find('.product_unit_price').attr('data-tax_rate');
                 var quantity = parseInt(_product.find('.product_quantity').val());
                 var maxQuantity = parseInt(_product.find('.product_quantity').attr('max'));
-                quantityTotal = maxQuantity - quantity;
+                if (maxQuantity>0) {
+                    quantityTotal = maxQuantity - quantity;
+                }
                 _product.find(".quantity_total").text(quantityTotal);
                 
                 if (productUnitPrice > 0 && quantity > 0) {

@@ -42,6 +42,22 @@
                          </span>
                     </header>
                     <div class="panel-body">
+
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                {!! Form::text('barcode', null, ['class' => 'form-control', 'id' => 'barcode','placeholder'=>'Barcode']) !!}
+                            </div>
+                            <div class="form-group col-md-3">
+                                {!! Form::text('product_name', null, ['class' => 'form-control', 'id' => 'product_name','placeholder'=>'Product Name']) !!}
+                            </div>
+                            <div class="form-group col-md-3">
+                                {!! Form::select('brand_id', $brands, null, ['class' => 'form-control select2', 'id' => 'brand_id']) !!}
+                            </div>
+                            <div class="form-group col-md-3">
+                                <button class="btn bnt-success searchProducts" >Search</button>
+                            </div>
+                        </div>
+
                         <table id="datatable" class="table table-bordered table-striped">
                             <thead>
                             <tr>
@@ -130,7 +146,15 @@ $(document).ready(function () {
       serverSide: true,
       ordering: true,
       responsive: true,
-      ajax: "{{url('admin/products')}}",
+      pageLength: -1,
+      ajax: {
+            url: "{{url('admin/products')}}",
+            data : function(d){
+                d.brand_id = $("#brand_id option:selected").val(); 
+                d.barcode= $("#barcode").val();
+                d.product_name= $("#product_name").val();
+            }
+        },
       columns: [
             {data: 'is_variants', orderable:false, searchable: false},
             {data: 'product_image', width: "10%", className: 'text-center'},
@@ -169,9 +193,69 @@ $(document).ready(function () {
             reload_datatable.fnDraw(); 
         });   
 
+        $(document).on('click', '.searchProducts', function (e) { 
+            reload_datatable.fnDraw(); 
+        });
+
         $(".csv_products").click(function(){
             $('#csv_model').modal('show');
-        });     
+        });   
+        
+        $("#datatable_length label").after('<button class="btn bnt-sm btn-danger deleteAllBtn" style="margin-left: 8px;" >Delete</button>');
+
+        $(".deleteAllBtn").click(function(){
+            var productIds = $('.multipleDelete:checked').map(function(){
+                return parseInt(this.value);
+            }).get();
+     
+            if (productIds.length > 0) {
+                $.confirm({
+                    title: 'Confirm!',
+                    content: 'Are you sure! You want remove this records',
+                    type: 'red',
+                    typeAnimated: true,
+                    closeIcon: true,
+                    buttons: {
+                        confirm: function () {
+                            $("#datatable tbody").LoadingOverlay("show");
+                            $.ajax({
+                                type: 'post',
+                                url: '{{ url("admin/products/delete-multi-products") }}',
+                                data: {'product_ids': productIds},
+                                complete:function (res) {
+                                    $("#datatable tbody").LoadingOverlay("hide");
+                                    var j = JSON.parse(res.responseText);
+                                    var result = j.result;
+                                    if(res.status == 200){
+                                        if(reload_datatable != ""){
+                                        reload_datatable.fnDraw();
+                                        }
+
+                                        success_message(result.message);
+
+                                    }else{
+                                        error_message(result.message);
+                                    }
+                                },
+                                error: function (request, status, error) {
+                                    $("#datatable tbody").LoadingOverlay("hide");
+                                    var result = request.responseJSON.result;
+                                    var err = JSON.parse(request.responseText);
+                                    if(status == 401){
+                                        error_message(result.message);
+                                    }else{
+                                        error_message(err.message);
+                                    }
+                                }
+                            });
+                        },
+                        cancel: function () { },
+                    }
+                });
+            } else {
+                toastr.error('Please select atleast one product');
+            }
+        });  
       });
       
     function format ( rowData ) {

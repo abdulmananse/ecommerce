@@ -51,54 +51,27 @@
                         <div class="row invoice-to">
                             <div class="col-md-6 col-sm-6 pull-left">
 
-                                <h4>Invoice ID: <b>{{$order->id}}</b></h4>
-                                <h4>Supplier Details:</h4>
-                                <p>
-                                    <b>Company Name:</b> The Super Van<br>
-                                    <b>Phone:</b> +44 141 374 0365<br>
-                                    <b>Email:</b> info@fonology.co.uk<br>
-                                    <b>Address:</b> 61c Main Street, Thornliebank G46 7RX Glasgow, UK.
-                                </p>
                                 <h4>Customer Details:</h4>
                                 <p>
-                                    @if(@$user->owner_name)
-                                    <b>Name:</b> {{ @$user->owner_name }}<br>
-                                    @else
-                                    <b>Name:</b> {{ @$user->first_name }} {{ @$user->last_name }}<br>
-                                    @endif
-                                    @if(@$user->shop_name)
-                                        <b>Shop Name:</b> {{ @$user->shop_name }}<br>
-                                    @endif
-                                    <b>Phone:</b> {{ @$user->contact_no }}<br>
-                                    <b>Email:</b> {{@$user->email }}<br>
-                                    <b>Address:</b> {{ @$user->address }}, {{ @$user->postal_code }}, {{ @$user->town }}, {{ @$user->city }}
+                                    <b>Business Name:</b> {{ @$user->company_name }}<br>
+                                    <b>Account No:</b> {{ @$user->customer_id }}<br>
+                                    <b>Address:</b> {{ @$user->address }}
                                 </p>
                             </div>
-                            <div class="col-md-4 col-sm-5 pull-right">
-                                <div class="row">
-                                    <div class="col-md-4 col-sm-5 inv-label">Invoice #</div>
-                                    <div class="col-md-8 col-sm-7">{{ $order->id }}</div>
-                                </div>
+                            <div class="col-md-6 col-sm-6 pull-right">
+                                <p>
+                                    <b>Invoice No:</b>
+                                    {{ sixDigitInvoiceNumber($order->id) }}
+                                </p>
                                 <br>
-                                <div class="row">
-                                    <div class="col-md-4 col-sm-5 inv-label">Date #</div>
-                                    <div class="col-md-8 col-sm-7">{{ date('d-m-Y h:i a', strtotime($order->created_at)) }}</div>
-                                </div>
-                                <br>
-                                <div class="row">
-                                    <div class="col-md-12 inv-label">
-                                        <h3>Total {{$total_text}}</h3>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <h1 class="amnt-value">{{ $currency_code }}{{number_format($order->amount,2)}}</h1>
-                                    </div>
-                                </div>
-
-
+                                <p>
+                                    <b>Date #</b>
+                                    {{ date('d-m-Y h:i a', strtotime($order->created_at)) }}
+                                </p>
                             </div>
                         </div>
                     <div class="adm-table">    
-                        <table class="table table-invoice" >
+                        <table class="table table-invoice1 table-bordered  " style="margin-top: 10px" >
                             <thead>
                             <tr>
                                 <th>#</th>
@@ -131,7 +104,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td class="invoice">
-                                    <h4>{{$productName}}</h4>
+                                    <h5>{{ ucwords(strtolower($productName)) }}</h5>
                                 </td>
                                 <td class="text-center">{{$currency_code}}{{$price}}</td>
                                 <td class="text-center">{{$single_item['quantity']}}</td>
@@ -141,45 +114,25 @@
 
                             @endforeach
 
+                            <tr>
+                                <td colspan="4" align="right"><b>Total Invoice Value</b></td>
+                                <td align="center"> {{$currency_code}}<?php
+                                    if (is_numeric($order->amount)) {
+                                        echo number_format($order->amount,2);
+                                    } else {
+                                        echo $order->amount;
+                                    }
+                                    ?>
+                                    </td>
+                            </tr>
 
                             </tbody>
                         </table>
                     </div>    
-                        <div class="row">
-                            <div class="col-md-8 col-xs-7 payment-method">
-                                <h4>Payment</h4>
-                                @php
-                                    $payment_method = @$trans_details['payer'];
-                                    $payment_status = 'Pending';
-                                    $payment_class = 'label-danger';
-
-                                    if($cart->payment_status == 'complete'){
-                                        $payment_status = 'Paid';
-                                        $payment_class = 'label-success';
-                                    }
-                                @endphp
-                                
-                                @if($order->payment_method == '2pay')
-                                <p>Payment Method : Wallet</p>
-                                @endif
-                                
-                                @if($order->payment_method != 'none')
-                                <p>Payment Mode : {{ ucwords($order->payment_method) }}</p>
-                                @endif
-                            </div>
-                            <div class="col-md-4 col-xs-5 invoice-block pull-right">
-                                <ul class="unstyled amounts">
-                                    <li style="display:none;">Product amount : {{$currency_code}}{{number_format($subtotal,2)}}</li>
-                                    <li style="display:none;">Discount : {{$currency_code}}{{number_format($order->discount,2)}} </li>
-                                     <li style="display:none;">Vat : {{$currency_code}}{{number_format($order->tax,2)}} </li>
-                                    <li class="grand-total">Total : {{$currency_code}}{{number_format($order->amount,2)}}</li>
-                                </ul>
-                            </div>
-                        </div>
-
+                        
                         <div class="row">    
-                            <h3 style="margin-left:20px;font-size:16px;">VAT Summary</h3>
-                        <table class="table table-invoice" >
+                            {{-- <h3 style="margin-left:20px;font-size:16px;">VAT Summary</h3> --}}
+                            <table class="table table-invoice1 table-bordered  " style="margin-top: 10px" >
                             <thead>
                             <tr>
                                 <th class="text-center">RATE</th>
@@ -191,16 +144,46 @@
                                 @php
                                     $vat = $order->tax;
                                     $amount = $order->amount;
+                                    if (!is_numeric($order->amount)) {
+                                        $amount = str_replace(',', '', $order->amount);
+                                    }
                                     $price = $amount - $vat;
                                     $vatRate = $vat / $amount * 100;
                                 @endphp
                                 <tr>
-                                    <td class="text-center">VAT @ {{ number_format($vatRate, 2) }}%</td>
+                                    {{-- <td class="text-center">VAT @ {{ number_format($vatRate, 2) }}%</td> --}}
+                                    <td class="text-center">VAT @ 20%</td>
                                     <td class="text-center">{{$currency_code}}{{ number_format($vat, 2) }}</td>
                                     <td class="text-center">{{$currency_code}}{{number_format($price, 2)}}</td>
                                 </tr>
                             </tbody>
                         </table>
+                        </div>
+
+                        <div class="row" >
+                            <div class="col-md-12">
+                                <p><b>Declaration:</b> The goods delivered remain the property of VAPEOSONIC Ltd until paid in full. Risk passes to buyer upon acceptance of delivery. Overdue accounts would be subject to interest of  3% per month. All shortages or damages must be reported with 24 hours of delivery. Goods are supplied subject to our term and conditions (copy available upon request).</p>
+                            </div>
+                        </div>
+
+                        <div class="row" >
+                            <div class="col-md-12">
+                                <h5><u>OUR COMPANY COMPLETE NAME & ADDRESS INC POSTCODE UNITED KINGDOM</u></h5>
+
+                                <div class="col-md-4 col-sm-4 pull-left">
+                                    <p><b>Company Name:</b> VAPEOSONIC LTD T/A SUPERVAN</p>
+                                    <p><b>Vat No:</b> 416 9547 70</p>
+                                    <p><b>Website:</b> www.thesupervan.co.uk</p>  
+                                    <p><b>A/C Name:</b> VAPESONIC</p>
+                                    <p><b>Sort Code:</b> 06-06-05</p>
+                                    <p><b>A/C No:</b> 19277217</p>
+                                </div>
+                                <div class="col-md-4 col-sm-4 pull-right">
+                                    <p><b>Company REG No:</b> SC737008</p>
+                                    <p><b>Email:</b> info@thesupervan.co.uk </p>
+                                    <p><b>Contact No:</b> +44 141 374 0365</p>
+                                </div>
+                            </div>
                         </div>
 
                     </div>

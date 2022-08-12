@@ -23,7 +23,7 @@
                 <!--breadcrumbs end -->
             </div>
         </div>                
-        
+        @if(roleName() =='Admin')
         <div class="row">
             <div class="col-sm-12">
                 <section class="panel">
@@ -277,7 +277,9 @@
                     </div>
                 </section>
             </div>
-        </div>       
+        </div>   
+        
+        @endif
     </section>
 </section>
       

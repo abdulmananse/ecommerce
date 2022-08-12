@@ -57,48 +57,27 @@
                         <div class="row invoice-to">
                             <div class="col-md-6 col-sm-6 pull-left">
 
-                                <h4>Invoice ID: <b>{{$order->id}}</b></h4>
-                                <h4>Supplier Details:</h4>
-                                <p>
-                                    <b>Company Name:</b> The Super Van<br>
-                                    <b>Phone:</b> +44 141 374 0365<br>
-                                    <b>Email:</b> info@fonology.co.uk<br>
-                                    <b>Address:</b> 61c Main Street, Thornliebank G46 7RX Glasgow, UK.
-                                </p>
+                                {!! adminDetails() !!}
+
                                 <h4>Customer Details:</h4>
                                 <p>
-                                    @if(@$user->owner_name)
-                                    <b>Name:</b> {{ @$user->owner_name }}<br>
-                                    @else
-                                    <b>Name:</b> {{ @$user->first_name }} {{ @$user->last_name }}<br>
-                                    @endif
-                                    @if(@$user->shop_name)
-                                        <b>Shop Name:</b> {{ @$user->shop_name }}<br>
-                                    @endif
-                                    <b>Phone:</b> {{ @$user->contact_no }}<br>
+                                    <b>Account No:</b> {{ @$user->customer_id }}<br>
+                                    <b>Business Name:</b> {{ @$user->company_name }}<br>
+                                    <b>Phone:</b> {{ (@$user->contact_no) ? $user->contact_no : @$user->phone }}<br>
                                     <b>Email:</b> {{@$user->email }}<br>
-                                    <b>Address:</b> {{ @$user->address }}, {{ @$user->postal_code }}, {{ @$user->town }}, {{ @$user->city }}
+                                    <b>Address:</b> {{ @$user->address }}
                                 </p>
                             </div>
                             <div class="col-md-4 col-sm-5 pull-right">
                                 <div class="row">
-                                    <div class="col-md-4 col-sm-5 inv-label">Invoice #</div>
-                                    <div class="col-md-8 col-sm-7">{{ $order->id }}</div>
+                                    <div class="col-md-4 col-sm-5 inv-label">Invoice #:</div>
+                                    <div class="col-md-8 col-sm-7">{{ sixDigitInvoiceNumber($order->id) }}</div>
                                 </div>
                                 <br>
                                 <div class="row">
                                     <div class="col-md-4 col-sm-5 inv-label">Date #</div>
                                     <div class="col-md-8 col-sm-7">{{ date('d-m-Y h:i a', strtotime($order->created_at)) }}</div>
                                 </div>
-<!--                                <br>
-                                <div class="row" >
-                                    <div class="col-md-12 inv-label">
-                                        <h3>Total {{$total_text}}</h3>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <h1 class="amnt-value">{{ $currency_code }}{{number_format($order->amount,2)}}</h1>
-                                    </div>
-                                </div>-->
 
 
                             </div>
@@ -146,7 +125,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td class="invoice">
-                                    <input type="text" name="products[{{ $pId }}][name]" value="{{$productName}}" style="width: 380px;margin-right: -200px;">
+                                    <input type="text" name="products[{{ $pId }}][name]" value="{{ ucwords(strtolower($productName)) }}" style="width: 380px;margin-right: -200px;">
                                 </td>
                                 <td class="text-center">{{$currency_code}} 
                                     <input type="number" step="any" min="0" name="products[{{ $pId }}][price]" value="{{$price}}" style="width: 60px;">
@@ -183,23 +162,31 @@
                                 @endif
                                 
                                 @if($order->payment_method != 'none')
-                                <p>Payment Mode : {{ ucwords($order->payment_method) }}</p>
+                                <p>Payment Mode : {{ ucwords(str_replace('2', 'To ', $order->payment_method)) }}</p>
                                 @endif
                                 
                             </div>
+
+                            <?php
+                                $amount = $order->amount;
+                                if (!is_numeric($order->amount)) {
+                                    $amount = str_replace(',', '', $order->amount);
+                                }
+                            ?>
+
                             <div class="col-md-4 col-xs-5 invoice-block pull-right">
                                 <ul class="unstyled amounts">
                                      <li style="display:none;">Product amount : {{$currency_code}}
-                                        <input type="number" name="subtotal" step="any" min="0" value="{{number_format($subtotal,2)}}" style="width: 80px;">
+                                        <input type="number" name="subtotal" step="any" min="0" value="{{ $subtotal }}" style="width: 80px;">
                                     </li>
                                     <li style="display:none;">Discount : {{$currency_code}}
-                                        <input type="number" name="discount" step="any" min="0" value="{{number_format($order->discount,2)}}" style="width: 80px;">
+                                        <input type="number" name="discount" step="any" min="0" value="{{ $order->discount }}" style="width: 80px;">
                                     </li>
                                     <li style="display:none;">Vat : {{$currency_code}}
-                                        <input type="number" name="tax" step="any" min="0" value="{{number_format($tax,2)}}" style="width: 80px;">
+                                        <input type="number" name="tax" step="any" min="0" value="{{ $tax }}" style="width: 80px;">
                                     </li>
                                     <li class="grand-total">Total : {{$currency_code}}
-                                        <input type="number" name="amount" step="any" min="0" value="{{ $order->amount }}" style="width: 80px;color: black;">
+                                        <input type="number" name="amount" step="any" min="0" value="{{ $amount }}" style="width: 80px;color: black;">
                                     </li>
                                 </ul>
                             </div>
@@ -223,9 +210,11 @@
                             </tr>
                             </thead>
                             <tbody>
+
                                 @php
                                     $vat = $tax;
-                                    $amount = $order->amount;
+                                    
+                                    
                                     $price = $amount - $vat;
                                     $vatRate = 0;
                                     if ($amount>0) {
@@ -234,7 +223,7 @@
                                     
                                 @endphp
                                 <tr>
-                                    <td class="text-center">VAT @ {{ number_format($vatRate, 2) }}%</td>
+                                    <td class="text-center">VAT @ 20%</td>
                                     <td class="text-center">{{$currency_code}}{{ number_format($vat, 2) }}</td>
                                     <td class="text-center">{{$currency_code}}{{number_format($price, 2)}}</td>
                                 </tr>

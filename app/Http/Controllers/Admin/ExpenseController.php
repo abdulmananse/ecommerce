@@ -51,6 +51,16 @@ class ExpenseController extends Controller
             if (roleName() != 'Admin') {
                 $expenses->where('admin_id', Auth::id());
             }
+
+            if($request->filled('order')) {
+                $orderBy = $request->order;
+                if ($orderBy[0]['column'] == 0) {
+                    $expenses->orderBy('date', $orderBy[0]['dir']);
+                }
+            } else {
+                $expenses->orderBy('updated_at','desc');
+            }
+
             return Datatables::of($expenses)
                 ->addColumn('date', function ($expense) {
                     return date('d-m-Y', strtotime($expense->date));

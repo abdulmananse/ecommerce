@@ -39,7 +39,8 @@ Route::group(['namespace' => 'Admin'], function () {
     Route::post('upload-csv-products','ProductsController@uploadCsvProducts');
     Route::post('update-invoice','OrdersController@updateInvoice')->name('update.invoice');
     Route::get('products/make-copy/{product_id}','ProductsController@makeCopy');
-    
+    Route::post('products/delete-multi-products','ProductsController@deleteMultiProducts');
+
     Route::resource('van-store','VanStoreController');
     Route::get('get-van-store-product-row', 'VanStoreController@getProductRow');
     
@@ -57,6 +58,7 @@ Route::group(['namespace' => 'Admin'], function () {
     Route::resource('subcategories', 'SubCategoriesController');
     Route::POST('load-subcategory', 'SubCategoriesController@loadSubCategory')->name('load.subcategory');
     Route::resource('customers', 'CustomerController');
+    Route::get('customers/{user_id}/wallet-statment', 'CustomerController@walletStatment');
     Route::post('add-wallet-amount','CustomerController@addWalletAmount')->name('add.wallet.amount');
     Route::post('add-2pay-amount','CustomerController@add2PayAmount')->name('add.2pay.amount');
     

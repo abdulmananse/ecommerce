@@ -10,11 +10,10 @@
 
 @php
     $cart = @$order->cart;
-    
     $user = unserialize(@$cart->user_details);
     //dd($user);
     $cart_details = unserialize(@$cart->cart_details);
-    //dd($cart_details);
+
     $trans_details = unserialize(@$order->trans_details);
 
     $total_text = 'Due';
@@ -48,34 +47,65 @@
 
                     <img src="{{ asset('uploads/settings/site_logo.jpg') }}" >
                 </div>
-                <center>
-                    <h1><u>Quotation</u></h1> 
-                    <p>(This is not an invoice)</p>
-                </center>
+                <center><h1><u>Quotation</u></h1></center>
 
                         <div class="row invoice-to">
                             <div class="col-md-6 col-sm-6 pull-left">
-                                
-                                {{-- {!! adminDetails() !!} --}}
-                                
+
+                                <h4>Quotation ID: <b>{{$order->id}}</b></h4>
+                                <h4>Admin Details:</h4>
                                 <p>
-                                    <b>Account Balance Including This Quotation Value:</b> {{ getWalletAndOrderAmount($order->user_id, $order->amount) }}
+                                    <b>Company Name:</b> The Super Van<br>
+                                    <b>Phone:</b> +44 141 374 0365<br>
+                                    <b>Email:</b> info@fonology.co.uk<br>
+                                    <b>Address:</b> 61c Main Street, Thornliebank G46 7RX Glasgow, UK.
                                 </p>
-                                
-                                <br>
-                                <p>ITEMS GIVEN ({{ count($cart_details) }} ITEMS) (QTY GIVEN : {{ $order->qty }})</p>
+                                <h4>Customer Details:</h4>
+                                <p>
+                                    @if(@$user['owner_name'])
+                                    <b>Name:</b> {{ @$user['owner_name'] }}<br>
+                                    @else
+                                    <b>Name:</b> {{ @$user['first_name'] }} {{ @$user['last_name'] }}<br>
+                                    @endif
+                                    @if(@$user['shop_name'])
+                                        <b>Shop Name:</b> {{ @$user['shop_name'] }}<br>
+                                    @endif
+                                    <b>Phone:</b> {{ @$user['contact_no'] }}<br>
+                                    <b>Email:</b> {{@$user['email'] }}<br>
+                                    <b>Address:</b> {{ @$user['address'] }}, {{ @$user['postal_code'] }}, {{ @$user['town'] }}, {{ @$user['city'] }}
+                                </p>
                             </div>
                             <div class="col-md-4 col-sm-5 pull-right">
-                                <p>
-                                    <b>Quotation No:</b> {{ sixDigitQuotationNumber($order->id) }}<br>
-                                </p>
-                                <p>
-                                    <b>Customer Business Name:</b> {{ @$user['company_name'] }}<br>
-                                </p>
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-5 inv-label">Quotation #</div>
+                                    <div class="col-md-8 col-sm-7">{{ $order->id }}</div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-5 inv-label">Date #</div>
+                                    <div class="col-md-8 col-sm-7">{{ date('d-m-Y h:i a', strtotime($order->created_at)) }}</div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-12 inv-label">
+                                        <h3>Total {{$total_text}}</h3>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <h1 class="amnt-value">{{ $currency_code }}<?php
+                                            if (is_numeric($order->amount)) {
+                                                echo number_format($order->amount,2);
+                                            } else {
+                                                echo $order->amount;
+                                            }
+                                            ?></h1>
+                                    </div>
+                                </div>
+
+
                             </div>
                         </div>
                         <div class="adm-table">
-                        <table class="table table-invoice1 table-bordered  " style="margin-top: 10px" >
+                        <table class="table table-invoice" >
                             <thead>
                             <tr>
                                 <th>#</th>
@@ -108,7 +138,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td class="invoice">
-                                    <h5>{{ ucwords(strtolower($productName)) }}</h5>
+                                    <h4>{{$productName}}</h4>
                                 </td>
                                 <td class="text-center">{{$currency_code}}{{$price}}</td>
                                 <td class="text-center">{{$single_item['quantity']}}</td>
@@ -118,33 +148,57 @@
 
                             @endforeach
 
-                            <tr>
-                                <td colspan="4" align="right"><b>Total</b></td>
-                                <td align="center"> {{$currency_code}}<?php
-                                    if (is_numeric($order->amount)) {
-                                        echo number_format($order->amount,2);
-                                    } else {
-                                        echo $order->amount;
-                                    }
-                                    ?>
-                                    </td>
-                            </tr>
+
                             </tbody>
                         </table>
                     </div>    
-                        <div class="row" >
-                            <div class="col-md-12 col-xs-12">
-                                <center><p>This is not an invoice</p></center>
+                        <div class="row">
+                            <div class="col-md-8 col-xs-7 payment-method">
+                                <h4>Payment</h4>
+                                @php
+                                    $payment_method = @$trans_details['payer'];
+                                    $payment_status = 'Pending';
+                                    $payment_class = 'label-danger';
+
+                                    if($cart->payment_status == 'complete'){
+                                        $payment_status = 'Paid';
+                                        $payment_class = 'label-success';
+                                    }
+                                @endphp
+                                
+                                @if($order->payment_method == '2pay')
+                                <p>Payment Method : Wallet</p>
+                                @endif
+                                
+                                @if($order->payment_method != 'none')
+                                <p>Payment Mode : {{ ucwords($order->payment_method) }}</p>
+                                @endif
                             </div>
-                            <div class="col-md-8 col-xs-7">
-                                <h4>Date and Time:</h4>
-                                <p>{{ date('d-m-Y h:i a', strtotime($order->created_at)) }}</p>
+                            <div class="col-md-4 col-xs-5 invoice-block pull-right">
+                                <ul class="unstyled amounts">
+                                    <li style="display:none;">Gross Total : {{$currency_code}}{{number_format($subtotal,2)}}</li>
+                                    <li style="display:none;">Discount : {{$currency_code}}{{number_format($order['discount'],2)}} </li>
+                                    <li style="display:none;">Vat : {{$currency_code}}{{number_format($order['tax'],2)}} </li>
+                                    <li class="grand-total">Total : {{$currency_code}}<?php
+                                        if (is_numeric($order->amount)) {
+                                            echo number_format($order->amount,2);
+                                        } else {
+                                            echo $order->amount;
+                                        }
+                                        ?></li>
+                                </ul>
                             </div>
                         </div>
+
+
+
                     </div>
                 </section>
             </div>
         </div>
+
+
+
     </section>
 </section>
 
@@ -177,6 +231,31 @@
         return true;
     }
 
+    /*function printDiv(elem)
+    {
+        Popup($('<div/>').append($('.'+elem).clone()).html());
+    }
+
+    function Popup(data)
+    {
+        var mywindow = window.open('', 'my div', 'height=400,width=600');
+        mywindow.document.write('<html><head><title>my div</title>');
+        mywindow.document.write('<link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="{{asset('css/style.css')}}" type="text/css" />');
+        mywindow.document.write('</head><body >');
+        mywindow.document.write(data);
+        mywindow.document.write('</body></html>');
+
+        mywindow.print();
+        //  mywindow.close();
+
+        return true;
+    }*/
+
+
+    // @foreach($cart_details as $single_item)
+    //     $(".select2-{{ $loop->iteration }}").select2();
+    // @endforeach
 </script>
 
 @endsection

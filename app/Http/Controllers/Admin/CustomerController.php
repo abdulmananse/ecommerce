@@ -6,7 +6,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Hashids, DataTables;
-use App\User;
+use App\Models\User;
 use Session;
 use App\Models\UserWallet;
 use App\Models\User2Pay;
@@ -17,10 +17,10 @@ class CustomerController extends Controller
 
     public function __construct()
    {
-        $this->middleware('permission:view customers', ['only' => ['index']]);
-        $this->middleware('permission:add customers', ['only' => ['create','store']]);
-        $this->middleware('permission:edit customers', ['only' => ['edit','update']]);
-        $this->middleware('permission:delete customers', ['only' => ['destroy']]);
+        //$this->middleware('permission:view customers', ['only' => ['index']]);
+        //$this->middleware('permission:add customers', ['only' => ['create','store']]);
+        //$this->middleware('permission:edit customers', ['only' => ['edit','update']]);
+        //$this->middleware('permission:delete customers', ['only' => ['destroy']]);
     }
 
     /**
@@ -34,9 +34,6 @@ class CustomerController extends Controller
             $customers = User::where('type','retailer');
 
             return Datatables::of($customers)
-                ->addColumn('name', function ($customer) {
-                    return $customer->first_name.' '.$customer->last_name;
-                })
                 ->addColumn('profile_image', function ($customer) {
                     return '<img width="30" src="'.checkImage('customers/thumbs/'. $customer->profile_image).'" />';
                 })
@@ -74,9 +71,8 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'first_name' => 'required|max:255',
-            'last_name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
+            'name' => 'required|max:100',
+            'email' => 'required|email|max:255',
             'password' => 'required|min:6'
         ]);
 
@@ -123,9 +119,8 @@ class CustomerController extends Controller
         $id = decodeId($id);
 
         $this->validate($request, [
-            'first_name' => 'required|max:255',
-            'last_name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users,email,'.$id,
+            'name' => 'required|max:100',
+            'email' => 'required|email|max:255',
         ]);
 
         $requestData = $request->all();
@@ -167,10 +162,14 @@ class CustomerController extends Controller
 
     }
     
-    public function retailerOrders()
+    public function retailerOrders(Request $request)
     {
-        if(request()->ajax()){
-            $customers = User::where('type','retailer')->orderBy('updated_at','desc');
+        if($request->ajax()){
+            $customers = User::where('type','retailer');
+
+            if(!$request->filled('order')) {
+                $customers->orderBy('updated_at', 'desc');
+            }
 
             return Datatables::of($customers)
                 ->addColumn('name', function ($customer) {
@@ -202,21 +201,40 @@ class CustomerController extends Controller
         return view('admin.customers.retailer_orders');
     }
     
-    public function addWalletAmount()
+    public function walletStatment($userId) {
+        $userId = decodeId($userId);
+        $wallets = UserWallet::where('user_id', $userId)->orderBy('date', 'asc')->get();
+        
+        return view('admin.customers.wallet-statment', compact('wallets'));
+    }
+
+    public function addWalletAmount(Request $request)
     {
-        UserWallet::create([
-            'credit' => \request()->amount,
-            'user_id' => \request()->id
-        ]);
+        $data = [
+            'date' => date('Y-m-d', strtotime($request->date)),
+            'note' => @$request->note,
+            'user_id' => $request->id
+        ];
+        if ($request->amount>0) {
+            $data['credit'] = $request->amount;
+            $data['type'] = 'wallet';
+        } else  {
+            $data['debit'] = abs($request->amount);
+            $data['type'] = '2pay';
+        }
+        
+        UserWallet::create($data);
 
         return ['status' => true, 'message' => 'Successfully Inserted'];
     }
     
-    public function add2PayAmount()
+    public function add2PayAmount(Request $request)
     {
         User2Pay::create([
-            'credit' => \request()->amount,
-            'user_id' => \request()->id
+            'credit' => $request->amount,
+            'date' => date('Y-m-d', strtotime($request->date)),
+            'note' => @$request->note,
+            'user_id' => $request->id
         ]);
 
         return ['status' => true, 'message' => 'Successfully Inserted'];

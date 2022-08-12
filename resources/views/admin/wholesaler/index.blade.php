@@ -31,15 +31,15 @@
                         <table id="datatable" class="table table-bordered table-striped">
                             <thead>
                             <tr>
+                                <th>Customer ID</th>
                                 <th>Name</th>
+                                <th>Business Name</th>
                                 <th>Email</th>
-                                <th>Shop Name</th>
                                 <th>Contact #</th>
-                                  <th>Address</th>
-                                <!--<th>Cost Percentage</th>-->
+                                <th>Address</th>
+                                <th>Notes</th>
                                 <th>Wallet Amount</th>
-                                <th>2Pay</th>
-                                <th>Status</th>
+                                <th>To Pay Amount</th>
                                 @can('edit wholesaler')
                                 <th>Action</th>
                                 @endcan
@@ -50,15 +50,15 @@
                             </tbody>
                             <tfoot>
                             <tr>
+                                <th>Customer ID</th>
                                 <th>Name</th>
+                                <th>Business Name</th>
                                 <th>Email</th>
-                                <th>Shop Name</th>
                                 <th>Contact #</th>
-                                 <th>Address</th>
-                                <!--<th>Cost Percentage</th>-->
+                                <th>Address</th>
+                                <th>Notes</th>
                                 <th>Wallet Amount</th>
-                                <th>2Pay</th>
-                                <th>Status</th>
+                                <th>To Pay Amount</th>
                                 @can('edit wholesaler')
                                 <th>Action</th>
                                 @endcan
@@ -102,14 +102,14 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
-                        <h4 class="modal-title">Add 2Pay Amount</h4>
+                        <h4 class="modal-title">Add To Pay Amount</h4>
                     </div>
                     <div class="modal-body">
 
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="form-group is_main_price">
-                                        {!! Form::label('amount', '2Pay Amount', ['class' => 'control-label col-lg-4 required-input ']) !!}
+                                        {!! Form::label('amount', 'To Pay Amount', ['class' => 'control-label col-lg-4 required-input ']) !!}
                                         <div class="col-lg-7">
                                             {!! Form::number('amount', null, ['class' => 'form-control 2payInput','min' => '0']) !!}
                                             <div class="help-block with-errors"></div>
@@ -137,21 +137,21 @@
 $("document").ready(function () {
     var datatable_url = "{{url('admin/wholesalers')}}";
     var datatable_columns = [
+        {data: 'customer_id'},
         {data: 'name'},
+        {data: 'company_name'},
         {data: 'email'},
-        {data: 'shop_name'},
         {data: 'phone'},
-         {data: 'address'},
-//        {data: 'percentage_1'},
+        {data: 'address'},
+        {data: 'notes'},
         {data: 'wallet_amount', orderable: false},
         {data: '2pay_amount', orderable: false},
-        {data: 'is_active', orderable: false, searchable: false,width: "10%"},
         @can('edit wholesaler')
         {data: 'action', orderable: false, searchable: false}
         @endcan        
         ];
         
-        create_datatables(datatable_url,datatable_columns);
+        create_datatables(datatable_url,datatable_columns, true, [], -1);
 
     $("body").on("click",'.walletAdd',function () {
         id = $(this).attr('data-id');

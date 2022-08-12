@@ -52,15 +52,12 @@ class ShopkeeperController extends Controller
 
                     return $satatus;
                 })
-                ->addColumn('name', function ($user) {
-                  return $user->full_name;
-                })
                 ->addColumn('wallet_amount', function ($user) {
                     return number_format(getWholsellerDataWallet($user->id),'2','.','');
                 })
-                ->addColumn('2pay_amount', function ($user) {
-                    return number_format(get2PayAmount($user->id),'2','.','');
-                })
+                // ->addColumn('2pay_amount', function ($user) {
+                //     return number_format(get2PayAmount($user->id),'2','.','');
+                // })
                 ->addColumn('action', function ($user) {
                 $action = '';
                 if(Auth::user()->can('edit shopkeepers'))
@@ -68,8 +65,9 @@ class ShopkeeperController extends Controller
                 if(Auth::user()->can('delete shopkeepers'))
                     $action .= '<a href="customers/'.Hashids::encode($user->id).'" class="text-danger btn-delete" data-toggle="tooltip" title="Delete Shopkeeper"><i class="fa fa-lg fa-trash"></i></a>';
 
-                   $action .= '<a href="javascript:void(0)" class="text-primary walletAdd"  data-id="'.$user->id.'" data-toggle="tooltip" title="Add Wallet Amount"><i class="fa fa-google-wallet"></i></a>';
-                   $action .= '<a href="javascript:void(0)" class="text-success 2payAdd"  data-id="'.$user->id.'" data-toggle="tooltip" title="Add 2Pay Amount"><i class="fa fa-google-wallet"></i></a>';
+                   $action .= '<a href="javascript:void(0)" class="text-primary walletAdd"  data-id="'.$user->id.'" data-toggle="tooltip" title="Add Wallet/To Pay Amount"><i class="fa fa-google-wallet"></i></a>';
+                   //$action .= '<a href="javascript:void(0)" class="text-success 2payAdd"  data-id="'.$user->id.'" data-toggle="tooltip" title="Add To Pay Quotation/Invoice Amount"><i class="fa fa-google-wallet"></i></a>';
+                   $action .= '<a href="customers/'. Hashids::encode($user->id).'/wallet-statment" class="text-success" data-toggle="tooltip" title="Wallet Statement"><i class="fa fa-google-wallet"></i></a>';
 
                 return $action;
                 })
@@ -90,7 +88,7 @@ class ShopkeeperController extends Controller
             if($request->filled('order')) {
                 $orderBy = $request->order;
                 if ($orderBy[0]['column'] == 1) {
-                    $users->orderBy('first_name', $orderBy[0]['dir']);
+                    $users->orderBy('name', $orderBy[0]['dir']);
                 }
                 if ($orderBy[0]['column'] == 2) {
                     $users->orderBy('email', $orderBy[0]['dir']);
@@ -101,7 +99,7 @@ class ShopkeeperController extends Controller
 
             return Datatables::of($users)
                 ->addColumn('name', function ($customer) {
-                    $name = $customer->first_name . ' ' . $customer->last_name;
+                    $name = $customer->name;
                     $color ='black';
                     if($customer->is_latest){
                         $color='red';

@@ -34,7 +34,7 @@
                         </div>
                         <div class="product-content">
                             <h3><a class="title-3 fsz-16" href="{{ url('products/'.$slug) }}"
-                                   title="{{ $product->name }}">{{ str_limit($product->name,25) }} </a></h3>
+                                   title="{{ $product->name }}">{{ ucwords(strtolower(str_limit($product->name,25))) }} </a></h3>
                             
                             @if(Auth::check() && Auth::guard('web')->check() && @$user->type != 'retailer')
                                 <p class="font-3">Price:

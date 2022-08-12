@@ -416,6 +416,7 @@ loadDatatable(start.format('YYYY-MM-DD'),end.format('YYYY-MM-DD'))
           serverSide: true,
           ordering: true,
           responsive: true,
+          pageLength: -1,
           ajax: {
               url:url,
                 data:{from_date:start_date,to_date:end_date}

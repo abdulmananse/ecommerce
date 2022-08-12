@@ -1792,6 +1792,27 @@ if (! function_exists('getWholsellerDataWallet')) {
     }
 }
 
+if (! function_exists('getWalletAndOrderAmount')) {
+
+    function getWalletAndOrderAmount($id, $amount)
+    {
+        $debit = UserWallet::where('user_id',$id)->sum('debit');
+        $credit = UserWallet::where('user_id',$id)->sum('credit');
+        $debit = ($debit)?$debit:0;
+        $credit = ($credit)?$credit:0;
+
+        $wallet = $credit-($debit+$amount);
+
+        if ($wallet<0) {
+            $walletAmount = '-£'.number_format(abs($wallet), 2);
+        } else {
+            $walletAmount = '£'.number_format($wallet, 2);
+        }
+
+        return $walletAmount;
+    }
+}
+
 if (! function_exists('get2PayAmount')) {
 
     function get2PayAmount($id)
@@ -1887,6 +1908,47 @@ if (! function_exists('getDefaultVariant')) {
         return $product_default_variant;
     }
 }
+
+if (! function_exists('numberTo2DecimelFloat')) {
+    function numberTo2DecimelFloat($number)
+    {
+        return number_format(($number), 2, '.', '');
+    }
+}
+
+if (! function_exists('adminDetails')) {
+    function adminDetails()
+    {
+        return '<h4>Admin Details:</h4>
+        <p>
+            <b>Company Name:</b> VAPEOSONIC LTD T/A SUPERVAN<br>
+            <b>COMPANY REG NO:</b> SC737008<br>
+            <b>VAT NO:</b> 416 9547 70<br>
+            <b>Phone:</b> +44 141 374 0365<br>
+            <b>Email:</b> info@thesupervan.co.uk <br>
+            <b>WEBSITE:</b> www.thesupervan.co.uk<br>
+            <b>Address:</b> 62 High Street, Johnstone, Paisley, Scotland. PA5 8SG</br>
+            <b>ACCOUNT NAME:</b> VAPESONIC<br>
+            <b>ACCOUNT NO:</b> 19277217<br>
+            <b>SORT CODE:</b> 06-06-05
+        </p>';
+    }
+}
+
+if (! function_exists('sixDigitQuotationNumber')) {
+    function sixDigitQuotationNumber($number)
+    {
+        return 'Q-'.str_pad($number, 6, '0', STR_PAD_LEFT);
+    }
+}
+
+if (! function_exists('sixDigitInvoiceNumber')) {
+    function sixDigitInvoiceNumber($number)
+    {
+        return 'INV-'.str_pad($number, 6, '0', STR_PAD_LEFT);
+    }
+}
+
 if(! function_exists('getVatCharges')){
     function getVatCharges(){
         $vatCharge=TaxRate::select('rate')->where('id', settingValue('tax_id'))->first();

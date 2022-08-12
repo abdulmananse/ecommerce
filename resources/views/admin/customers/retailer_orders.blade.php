@@ -68,6 +68,7 @@
             $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
+                pageLength: -1,
                 ajax: {
                     url: "{{ route('admin.retailer.orders') }}",
                     data : function(d){

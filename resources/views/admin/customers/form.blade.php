@@ -4,6 +4,7 @@
             <header class="panel-heading">{{ request()->type }}</header>
             <div class="panel-body">
                 <div class="position-center" style="width:65%;">
+                    
                     <div class="form-group {{ $errors->has('type') ? 'has-error' : ''}}">
                         {!! Form::label('type', 'Customer Type', ['class' => 'col-lg-3 col-sm-3 control-label required-input']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
@@ -12,19 +13,27 @@
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
-                    <div class="form-group {{ $errors->has('first_name') ? 'has-error' : ''}}">
-                        {!! Form::label('first_name', 'First Name', ['class' => 'col-lg-3 col-sm-3 control-label required-input']) !!}
+                    <div class="form-group {{ $errors->has('customer_id') ? 'has-error' : ''}}">
+                        {!! Form::label('customer_id', 'Customer ID', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
-                            {!! Form::text('first_name', null, ['class' => 'form-control','placeholder' => 'First Name','required' => 'required']) !!}
-                            {!! $errors->first('first_name', '<p class="help-block">:message</p>') !!}
+                            {!! Form::text('customer_id', null, ['class' => 'form-control','placeholder' => 'Customer ID']) !!}
+                            {!! $errors->first('customer_id', '<p class="help-block">:message</p>') !!}
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
-                    <div class="form-group {{ $errors->has('last_name') ? 'has-error' : ''}}">
-                        {!! Form::label('last_name', 'Last Name', ['class' => 'col-lg-3 col-sm-3 control-label required-input']) !!}
+                    <div class="form-group {{ $errors->has('name') ? 'has-error' : ''}}">
+                        {!! Form::label('name', 'Name', ['class' => 'col-lg-3 col-sm-3 control-label required-input']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
-                            {!! Form::text('last_name', null, ['class' => 'form-control','placeholder' => 'Last Name','required' => 'required']) !!}
-                            {!! $errors->first('last_name', '<p class="help-block">:message</p>') !!}
+                            {!! Form::text('name', null, ['class' => 'form-control','placeholder' => 'Name','required' => 'required']) !!}
+                            {!! $errors->first('name', '<p class="help-block">:message</p>') !!}
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="form-group {{ $errors->has('company_name') ? 'has-error' : ''}}">
+                        {!! Form::label('company_name', 'Business Name', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
+                        <div class="col-lg-9 col-md-9 col-sm-9">
+                            {!! Form::text('company_name', null, ['class' => 'form-control','placeholder' => 'Business Name']) !!}
+                            {!! $errors->first('company_name', '<p class="help-block">:message</p>') !!}
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
@@ -44,22 +53,15 @@
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
-                    <div class="form-group {{ $errors->has('shop_name') ? 'has-error' : ''}}">
+                    
+                    {{-- <div class="form-group {{ $errors->has('shop_name') ? 'has-error' : ''}}">
                         {!! Form::label('shop_name', 'Shop Name', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
                             {!! Form::text('shop_name', null, ['class' => 'form-control','placeholder' => 'Shop Name']) !!}
                             {!! $errors->first('shop_name', '<p class="help-block">:message</p>') !!}
                             <div class="help-block with-errors"></div>
                         </div>
-                    </div>
-                    <div class="form-group {{ $errors->has('owner_name') ? 'has-error' : ''}}">
-                        {!! Form::label('owner_name', 'Owner Name', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
-                        <div class="col-lg-9 col-md-9 col-sm-9">
-                            {!! Form::text('owner_name', null, ['class' => 'form-control','placeholder' => 'Owner Name']) !!}
-                            {!! $errors->first('owner_name', '<p class="help-block">:message</p>') !!}
-                            <div class="help-block with-errors"></div>
-                        </div>
-                    </div>
+                    </div> --}}
                     
                     <div class="form-group {{ $errors->has('address') ? 'has-error' : ''}}">
                         {!! Form::label('address', 'Address', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
@@ -69,17 +71,8 @@
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
-                   
-                    <div class="form-group {{ $errors->has('town') ? 'has-error' : ''}}">
-                        {!! Form::label('town', 'Town', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
-                        <div class="col-lg-9 col-md-9 col-sm-9">
-                            {!! Form::text('town', null, ['class' => 'form-control','placeholder' => 'Town']) !!}
-                            {!! $errors->first('town', '<p class="help-block">:message</p>') !!}
-                            <div class="help-block with-errors"></div>
-                        </div>
-                    </div>
 
-                    <div class="form-group {{ $errors->has('city') ? 'has-error' : ''}}">
+                    {{-- <div class="form-group {{ $errors->has('city') ? 'has-error' : ''}}">
                         {!! Form::label('city', 'City', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
                             {!! Form::text('city', null, ['class' => 'form-control','placeholder' => 'City']) !!}
@@ -95,7 +88,7 @@
                             {!! $errors->first('postal_code', '<p class="help-block">:message</p>') !!}
                             <div class="help-block with-errors"></div>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <div class="form-group {{ $errors->has('notes') ? 'has-error' : ''}}">
                         {!! Form::label('notes', 'Notes', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
@@ -106,14 +99,14 @@
                         </div>
                     </div>
 
-                    <div class="form-group {{ $errors->has('is_active') ? 'has-error' : ''}}">
+                    {{-- <div class="form-group {{ $errors->has('is_active') ? 'has-error' : ''}}">
                         {!! Form::label('is_active', 'Status', ['class' => 'col-lg-3 col-sm-3 control-label']) !!}
                         <div class="col-lg-9 col-md-9 col-sm-9">
                             {!! Form::select('is_active', ['yes'=>'Active','no'=>'Inactive'],null, ['class' => 'form-control']) !!}
                             {!! $errors->first('is_active', '<p class="help-block">:message</p>') !!}
                             <div class="help-block with-errors"></div>
                         </div>
-                    </div>
+                    </div> --}}
                     @if(@$user)
                     @else
                     <div class="form-group {{ $errors->has('password') ? 'has-error' : ''}}">

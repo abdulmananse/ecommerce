@@ -88,7 +88,7 @@ $(document).ready(function(){
 //$(document).ajaxStart(function () {
 //    Pace.restart();
 //});
-function create_datatables(url,columns, index_field = true,ordering = []){
+function create_datatables(url,columns, index_field = true,ordering = [], pageLength = 10){
 
     if(index_field){
         $('#datatable thead tr').prepend("<th>#</th>");
@@ -98,14 +98,15 @@ function create_datatables(url,columns, index_field = true,ordering = []){
     }
 
     var t = $('#datatable').DataTable({
-      processing: true,
-      serverSide: true,
-      ordering: true,
-      responsive: true,
-      ajax: url,
-      columns: columns,
-      order: ordering,
-      drawCallback: function( settings ) {
+        processing: true,
+        serverSide: true,
+        ordering: true,
+        responsive: true,
+        ajax: url,
+        columns: columns,
+        pageLength: -1,
+        order: ordering,
+        drawCallback: function( settings ) {
         var api = this.api();
 
         //console.log( api.rows( {page:'current'} ).data()) );

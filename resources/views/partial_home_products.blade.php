@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 <div class="product-content">
-                    <h3> <a class="title-3 fsz-16" href="{{ route('get.product.detail',['id' =>($product->slug!='')?$product->slug:Hashids::encode(($product->id))]) }}"> {{ $product->name }} </a> </h3>
+                    <h3> <a class="title-3 fsz-16" href="{{ route('get.product.detail',['id' =>($product->slug!='')?$product->slug:Hashids::encode(($product->id))]) }}"> {{ ucwords(strtolower($product->name)) }} </a> </h3>
                 </div>
 
 

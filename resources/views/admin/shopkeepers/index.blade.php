@@ -31,15 +31,15 @@
                         <table id="datatable" class="table table-bordered table-striped">
                             <thead>
                             <tr>
+                                <th>Customer ID</th>
                                 <th>Name</th>
+                                <th>Business Name</th>
                                 <th>Email</th>
-                                <th>Shop Name</th>
                                 <th>Contact #</th>
-                                  <th>Address</th>
-                                <!--<th>Cost Percentage</th>-->
+                                <th>Address</th>
+                                <th>Notes</th>
                                 <th>Wallet Amount</th>
-                                <th>2Pay</th>
-                                <th>Status</th>
+                                {{-- <th>To Pay Amount</th> --}}
                                 @can('edit wholesaler')
                                 <th>Action</th>
                                 @endcan
@@ -50,15 +50,15 @@
                             </tbody>
                             <tfoot>
                             <tr>
+                                <th>Customer ID</th>
                                 <th>Name</th>
+                                <th>Business Name</th>
                                 <th>Email</th>
-                                <th>Shop Name</th>
                                 <th>Contact #</th>
-                                 <th>Address</th>
-                                <!--<th>Cost Percentage</th>-->
+                                <th>Address</th>
+                                <th>Notes</th>
                                 <th>Wallet Amount</th>
-                                <th>2Pay</th>
-                                <th>Status</th>
+                                {{-- <th>To Pay Amount</th> --}}
                                 @can('edit wholesaler')
                                 <th>Action</th>
                                 @endcan
@@ -74,16 +74,31 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
-                        <h4 class="modal-title">Add Wallet Amount</h4>
+                        <h4 class="modal-title">Add Wallet/To Pay Amount</h4>
                     </div>
                     <div class="modal-body">
 
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="form-group is_main_price">
-                                        {!! Form::label('amount', 'Wallet Amount', ['class' => 'control-label col-lg-4 required-input ']) !!}
+                                        {!! Form::label('amount', 'Wallet/To Pay Amount', ['class' => 'control-label col-lg-4 required-input ']) !!}
                                         <div class="col-lg-7">
-                                            {!! Form::number('amount', null, ['class' => 'form-control walletInput','min' => '0']) !!}
+                                            {!! Form::number('amount', null, ['class' => 'form-control walletInput']) !!}
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group {{ $errors->has('date') ? 'has-error' : ''}}">
+                                        {!! Form::label('date', 'Date', ['class' => 'col-lg-4 col-sm-4 control-label required-input']) !!}
+                                        <div class="col-lg-7">
+                                            {!! Form::text('date', null, ['class' => 'form-control datepicker walletDate','required' => 'required','autocomplete' => 'off']) !!}
+                                            {!! $errors->first('date', '<p class="help-block">:message</p>') !!}
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group is_main_price">
+                                        {!! Form::label('note', 'Note', ['class' => 'control-label col-lg-4']) !!}
+                                        <div class="col-lg-7">
+                                            {!! Form::textarea('note', null, ['class' => 'form-control walletNote','rows' => '2']) !!}
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
@@ -102,16 +117,31 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
-                        <h4 class="modal-title">Add 2Pay Amount</h4>
+                        <h4 class="modal-title">Add To Pay Amount</h4>
                     </div>
                     <div class="modal-body">
 
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="form-group is_main_price">
-                                        {!! Form::label('amount', '2Pay Amount', ['class' => 'control-label col-lg-4 required-input ']) !!}
+                                        {!! Form::label('amount', 'To Pay Amount', ['class' => 'control-label col-lg-4 required-input ']) !!}
                                         <div class="col-lg-7">
                                             {!! Form::number('amount', null, ['class' => 'form-control 2payInput','min' => '0']) !!}
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group {{ $errors->has('date') ? 'has-error' : ''}}">
+                                        {!! Form::label('date', 'Date', ['class' => 'col-lg-4 col-sm-4 control-label required-input']) !!}
+                                        <div class="col-lg-7">
+                                            {!! Form::text('date', null, ['class' => 'form-control datepicker 2payDate','required' => 'required','autocomplete' => 'off']) !!}
+                                            {!! $errors->first('date', '<p class="help-block">:message</p>') !!}
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group is_main_price">
+                                        {!! Form::label('note', 'Note', ['class' => 'control-label col-lg-4']) !!}
+                                        <div class="col-lg-7">
+                                            {!! Form::textarea('note', null, ['class' => 'form-control 2payNote','rows' => '2']) !!}
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
@@ -126,7 +156,9 @@
         </div>
     </section>
 </section>
-      
+      <style>
+        .datepicker{ z-index:99999 !important; }?
+      </style>
 @endsection
 
 
@@ -135,23 +167,28 @@
     var token = $('meta[name="csrf-token"]').attr('content');
     var id= '';
 $("document").ready(function () {
+
+    $("body").delegate(".datepicker", "focusin", function () {
+        $(this).datepicker();
+    });
+
     var datatable_url = "{{url('admin/shopkeepers')}}";
     var datatable_columns = [
+        {data: 'customer_id'},
         {data: 'name'},
+        {data: 'company_name'},
         {data: 'email'},
-        {data: 'shop_name'}, 
         {data: 'phone'},
-         {data: 'address'},
-//        {data: 'percentage_1'},
+        {data: 'address'},
+        {data: 'notes'},
         {data: 'wallet_amount', orderable: false},
-        {data: '2pay_amount', orderable: false},
-        {data: 'is_active', orderable: false, searchable: false,width: "10%"},
+        //{data: '2pay_amount', orderable: false},
         @can('edit wholesaler')
         {data: 'action', orderable: false, searchable: false}
         @endcan        
         ];
         
-        create_datatables(datatable_url,datatable_columns);
+        create_datatables(datatable_url,datatable_columns, true, [], -1);
 
     $("body").on("click",'.walletAdd',function () {
         id = $(this).attr('data-id');
@@ -174,12 +211,17 @@ $("document").ready(function () {
                 toastr.error("Please Enter Amount!");
                 return false;
             }
+            if($(".walletDate").val() == ''){
+                toastr.error("Please Enter Date!");
+                return false;
+            }
+
             var attribute_id = $("#attribute").val();
 
             $.ajax({
                 url :'{{route('admin.add.wallet.amount')}}',
                 type: 'post',
-                data: {'_token': token,'id':id,amount:$(".walletInput").val()},
+                data: {'_token': token,'id':id,amount:$(".walletInput").val(), date:$(".walletDate").val(), note:$(".walletNote").val()},
                 success: function (result) {
                     $('#attribute_model').modal('hide');
                     $(".walletInput").val('');
@@ -202,12 +244,17 @@ $("document").ready(function () {
                 toastr.error("Please Enter 2Pay Amount!");
                 return false;
             }
+            if($(".2payDate").val() == ''){
+                toastr.error("Please Enter Date!");
+                return false;
+            }
+
             var attribute_id = $("#attribute").val();
 
             $.ajax({
                 url :'{{ route('admin.add.2pay.amount') }}',
                 type: 'post',
-                data: {'_token': token,'id':id,amount:$(".2payInput").val()},
+                data: {'_token': token,'id':id,amount:$(".2payInput").val(), date:$(".2payDate").val(), note:$(".2payNote").val()},
                 success: function (result) {
                     $('#2pay_model').modal('hide');
                     $(".2PayInput").val('');

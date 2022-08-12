@@ -2,11 +2,12 @@
 
 namespace App\Imports;
 
-use App\Models\OrderUser;
+use App\Models\User;
 
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use DB;
+use Hash;
 
 class UsersImport implements ToModel
 {
@@ -17,35 +18,43 @@ class UsersImport implements ToModel
     */
     public function model(array $row)
     {
-        if (empty($row[1])) {
+        if (empty($row[0]) || $row[0] == 'NO') {
             return null;
         }
         
-        if ($row[0] != 'Shop Name') {
             
-            $contactNo = str_replace('+', '', $row[4]);
-            $contactNo = str_replace(' ', '', $contactNo);
-            
-             $userData = [
-                'first_name'         =>  $row[2],
-                'last_name'        =>  $row[3],
-                'owner_name'       =>  $row[1],
-                'shop_name'         =>  $row[0],
-                'contact_no'  =>  $contactNo,
-                'address'     =>  $row[5],
-                'town'     =>  $row[6],
-                'city'     =>  $row[7],
-                'postal_code'     =>  $row[8],
-                'notes'     =>  $row[9],
-            ];
+        $contactNo = str_replace('+', '', $row[5]);
+        $contactNo = str_replace(' ', '', $contactNo);
 
-            $user = OrderUser::updateOrCreate(
-                ['contact_no' => $contactNo],
-                $userData
-            );
-            
-            return $user;
+        $email = strtolower($row[4]);
+        if (empty($row[4])) {
+            $email = str_replace(' ', '.', strtolower($row[2])).'@thesupervan.co.uk';
         }
+
+        
+        $userData = [
+            'customer_id'         =>  $row[1],
+            'name'         =>  $row[2],
+            'email'        =>  $email,
+            'password'        => Hash::make($email),
+            'company_name'         =>  $row[3],
+            'shop_name'         =>  $row[3],
+            'contact_no'  =>  $contactNo,
+            'phone'  =>  $contactNo,
+            'address'     =>  $row[6],
+            //'town'     =>  $row[6],
+            //'city'     =>  $row[5],
+            //'postal_code'     =>  $row[6],
+            'notes'     =>  $row[7],
+            'type' => 'shopkeeper'
+        ];
+
+        $user = User::updateOrCreate(
+            ['phone' => $contactNo, 'email' => $email],
+            $userData
+        );
+        
+        return $user;
         
         return null;
     }

@@ -34,7 +34,6 @@
                                 <th>Image</th>
                                 <th>Prefix</th>
                                 <th>Name</th>
-                                <th>Store Name</th>
                                 <th>Total Products</th> 
                                 @if(auth()->user()->can('edit categories') || auth()->user()->can('delete categories'))
                                 <th>Actions</th>
@@ -49,7 +48,6 @@
                                 <th>Image</th>                                
                                 <th>Prefix</th>
                                 <th>Name</th>
-                                <th>Store Name</th>
                                 <th>Total Products</th> 
                                 @if(auth()->user()->can('edit categories') || auth()->user()->can('delete categories'))
                                 <th>Actions</th>
@@ -76,7 +74,6 @@ $("document").ready(function () {
             {data: 'category_image', width: '10%',orderable: false, searchable:false},
             {data: 'prefix'},
             {data: 'category_name'},
-            {data: 'store_id'},
             {data: 'products_count', name: 'products_count', width: '20%', className: 'text-center'},
             @if(auth()->user()->can('edit categories') || auth()->user()->can('delete categories'))
             {data: 'action',  width: '10%', orderable: false, searchable: false}
@@ -84,28 +81,7 @@ $("document").ready(function () {
             
             ];
         
-        $('#datatable').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: datatable_url,
-                data : function(d){
-                    if($(".filter_by_store").val() != ''){
-                        d.columns[2]['search']['value'] = $(".filter_by_store option:selected").text();
-                    }                    
-                    }
-            }, 
-            columns: datatable_columns,
-            "order": []
-        });
-        
-        $("#datatable_length").append('{!! Form::select("type", getStoresFilterDropdown(), null, ["class" => "form-control input-sm filter_by_store","style"=>"margin-left: 20px;"]) !!}');
-        
-        var reload_datatable = $("#datatable").dataTable( { bRetrieve : true } );
-        
-        $(document).on('change', '.filter_by_store', function (e) {
-            reload_datatable.fnDraw();
-        });
+            create_datatables(datatable_url,datatable_columns);
         
       });            
 </script>

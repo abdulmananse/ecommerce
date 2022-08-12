@@ -46,7 +46,8 @@
     <link rel="stylesheet" href="{{ asset('css/pace.min.css') }}">
     <!-- Bootstrap datatables -->
     <link href="{{ asset('css/dataTables.bootstrap.css') }}" rel="stylesheet">
-
+    <link href="{{ asset('css/responsive.bootstrap4.min.css') }}" rel="stylesheet" />
+    
     <link href="{{ asset('css/jquery-confirm.min.css') }}" rel="stylesheet">
 
     <!-- Custom styles for this template -->
@@ -107,6 +108,8 @@
     <!-- DataTables -->
     <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('js/responsive.bootstrap4.min.js') }}"></script>
 
     <!-- AdminLTE App -->
     <script src="{{ asset('js/app.min.js') }}"></script>
@@ -136,6 +139,7 @@
     <script src="{{ asset('js/jquery.tagsinput.js') }}"></script>
     <!-- Select 2-->
     <script type="text/javascript" src="{{ asset('js/select2.min.js') }}"></script>
+    
 
     <!-- overlay-->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@1.5.4/src/loadingoverlay.min.js"></script>

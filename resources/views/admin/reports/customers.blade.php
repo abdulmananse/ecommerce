@@ -141,6 +141,7 @@ $(document).ready(function () {
         serverSide: true,
         ordering: true,
         responsive: true,
+        pageLength: -1,
         ajax: {
                   url: "{{url('admin/reports/customer')}}",
                   data : function(d){

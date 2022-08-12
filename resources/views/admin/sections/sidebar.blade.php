@@ -120,7 +120,7 @@
                 
                 @can('view retailers')
                 <li class="sub-menu">
-                    <a href="javascript:void(0);" {{ setActive(['admin/retailer-orders','admin/shopkeeper-orders', 'whole-saler-orders']) }}>
+                    <a href="javascript:void(0);" {{ setActive(['admin/retailer-orders','admin/shopkeeper-orders', 'admin/whole-saler-orders']) }}>
                         <i class="fa fa-file-text"></i>
                         <span>Orders</span>
                     </a>

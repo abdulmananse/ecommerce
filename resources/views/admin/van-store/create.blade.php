@@ -31,6 +31,8 @@
                         <form id="applicationForm" action="{{ route('admin.van-store.store') }}" method="post">
                         @csrf
 
+                        {{-- <input class="form-control" placeholder="Product Code" required="required" name="code" type="text" id="code"> --}}
+
                         <table class="table table-invoice" >
                             <thead>
                             <tr>

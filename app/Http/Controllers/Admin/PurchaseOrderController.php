@@ -63,7 +63,16 @@ class PurchaseOrderController extends Controller
         
         if ($request->ajax()) {
             $id = decodeId($id);
-            $orders = PurchaseOrder::where('supplier_id', $id)->orderBy('id', 'desc');
+            $orders = PurchaseOrder::where('supplier_id', $id);
+
+            if($request->filled('order')) {
+                $orderBy = $request->order;
+                if ($orderBy[0]['column'] == 1) {
+                    $orders->orderBy('created_at', $orderBy[0]['dir']);
+                }
+            } else {
+                $orders->orderBy('updated_at','desc');
+            }
             
             return Datatables::of($orders)
                 ->addColumn('date', function ($order) {
